@@ -1,0 +1,135 @@
+/**
+ *  Copyright 2014 Ryszard Wiśniewski <brut.alll@gmail.com>
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ */
+buildscript {
+    repositories {
+        jcenter()
+    }
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+    dependencies {
+        classpath 'com.github.jengelman.gradle.plugins:shadow:5.1.0'
+    }
+}
+
+plugins {
+    id "com.github.hierynomus.license" version "0.14.0"
+}
+
+apply from: 'gradle/functions.gradle'
+
+def apktoolversion_major = '2.4.1'
+def apktoolversion_minor = 'SNAPSHOT';
+
+defaultTasks 'build', 'shadowJar', 'proguard'
+
+allprojects {
+    apply plugin: 'java'
+    apply plugin: 'license'
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+
+    license {
+        header rootProject.file("brut.j.common/src/templates/apache2.0-header.txt")
+        exclude "**/android/content/res/*.java"
+        exclude "**/android/util/*.java"
+        include "**/*.java"
+        strictCheck true
+
+        ext.year = Calendar.getInstance().get(Calendar.YEAR)
+        ext.brut = 'Ryszard Wiśniewski'
+        ext.brutEmail = 'brut.alll@gmail.com'
+        ext.ibot = 'Connor Tumbleson'
+        ext.ibotEmail = 'connor.tumbleson@gmail.com'
+    }
+
+    tasks.withType(JavaCompile) {
+        options.compilerArgs += ["-Xlint:-options"]
+    }
+
+    // license plugin automatically fires these tasks, disable them and run them during releases
+    gradle.startParameter.excludedTaskNames += "licenseMain"
+    gradle.startParameter.excludedTaskNames += "licenseTest"
+}
+
+if (!('release' in gradle.startParameter.taskNames)) {
+    def hash = getCheckedOutGitCommitHash();
+
+    if (hash == null) {
+        project.ext.set("hash", "dirty")
+        project.ext.set("apktool_version", apktoolversion_major + "-dirty")
+        println "Building SNAPSHOT (no .git folder found)";
+    } else {
+        project.ext.set("hash", hash);
+        project.ext.set("apktool_version", apktoolversion_major + "-" + hash + "-SNAPSHOT");
+        println "Building SNAPSHOT (" + getCheckedOutBranch() + "): " + hash;
+    }
+} else {
+    project.ext.set("hash", "")
+    if (apktoolversion_minor.length() > 0) {
+        project.ext.set("apktool_version", apktoolversion_major + "-" + apktoolversion_minor);
+    } else {
+        project.ext.set("apktool_version", apktoolversion_major);
+    }
+    println "Building RELEASE (" + getCheckedOutBranch() + "): " + project.ext.apktool_version;
+}
+
+build.doFirst {
+    def javaVersion = System.getProperty("java.version")
+
+    // fail the build if java (1.5/1.6/1.7)
+    if (javaVersion.startsWith("1.5") || javaVersion.startsWith("1.6") || javaVersion.startsWith("1.7")) {
+        throw new GradleException("You can fix this problem!\n" +
+                "We found a " + javaVersion + " JDK\n" +
+                "Please update JAVA_HOME to use at least a 1.8 JDK\n" +
+                "Currently it is set to: " + System.getProperty("java.home")
+        );
+    }
+}
+
+// used for official releases only. Please don't use
+task release {
+}
+
+subprojects {
+    apply plugin: 'java'
+
+    ext {
+        depends = [
+                baksmali: 'org.smali:baksmali:2.3.4',
+                commons_cli: 'commons-cli:commons-cli:1.4',
+                commons_io: 'commons-io:commons-io:2.4',
+                commons_lang: 'org.apache.commons:commons-lang3:3.1',
+                guava: 'com.google.guava:guava:14.0',
+                junit: 'junit:junit:4.12',
+                proguard_gradle: 'net.sf.proguard:proguard-gradle:6.1.1',
+                snakeyaml: 'org.yaml:snakeyaml:1.18:android',
+                smali: 'org.smali:smali:2.3.4',
+                xmlpull: 'xpp3:xpp3:1.1.4c',
+                xmlunit: 'xmlunit:xmlunit:1.6',
+        ]
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    test {
+        testLogging {
+            exceptionFormat = 'full'
+        }
+    }
+}

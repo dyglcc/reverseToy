@@ -1,0 +1,161 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/parent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#FAFAFA"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="@color/logo"
+            android:drawableLeft="@mipmap/adhoc_top_logo"
+            android:drawablePadding="6dp"
+            android:gravity="center_vertical"
+            android:paddingLeft="42dp"
+            android:text="调试助手"
+            android:textColor="@android:color/white"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tv_adhoc_sdk_version_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="42dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="42dp"
+            android:text="SDK版本号"
+            android:textColor="#a0a0a0"
+            android:textSize="12sp" />
+
+        <TextView
+            android:id="@+id/tv_adhoc_sdk_new_version"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="42dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginRight="42dp"
+            android:text="发现新版本SDK,为了获得最佳使用体验，建议尽快升级！"
+            android:textColor="#ff8181"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="38dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="38dp"
+            android:background="@drawable/adhoc_exp_status_bg"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:paddingTop="24dp"
+            android:paddingBottom="24dp">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:text="当前调试版本"
+                android:textColor="#a0a0a0"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/tv_status"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:text="@string/adhoc_no_experiments"
+                android:textColor="#313131"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+
+
+        <TextView
+            android:id="@+id/tv_status_tip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="42dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginRight="42dp"
+            android:text="@string/adhoc_tester_tips_1"
+            android:textColor="#a0a0a0"
+            android:textSize="12sp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1.0" />
+
+        <Button
+            android:id="@+id/btn_editor"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="42dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="42dp"
+            android:background="@drawable/button_selector"
+            android:gravity="center"
+            android:paddingLeft="10dip"
+            android:text="@string/adhoc_tester_editor_in"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/btn_scan"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="42dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="42dp"
+            android:background="@drawable/button_selector"
+            android:gravity="center"
+            android:paddingLeft="10dip"
+            android:text="@string/adhoc_tester_scanner"
+            android:textColor="@android:color/white" />
+
+        <Button
+            android:id="@+id/btn_quit_experiment"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="42dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="42dp"
+            android:background="@drawable/button_quit_sel"
+            android:gravity="center"
+            android:paddingLeft="10dip"
+            android:text="@string/adhoc_tester_exit_experiment"
+            android:textColor="@android:color/white"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btn_version"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="42dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="42dp"
+            android:background="@drawable/button_selector"
+            android:gravity="center"
+            android:paddingLeft="10dip"
+            android:text="当前版本为测试版本,点击切换版本"
+            android:textColor="@android:color/white"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tv_scan_result"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp" />
+
+
+    </LinearLayout>
+</ScrollView>
