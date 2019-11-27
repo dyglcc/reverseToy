@@ -54,3 +54,15 @@ java -jar baksmali.jar -o [输出文件夹] dex文件
  apktool b 合并包
 签名文件。
 
+
+
+// ResPackage 
+package hash map key 为packagename
+ 
+AndrolibResources 的loadMainPkg 加载到所有的ids,可以在这里处理添加aar的ids
+
+mResSpecs 是一个map里面所有可以操作的id、string ，map等。都在里面。
+
+
+0x1 开始的是系统的id
+0x7f开头的是mainpackage的。

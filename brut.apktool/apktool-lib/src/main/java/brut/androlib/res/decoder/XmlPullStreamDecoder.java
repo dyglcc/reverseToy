@@ -19,7 +19,9 @@ package brut.androlib.res.decoder;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.logging.Logger;
 
+import brut.androlib.Androlib;
 import brut.androlib.err.AXmlDecodingException;
 import brut.androlib.err.RawXmlEncounteredException;
 import org.xmlpull.v1.XmlPullParser;
@@ -33,10 +35,12 @@ import brut.androlib.AndrolibException;
 import brut.androlib.res.data.ResTable;
 import brut.androlib.res.util.ExtXmlSerializer;
 
+
 /**
  * @author Ryszard Wiśniewski <brut.alll@gmail.com>
  */
 public class XmlPullStreamDecoder implements ResStreamDecoder {
+    private final static Logger LOGGER = Logger.getLogger(Androlib.class.getName());
     public XmlPullStreamDecoder(XmlPullParser parser,
                                 ExtXmlSerializer serializer) {
         this.mParser = parser;
@@ -91,6 +95,7 @@ public class XmlPullStreamDecoder implements ResStreamDecoder {
                     // read <manifest> for package:
                     for (int i = 0; i < pp.getAttributeCount(); i++) {
                         attr_name = pp.getAttributeName(i);
+                        LOGGER.info("parseManifest attr_name "+attr_name);
 
                         if (attr_name.equalsIgnoreCase(("package"))) {
                             resTable.setPackageRenamed(pp.getAttributeValue(i));
@@ -135,6 +140,7 @@ public class XmlPullStreamDecoder implements ResStreamDecoder {
                 }
             };
 
+            //todo outfile 时候可以把aar的资源加载到这里
             par.setInput(in, null);
             ser.setOutput(out, null);
 

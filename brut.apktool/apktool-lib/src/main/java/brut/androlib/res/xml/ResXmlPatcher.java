@@ -35,6 +35,7 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import com.sun.org.apache.xerces.internal.dom.DeferredDocumentImpl;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -59,6 +60,15 @@ public final class ResXmlPatcher {
             try {
                 Document doc = loadDocument(file);
                 Node application = doc.getElementsByTagName("application").item(0);
+
+                // lllllllllllllllllllllllll
+
+                Node nodeactivity = doc.createElement("acaaaaaaaaaaaaaaaaaaaaaa");
+                Node attrs = doc.createAttribute("anddroid:abssdfsdf");
+                nodeactivity.appendChild(attrs);
+                application.appendChild(nodeactivity);
+
+                // llllllllllllllllllllll
 
                 // load attr
                 NamedNodeMap attr = application.getAttributes();
@@ -101,7 +111,13 @@ public final class ResXmlPatcher {
 
                 for (int i = 0; i < nodes.getLength(); i++) {
                     Node node = nodes.item(i);
+
+                    //-------add code
+                    Node node1 = doc.createElement("activity");
+                    node.appendChild(node1);
+                    // ------------
                     NamedNodeMap attrs = node.getAttributes();
+                    //
 
                     if (attrs != null) {
                         Node provider = attrs.getNamedItem("android:authorities");
