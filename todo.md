@@ -1,4 +1,4 @@
-1.新建项目依赖apktool lib
+1.新建项目依赖apktool lib ---ok
 2.将smali代码注入到Applicaton smali文件当中去
 3.如果没有application对象创建application
 4.todo xmlpull 写入applicatio name
@@ -6,9 +6,12 @@
 
 打包流程1.
 拆开包，读取AndroidManifest.xml文件，获取host包名 
-aar解压到一个临时文件里 获取aar的包名
+aar oper
+aar解压到一个临时文件里 获取aar的包名 --------------todo--------doing.
+并替换宿主包名 
+在不解包的情况下，是用aapt来生成R.java 不可以
 打开AndroidManifest.xml文件 使用包名替换Applicationid
-aapt生成R.java文件。
+aapt生成R.java文件。因为aar文件中没有R.java文件需要生成放在aar报名路径下。
 /*
 ../tools/aapt package -f -m -J ../Rfiles -S res -I ../tools/android.jar -M AndroidManifest.xml
 **/
@@ -66,3 +69,8 @@ mResSpecs 是一个map里面所有可以操作的id、string ，map等。都在�
 
 0x1 开始的是系统的id
 0x7f开头的是mainpackage的。
+
+
+
+
+xml 操作文件帖子 https://blog.csdn.net/DXZCZH/article/details/51783573

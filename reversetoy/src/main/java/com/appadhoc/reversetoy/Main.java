@@ -11,6 +11,7 @@ import java.io.IOException;
 //d /Users/jiaozhengxiang/Desktop/AbTestDemo-debug.apk -o /Users/jiaozhengxiang/Desktop/work
 public class Main {
     public static void main(String[] args) throws BrutException, IOException {
+        // -----------------------------decode  apk-------------------
 //        System.out.println("abc");
 //        ApkDecoder decoder = new ApkDecoder();
 //        decoder.setForceDelete(true);
