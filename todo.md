@@ -77,10 +77,10 @@ xml 操作文件帖子 https://blog.csdn.net/DXZCZH/article/details/51783573
 
 必须完成的模块
 
-1.(1)aar中的将aar文件manifest替换的模块，解压放在tmp文件夹中.
-1.解压宿主apk文件，回头处理aar文件，替换aar manifest文件
-1.生成aar的R。java文件,使用aapt
-1.合并宿主manifest和aar manifest，待用
+1.(1)aar中的将aar文件manifest替换的模块，解压放在tmp文件夹中.ok
+1.解压宿主apk文件，回头处理aar文件，替换aar manifest文件ok
+1.生成aar的R。java文件,使用aapt todo ...
+1.合并宿主manifest和aar manifest，待用 ok
 
 2.id合并模块，
 3.必须解压并生成到到一个文件夹下面，然后
@@ -91,26 +91,3 @@ xml 操作文件帖子 https://blog.csdn.net/DXZCZH/article/details/51783573
 4.拷贝res jni，资源到宿主文件夹，smali文件夹生成，
 5.合并生成未签名apk
 6.签名
-
-
- public void aaptPackage(File apkFile, File manifest, File resDir, File rawDir, File assetDir, File[] include)
-            throws AndrolibException {
-
-        String aaptPath = apkOptions.aaptPath;
-        boolean customAapt = !aaptPath.isEmpty();
-        List<String> cmd = new ArrayList<String>();
-
-        try {
-            String aaptCommand = AaptManager.getAaptExecutionCommand(aaptPath, getAaptBinaryFile());
-            cmd.add(aaptCommand);
-        } catch (BrutException ex) {
-            LOGGER.warning("aapt: " + ex.getMessage() + " (defaulting to $PATH binary)");
-            cmd.add(AaptManager.getAaptBinaryName(getAaptVersion()));
-        }
-
-        if (apkOptions.isAapt2()) {
-            aapt2Package(apkFile, manifest, resDir, rawDir, assetDir, include, cmd, customAapt);
-            return;
-        }
-        aapt1Package(apkFile, manifest, resDir, rawDir, assetDir, include, cmd, customAapt);
-    }
