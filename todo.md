@@ -74,3 +74,20 @@ mResSpecs 是一个map里面所有可以操作的id、string ，map等。都在�
 
 
 xml 操作文件帖子 https://blog.csdn.net/DXZCZH/article/details/51783573
+
+必须完成的模块
+
+1.aar中的将aar文件manifest替换的模块，解压放在tmp文件夹中，待用。
+1.解压宿主apk文件，回头处理aar文件，替换aar manifest文件
+1.合并宿主manifest和aar manifest，待用
+1.生成aar的R。java文件
+2.id合并模块，
+3.必须解压并生成到到一个文件夹下面，然后
+3.smali生成模块。
+3.生成aar的smali文件，包括，上面生成的R文件
+4.资源拷贝模块
+4.拷贝res jni，资源到宿主文件夹，smali文件夹生成，
+5.合并生成未签名apk
+6.签名
+
+
