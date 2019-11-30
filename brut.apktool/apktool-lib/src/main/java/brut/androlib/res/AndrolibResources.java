@@ -1045,6 +1045,15 @@ final public class AndrolibResources {
     private String mVersionCode = null;
     private String mVersionName = null;
     private String mPackageRenamed = null;
+
+    public String getmPackageId() {
+        return mPackageId;
+    }
+
+//    public void setmPackageId(String mPackageId) {
+//        this.mPackageId = mPackageId;
+//    }
+
     private String mPackageId = null;
 
     private boolean mSharedLibrary = false;

@@ -56,6 +56,9 @@ public class Androlib {
         mAndRes.apkOptions = apkOptions;
     }
 
+    public String getHostPackageName(){
+        return mAndRes.getmPackageId();
+    }
     public Androlib() {
         this.apkOptions = new ApkOptions();
         mAndRes.apkOptions = this.apkOptions;

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="button_p">#12457d</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="logo">#2165B2</color>
+    <color name="stand_blue">#4183cd</color>
+    <color name="stand_red">#ff0000</color>
+    <item name="adhoc_tag" type="id"/>
+    <item name="decode" type="id"/>
+    <item name="decode_failed" type="id"/>
+    <item name="decode_succeeded" type="id"/>
+    <item name="launch_product_query" type="id"/>
+    <item name="quit" type="id"/>
+    <item name="restart_preview" type="id"/>
+    <item name="return_scan_result" type="id"/>
+    <string name="adhoc_camera_no_permission_tip">未打开相机功能,此功能无法使用.</string>
+    <string name="adhoc_camera_permission_tip_message">《扫描加入试验》功能需要《相机》权限进行二维码扫描.</string>
+    <string name="adhoc_client_id_empty_tips">Adhoc sdk clientId为空.</string>
+    <string name="adhoc_commmon_failed">更新数据失败,请重新扫描加入试验</string>
+    <string name="adhoc_common_success">更新数据成功</string>
+    <string name="adhoc_dialog_loading">加载中…</string>
+    <string name="adhoc_enter_experiment_tip">%s</string>
+    <string name="adhoc_exit_experiment_failed">退出试验出错了.原因:%s</string>
+    <string name="adhoc_exit_experiment_success">退出试验成功!</string>
+    <string name="adhoc_failed_unknown">未知原因</string>
+    <string name="adhoc_get_flag_tip_message">更新试验数据中…</string>
+    <string name="adhoc_join_experiment_failed">加入试验出错了?%s</string>
+    <string name="adhoc_joined_experiment">已经加入试验</string>
+    <string name="adhoc_no_experiments">当前未进入任何调试版本</string>
+    <string name="adhoc_scan_result_empty">接收到的数据为空。</string>
+    <string name="adhoc_tester_editor_in">进入可视化编辑</string>
+    <string name="adhoc_tester_editor_out">退出可视化编辑</string>
+    <string name="adhoc_tester_exit_experiment">退出调试试验</string>
+    <string name="adhoc_tester_scanner">调试试验版本</string>
+    <string name="adhoc_tester_scanner_default">扫描加入默认版本</string>
+    <string name="adhoc_tester_tips_1">如果需要调试试验版本，请点击界面下方按钮之后，扫描对应二维码。二维码位于AppAdhoc网站操作界面的集成调试模块。</string>
+    <string name="adhoc_tester_tips_2">不能加入试验？\n检查APPKEY是否正确\n检查logcat看是否有错误提示</string>
+    <string name="adhoc_tester_tips_3">本设备将停留在调试版本中。如果要停止调试此版本，请点击底部\"退出调试试验\"按钮</string>
+    <string name="adhoc_warning">警告</string>
+    <string name="app_name">AdhocEditor</string>
+    <string name="btn_close_flashlight_text">关闭手电筒</string>
+    <string name="btn_open_flashlight_text">打开手电筒</string>
+    <string name="btn_scan_local_pic">从相册选取二维码</string>
+    <string name="msg_default_status">请扫描测试版本二维码加入试验</string>
+    <string name="scan_fail">扫描失败!</string>
+    <style name="AppTheme" parent="android:Theme.Black.NoTitleBar">
+        <!-- Customize your theme here. -->
+        <!--<item name="colorPrimary">@color/colorPrimary</item>-->
+        <!--<item name="colorPrimaryDark">@color/colorPrimaryDark</item>-->
+        <!--<item name="colorAccent">@color/colorAccent</item>-->
+    </style>
+</resources>

@@ -1,48 +1,53 @@
-package com.appadhoc.reversetoy;
+package com.appadhoc.reversetoy.aar;
 
 
-import brut.androlib.Androlib;
-import brut.androlib.ApkDecoder;
-import brut.androlib.ApkOptions;
-import brut.common.BrutException;
+import brut.directory.ExtFile;
 
 import java.io.File;
-import java.io.IOException;
 
 public class AarManager {
 
     private File aarWorkspace;
+
+    public String getHostPackageName() {
+        return hostPackageName;
+    }
+
+    private String hostPackageName;
     // 第一步，解压包到一个临时文件加
 
     private ExtFile aarFile;
 
-    public void setAarFile(String aarfile) {
+    public void setAarFile(String aarfile) throws Exception {
         ExtFile aarFile = new ExtFile(aarfile);
         if (aarFile != null) {
             try {
-                aarFile.close;
+                aarFile.close();
             } catch (Exception e) {
             }
         }
-        if (!aarFile.isExists()) {
-            throw Exception("aar file not exist");
+        if (!aarFile.exists()) {
+            throw new Exception("aar file not exist");
         }
         this.aarFile = aarFile;
     }
 
-    private createWorkAarworks(){
-        if(this.aarWrokspace!=null && aarWorkspace.exist()){
+    private void createWorkAarworks() throws Exception {
+        if(this.aarWorkspace!=null && aarWorkspace.exists()){
             return;
         }
-        if(aarFile == null || !aarFile.exist()){
+        if(aarFile == null || !aarFile.exists()){
             throw new Exception("aar file not exist when create tmp file");
-            return;
         }
         File file = new File(aarFile.getParent()+"aar/tmp");
-        if(!file.exist()){
+        if(!file.exists()){
             file.mkdirs();
             this.aarWorkspace = file;
         }
+    }
+
+    private void setHostPackageName(String hostPackageName){
+        this.hostPackageName = hostPackageName;
     }
 
     private void unzipFile(ExtFile aarFile){
@@ -51,10 +56,11 @@ public class AarManager {
 
     }
 
-    public void manipulate(String hostPackageName) {
+    public void manipulate() {
 
 
-
+    }
+    private void createRjavaFile(){
 
     }
 }

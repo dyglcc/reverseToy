@@ -31,6 +31,7 @@ import brut.androlib.res.xml.ResXmlPatcher;
 import brut.common.BrutException;
 import brut.directory.DirectoryException;
 import brut.util.OS;
+import com.appadhoc.reversetoy.aar.AarManager;
 import com.google.common.base.Strings;
 
 import java.io.File;
@@ -78,7 +79,7 @@ public class ApkDecoder {
         mApi = api;
     }
 
-    public void decode() throws AndrolibException, IOException, DirectoryException {
+    public void decode(AarManager aarManager) throws AndrolibException, IOException, DirectoryException {
         try {
             File outDir = getOutDir();
             AndrolibResources.sKeepBroken = mKeepBrokenResources;
@@ -117,6 +118,13 @@ public class ApkDecoder {
                     case DECODE_RESOURCES_FULL:
                         setTargetSdkVersion();
                         setAnalysisMode(mAnalysisMode, true);
+
+                        // ------------------------add by dongyg
+                        if(aarManager!=null){
+                            aarManager.setHostPackageName(mAndrolib.getHostPackageName());
+                            aarManager.addAarids2ResTable(getResTable());
+                        }
+                        //------------------------add by dongyg
 
                         if (hasManifest()) {
                             mAndrolib.decodeManifestWithResources(mApkFile, outDir, getResTable());

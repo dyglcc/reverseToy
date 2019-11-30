@@ -18,10 +18,18 @@ package brut.util;
 
 import brut.common.BrutException;
 import java.io.File;
+import java.io.IOError;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AaptManager {
+
+    public static File getAndroidJar() throws IOException, BrutException {
+        File file =  Jar.getResourceAsFile("/brut/androlib/android.jar", AaptManager.class);;
+        file.setExecutable(true);
+        return file;
+    }
 
     public static File getAppt2() throws BrutException {
         return getAppt(2);
