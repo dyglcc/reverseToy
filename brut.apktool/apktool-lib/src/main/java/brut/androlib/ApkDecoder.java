@@ -119,16 +119,16 @@ public class ApkDecoder {
                         setTargetSdkVersion();
                         setAnalysisMode(mAnalysisMode, true);
 
-                        // ------------------------add by dongyg
-                        if(aarManager!=null){
-                            aarManager.setHostPackageName(mAndrolib.getHostPackageName());
-                            aarManager.addAarids2ResTable(getResTable());
-                        }
-                        //------------------------add by dongyg
-
                         if (hasManifest()) {
                             mAndrolib.decodeManifestWithResources(mApkFile, outDir, getResTable());
                         }
+                        // ------------------------add by dongyg
+                        if(aarManager!=null){
+                            aarManager.setHostPackageName(getResTable().getPackageRenamed());
+                            aarManager.preCombin(outDir);
+                            aarManager.addAarids2ResTable(getResTable());
+                        }
+                        //------------------------add by dongyg
                         mAndrolib.decodeResourcesFull(mApkFile, outDir, getResTable());
                         break;
                 }

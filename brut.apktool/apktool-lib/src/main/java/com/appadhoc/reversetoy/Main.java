@@ -8,19 +8,20 @@ import brut.androlib.ApkOptions;
 import brut.common.BrutException;
 import brut.directory.DirectoryException;
 import com.appadhoc.reversetoy.aar.AarManager;
+import com.appadhoc.reversetoy.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
+
 //d /Users/jiaozhengxiang/Desktop/AbTestDemo-debug.apk -o /Users/jiaozhengxiang/Desktop/work
 public class Main {
     public static void main(String[] args) throws BrutException, IOException {
         // -----------------------------decode  apk-------------------
 //        decodeApkTest();
-        System.out.println("absdf");
-
-
         //------------------------------build apk---------------------
 //        buildApkTest();
+        decodeApkTest();
 
     }
 
@@ -29,16 +30,22 @@ public class Main {
         decoder.setForceDelete(true);
         ApkOptions options = new ApkOptions();
         options.verbose = true;
-        File file = new File("/Users/jiaozhengxiang/Desktop/AbTestDemo-debug.apk");
-        File outFile = new File("/Users/jiaozhengxiang/Desktop/apktool_workspace");
+        File file = new File("/Users/dongyuangui/Desktop/sample-debug.apk");
+        File outFile = new File("/Users/dongyuangui/Desktop/work/toy_workspace");
         decoder.setApkFile(file);
         decoder.setOutDir(outFile);
-
-        AarManager manager = new AarManager();
+        AarManager manager = AarManager.getInstance().init("/Users/dongyuangui/Desktop/work/toy_workspace","/Users/dongyuangui/Desktop/work/aar-workspace/abtest-lite-v5.1.3-sp.aar");
         decoder.decode(manager);
+
+//        manager.asdfasdfasdf();
+//        buildApk();
+//        signApk();
     }
 
-    public static void buildApkTest(){
+    private static void signApk() {
+    }
+
+    public static void buildApk(){
         ApkOptions options = new ApkOptions();
         options.verbose=true;
         options.debugMode = true;

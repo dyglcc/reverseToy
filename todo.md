@@ -7,30 +7,30 @@
 打包流程1.
 拆开包，读取AndroidManifest.xml文件，获取host包名 
 aar oper
-aar解压到一个临时文件里 获取aar的包名 --------------todo--------doing.
+aar解压到一个临时文件里 获取aar的包名 ok
 并替换宿主包名 
-在不解包的情况下，是用aapt来生成R.java 不可以
-打开AndroidManifest.xml文件 使用包名替换Applicationid
+打开AndroidManifest.xml文件 使用包名替换Applicationid ok
 aapt生成R.java文件。因为aar文件中没有R.java文件需要生成放在aar报名路径下。
 /*
 ../tools/aapt package -f -m -J ../Rfiles -S res -I ../tools/android.jar -M AndroidManifest.xml
 **/
 
-把R.java编译生成class文件，
-把R.class放在aar包 包路径下面
+把R.java编译生成class文件，ok
+把R.class放在aar包 包路径下面ok
 
 
-拆开包，读取AndroidManifest.xml文件，获取包名 （aar包需要）
-
-合并Andmanifest.xml。
-遍历aar文件合并资源文件，anim,图片.字符串.so，assets 纯copy
+拆开包，读取AndroidManifest.xml文件，获取包名 （aar包需要）ok
 合并public.xml,将R.java的资源追加到public.id后面，如果需要的话，还需要处理values下面的其它文件
+遍历aar文件合并资源文件，anim,图片.字符串.so，assets 纯copy
+合并Andmanifest.xml。 ok ......
+
+todo replace ids 
 
 加入public.xml ，将R.smali文件中的id都添加到public.xml文件中遇到问题
 1.名称重复，
 解决办法：不添加，
 2.0x地址重复
-解决办法：往后顺延知道满足条件
+解决办法：往后顺延直到满足条件
 3.添加id之后遇到问题，需要添加ids。xml文件
 解决办法：id 是特殊的东西，需要额外添加到ids.xml的
 4.加入ids.xml文件遇到问题

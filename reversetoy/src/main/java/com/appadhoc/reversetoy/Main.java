@@ -14,7 +14,6 @@ import java.io.IOException;
 public class Main {
     public static void main(String[] args) throws BrutException, IOException {
         // -----------------------------decode  apk-------------------
-        decodeApkTest();
 
 
 
@@ -23,27 +22,4 @@ public class Main {
 
     }
 
-    public static void decodeApkTest() throws AndrolibException, IOException, DirectoryException {
-        ApkDecoder decoder = new ApkDecoder();
-        decoder.setForceDelete(true);
-        ApkOptions options = new ApkOptions();
-        options.verbose = true;
-        File file = new File("/Users/jiaozhengxiang/Desktop/AbTestDemo-debug.apk");
-        File outFile = new File("/Users/jiaozhengxiang/Desktop/apktool_workspace");
-        decoder.setApkFile(file);
-        decoder.setOutDir(outFile);
-//        new Androlib(options).build(new File("."), outFile);
-        decoder.decode();
-    }
-
-    public static void buildApkTest(){
-        ApkOptions options = new ApkOptions();
-        options.verbose=true;
-        options.debugMode = true;
-        try {
-            new Androlib(options).build(new File("/Users/jiaozhengxiang/Desktop/apktool_workspace"), new File("helloBuildByapi.apk"));
-        } catch (BrutException e) {
-            e.printStackTrace();
-        }
-    }
 }

@@ -18,6 +18,8 @@ package brut.androlib.res.data;
 
 import brut.androlib.AndrolibException;
 import brut.androlib.err.UndefinedResObject;
+import com.appadhoc.reversetoy.utils.Utils;
+
 import java.util.*;
 
 /**
@@ -31,6 +33,12 @@ public final class ResTypeSpec {
     public static final String RES_TYPE_NAME_ATTR = "attr";
 
     private final String mName;
+    private int maxValue = -1;
+
+    public Map<String, ResResSpec> getmResSpecs() {
+        return mResSpecs;
+    }
+
     private final Map<String, ResResSpec> mResSpecs = new LinkedHashMap<String, ResResSpec>();
 
     private final ResTable mResTable;
@@ -92,5 +100,21 @@ public final class ResTypeSpec {
     @Override
     public String toString() {
         return mName;
+    }
+
+    public boolean hasKey(String key) {
+        return mResSpecs.containsKey(key);
+    }
+
+    public int getTail() throws NoSuchFieldException, IllegalAccessException {
+        if(maxValue !=-1){
+            return maxValue;
+        }
+        for(ResResSpec resResSpec :mResSpecs.values()){
+            if(resResSpec.getId().id > maxValue){
+                maxValue = resResSpec.getId().id;
+            }
+        }
+        return maxValue;
     }
 }

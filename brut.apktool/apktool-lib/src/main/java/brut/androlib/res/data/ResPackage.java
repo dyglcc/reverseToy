@@ -227,4 +227,43 @@ public class ResPackage {
     }
 
     private final static Logger LOGGER = Logger.getLogger(ResPackage.class.getName());
+
+    // add by dyg
+    public ResID addAarRes(Integer integer, String type,String key) throws AndrolibException, NoSuchFieldException, IllegalAccessException {
+        ResTypeSpec resTypeSpec = getType(type);
+        // 检查key是否已经存在
+        if(resTypeSpec.hasKey(key)){
+            LOGGER.info("有重复的key" +key+"返回宿主id");
+            return resTypeSpec.getResSpec(key).getId();
+        }
+        int id = resTypeSpec.getTail() + 1;
+
+        ResID resID = new ResID(id);
+
+        // 检查id是否有重复,获取一个
+        resID = checkdup(resID);
+
+        ResResSpec spec = new ResResSpec(resID, key, this, resTypeSpec);
+        resTypeSpec.addResSpec(spec);
+        return resID;
+    }
+    private ResID checkdup(ResID mresid){
+        for(ResID srcID:mResSpecs.keySet()){
+            if(mresid.id == srcID.id){
+                return checkdup(new ResID(mresid.id+1));
+            }
+        }
+        return mresid;
+    }
+
+    public void reArrange(){
+        mResSpecs.clear();
+        for(ResTypeSpec entry:mTypes.values()){
+            Map<String, ResResSpec> map = entry.getmResSpecs();
+            for(ResResSpec resResSpec:map.values()){
+                ResID resID = resResSpec.getId();
+                mResSpecs.put(resID,resResSpec);
+            }
+        }
+    }
 }
