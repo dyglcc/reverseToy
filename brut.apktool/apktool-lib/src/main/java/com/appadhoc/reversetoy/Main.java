@@ -30,11 +30,11 @@ public class Main {
         decoder.setForceDelete(true);
         ApkOptions options = new ApkOptions();
         options.verbose = true;
-        File file = new File("/Users/dongyuangui/Desktop/sample-debug.apk");
-        File outFile = new File("/Users/dongyuangui/Desktop/work/toy_workspace");
+        File file = new File("/Users/jiaozhengxiang/Desktop/sample-debug.apk");
+        File outFile = new File("/Users/jiaozhengxiang/Desktop/work/toy_workspace");
         decoder.setApkFile(file);
         decoder.setOutDir(outFile);
-        AarManager manager = AarManager.getInstance().init("/Users/dongyuangui/Desktop/work/toy_workspace","/Users/dongyuangui/Desktop/work/aar-workspace/abtest-lite-v5.1.3-sp.aar");
+        AarManager manager = AarManager.getInstance().init("/Users/jiaozhengxiang/Desktop/work/toy_workspace","/Users/jiaozhengxiang/Desktop/work/aar-workspace/abtest-lite-v5.1.3-sp.aar");
         decoder.decode(manager);
 
 //        manager.asdfasdfasdf();

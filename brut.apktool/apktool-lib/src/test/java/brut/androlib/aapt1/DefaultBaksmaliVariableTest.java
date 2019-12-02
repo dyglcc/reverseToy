@@ -51,7 +51,7 @@ public class DefaultBaksmaliVariableTest extends BaseTest {
         LOGGER.info("Decoding issue1481.jar...");
         ApkDecoder apkDecoder = new ApkDecoder(testJar);
         apkDecoder.setOutDir(sTestNewDir);
-        apkDecoder.decode();
+        apkDecoder.decode(null);
     }
 
     @AfterClass

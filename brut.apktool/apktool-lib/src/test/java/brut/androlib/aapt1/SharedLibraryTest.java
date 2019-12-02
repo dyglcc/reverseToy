@@ -89,14 +89,14 @@ public class SharedLibraryTest extends BaseTest {
         apkDecoder.setOutDir(new File(sTmpDir + File.separator + client + ".out"));
         apkDecoder.setFrameworkDir(apkOptions.frameworkFolderLocation);
         apkDecoder.setFrameworkTag(apkOptions.frameworkTag);
-        apkDecoder.decode();
+        apkDecoder.decode(null);
 
         // decode library.apk
         ApkDecoder libraryDecoder = new ApkDecoder(new File(sTmpDir + File.separator + library));
         libraryDecoder.setOutDir(new File(sTmpDir + File.separator + library + ".out"));
         libraryDecoder.setFrameworkDir(apkOptions.frameworkFolderLocation);
         libraryDecoder.setFrameworkTag(apkOptions.frameworkTag);
-        libraryDecoder.decode();
+        libraryDecoder.decode(null);
 
         // build client.apk
         ExtFile clientApk = new ExtFile(sTmpDir, client + ".out");

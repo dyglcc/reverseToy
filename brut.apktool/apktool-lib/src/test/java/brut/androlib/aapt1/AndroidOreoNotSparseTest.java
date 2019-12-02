@@ -46,7 +46,7 @@ public class AndroidOreoNotSparseTest extends BaseTest {
         LOGGER.info("Decoding not_sparse.apk...");
         ApkDecoder apkDecoder = new ApkDecoder(testApk);
         apkDecoder.setOutDir(sTestNewDir);
-        apkDecoder.decode();
+        apkDecoder.decode(null);
 
         LOGGER.info("Building not_sparse.apk...");
         ApkOptions apkOptions = new ApkOptions();

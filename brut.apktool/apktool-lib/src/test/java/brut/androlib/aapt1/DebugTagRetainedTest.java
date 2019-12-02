@@ -58,7 +58,7 @@ public class DebugTagRetainedTest extends BaseTest {
         LOGGER.info("Decoding issue1235.apk...");
         ApkDecoder apkDecoder = new ApkDecoder(testApk);
         apkDecoder.setOutDir(sTestNewDir);
-        apkDecoder.decode();
+        apkDecoder.decode(null);
     }
 
     @AfterClass

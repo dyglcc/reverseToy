@@ -53,7 +53,7 @@ public class SkipAssetTest extends BaseTest {
         apkDecoder.setOutDir(sTestOrigDir);
         apkDecoder.setDecodeAssets(ApkDecoder.DECODE_ASSETS_NONE);
         apkDecoder.setForceDelete(true);
-        apkDecoder.decode();
+        apkDecoder.decode(null);
 
         checkFileDoesNotExist("assets" + File.separator + "kotlin.kotlin_builtins");
         checkFileDoesNotExist("assets" + File.separator + "ranges" + File.separator + "ranges.kotlin_builtins");
@@ -70,7 +70,7 @@ public class SkipAssetTest extends BaseTest {
         apkDecoder.setOutDir(sTestOrigDir);
         apkDecoder.setDecodeAssets(ApkDecoder.DECODE_ASSETS_FULL);
         apkDecoder.setForceDelete(true);
-        apkDecoder.decode();
+        apkDecoder.decode(null);
 
         checkFileDoesExist("assets" + File.separator + "kotlin.kotlin_builtins");
         checkFileDoesExist("assets" + File.separator + "ranges" + File.separator + "ranges.kotlin_builtins");

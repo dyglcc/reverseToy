@@ -50,7 +50,7 @@ public class UnknownCompressionTest extends BaseTest {
         // decode deflated_unknowns.apk
         ApkDecoder apkDecoder = new ApkDecoder(sTestOrigDir);
         apkDecoder.setOutDir(new File(sTestOrigDir.getAbsolutePath() + ".out"));
-        apkDecoder.decode();
+        apkDecoder.decode(null);
 
         // build deflated_unknowns
         ExtFile clientApkFolder = new ExtFile(sTestOrigDir.getAbsolutePath() + ".out");

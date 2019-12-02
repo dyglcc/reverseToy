@@ -140,6 +140,6 @@ public class ForceManifestDecodeNoResourcesTest extends BaseTest {
         apkDecoder.setForceDelete(true); // delete directory due to multiple tests.
 
         apkDecoder.setOutDir(new File(output));
-        apkDecoder.decode();
+        apkDecoder.decode(null);
     }
 }

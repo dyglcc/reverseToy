@@ -54,7 +54,7 @@ public class VectorDrawableTest extends BaseTest {
         sTestOrigDir = new ExtFile(sTmpDir + File.separator + apk + ".out");
 
         apkDecoder.setOutDir(new File(sTmpDir + File.separator + apk + ".out"));
-        apkDecoder.decode();
+        apkDecoder.decode(null);
 
         checkFileExists("res/drawable/ic_arrow_drop_down_black_24dp.xml");
         checkFileExists("res/drawable/ic_android_black_24dp.xml");

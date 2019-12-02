@@ -232,6 +232,7 @@ public class ResPackage {
     // add by dyg
     public ResID addAarRes(Integer integer, String type, String key) throws AndrolibException, NoSuchFieldException, IllegalAccessException {
         ResTypeSpec resTypeSpec = getType(type);
+        LOGGER.info("type # key " + type +"&" + key);
         // 检查key是否已经存在
         if (resTypeSpec.hasKey(key)) {
             LOGGER.info("有重复的key" + key + "返回宿主id");

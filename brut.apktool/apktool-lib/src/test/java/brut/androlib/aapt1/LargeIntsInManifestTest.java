@@ -51,7 +51,7 @@ public class LargeIntsInManifestTest extends BaseTest {
         sTestOrigDir = new ExtFile(sTmpDir + File.separator + apk + ".out");
 
         apkDecoder.setOutDir(new File(sTmpDir + File.separator + apk + ".out"));
-        apkDecoder.decode();
+        apkDecoder.decode(null);
 
         // build issue767
         ExtFile testApk = new ExtFile(sTmpDir, apk + ".out");
@@ -63,7 +63,7 @@ public class LargeIntsInManifestTest extends BaseTest {
         sTestNewDir = new ExtFile(sTmpDir + File.separator + apk + ".out.two");
 
         apkDecoder.setOutDir(new File(sTmpDir + File.separator + apk + ".out.two"));
-        apkDecoder.decode();
+        apkDecoder.decode(null);
 
         compareXmlFiles("AndroidManifest.xml");
     }
