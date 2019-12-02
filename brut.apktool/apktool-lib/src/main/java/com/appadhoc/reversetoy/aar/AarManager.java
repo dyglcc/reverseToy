@@ -20,16 +20,14 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class AarManager {
     private final static Logger LOGGER = Logger.getLogger(AarManager.class.getName());
     private static AarManager instance = new AarManager();
-    private Map<String,LinkedHashMap> ids;
+    private String packageName;
+    private Map<String, LinkedHashMap> ids;
     private static String tmpPath = "aar/tmp";
     private static String rFilePath = tmpPath + "/rFiles";
     private File toyWorkspace;
@@ -65,7 +63,7 @@ public class AarManager {
 
     }
 
-    public AarManager init(String workspace,String aarFile) {
+    public AarManager init(String workspace, String aarFile) {
         try {
             setWorkSpace(workspace);
             setAarFile(aarFile);
@@ -157,13 +155,13 @@ public class AarManager {
         // 将restyp里面的都替换一下
         // 重新组成新的respect
         // type eg id integer string  attr bool
-        for(String typeKey:ids.keySet()){
-            Map<String,Integer> aarIdMap = (LinkedHashMap) ids.get(typeKey);
-            for(String resKey:aarIdMap.keySet()){
+        for (String typeKey : ids.keySet()) {
+            Map<String, Integer> aarIdMap = (LinkedHashMap) ids.get(typeKey);
+            for (String resKey : aarIdMap.keySet()) {
                 Integer source_integer = aarIdMap.get(resKey);
                 try {
-                    ResID resID = mainPackage.addAarRes(source_integer,typeKey,resKey);
-                    aarIdMap.put(resKey,resID.id);
+                    ResID resID = mainPackage.addAarRes(source_integer, typeKey, resKey);
+                    aarIdMap.put(resKey, resID.id);
                 } catch (NoSuchFieldException e) {
                     e.printStackTrace();
                 } catch (IllegalAccessException e) {
@@ -175,40 +173,9 @@ public class AarManager {
         mainPackage.reArrange();
 
         // 编译smali文件并替换smali里面的东西
+
         //
     }
-
-    public static void main(String[] args) throws DirectoryException, IOException, ParserConfigurationException, SAXException, XPathExpressionException, TransformerException {
-
-//        AarManager aarManager = AarManager.getInstance();
-//        aarManager.init();
-//        try {
-//            aarManager.setHostPackageName("helloworld");
-//            aarManager.preCombin();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-
-
-//        File file = new File("/Users/dongyuangui/Desktop/work/toy_workspace/aar/tmp/rFiles/com/adhoc/abtest/R.java");
-//        Map map = Utils.RFileUtils.readAarIds(file);
-//        for(Object value:ids.keySet()){
-//            System.out.println(value);
-//        }
-//        for(Object value:ids.values()){
-//            Map map = (Map) value;
-//            for(Object value1 : map.values()){
-//                System.out.println("value1" + value1);
-//                System.out.println("value1" + Integer.toHexString((Integer) value1));
-//            }
-//        }
-
-        File sourceFile = new File("/Users/dongyuangui/Desktop/work/aar-workspace","AndroidManifest.xml");
-        File desFile = new File("/Users/dongyuangui/Desktop/work/aar-workspace","abc.xml");
-        Utils.XmlUtils.combin(sourceFile,desFile);
-
-    }
-
     public void preCombin(File hostUnzipDir) {
         try {
             unzipAarFile();
@@ -231,7 +198,7 @@ public class AarManager {
         // aar manifest
         File aarManifest = getAarManifest();
         try {
-            Utils.XmlUtils.combin(aarManifest,hostManifest);
+            Utils.XmlUtils.combin(aarManifest, hostManifest);
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
         } catch (SAXException e) {
@@ -260,13 +227,15 @@ public class AarManager {
 
         File Rfile = getRjavaFile();
         compileFile(Rfile);
+        // rm R.java file
+        OS.rmfile(Rfile.getAbsolutePath());
     }
 
     private void compileFile(File rfile)
             throws BrutException {
         List<String> cmd = new ArrayList<String>();
 
-        String aaptCommand = getJavacFile().getAbsolutePath();
+        String aaptCommand = Utils.BuildPackage.getJavacFile().getAbsolutePath();
         cmd.add(aaptCommand);
 
         cmd.add(rfile.getAbsolutePath());
@@ -283,7 +252,7 @@ public class AarManager {
     private File getJavacFile() {
         File file = null;
         try {
-            file = Jar.getResourceAsFile("/brut/androlib/javac", AarManager.class);
+            file = Jar.getResourceAsFile("/prebuilt/macosx/javac", AarManager.class);
         } catch (BrutException ex) {
             LOGGER.warning("javac: " + ex.getMessage());
         }
@@ -361,7 +330,7 @@ public class AarManager {
     }
 
     private void aaptPackage()
-            throws BrutException {
+            throws BrutException, IOException {
         List<String> cmd = new ArrayList<String>();
         try {
             String aaptCommand = AaptManager.getAppt1().getAbsolutePath();
@@ -379,11 +348,10 @@ public class AarManager {
         cmd.add(getAarres().getAbsolutePath());
         cmd.add("-I");
 
-        cmd.add(Jar.getResourceAsFile("/brut/androlib/android.jar", AarManager.class).getAbsolutePath());
+        cmd.add(Utils.BuildPackage.getAndroidJar(AarManager.class).getAbsolutePath());
         cmd.add("-M");
 
         cmd.add(getAarManifest().getAbsolutePath());
-        //../tools/aapt package -f -m -J ../Rfiles -S res -I ../tools/android.jar -M AndroidManifest.xml
 
         try {
             OS.exec(cmd.toArray(new String[0]));
@@ -394,10 +362,242 @@ public class AarManager {
         }
     }
 
-    public void asdfasdfasdf() {
-//        todo 打包smali文件
-//        reArrangeRsmalifileIDs();
-//        todo 拷贝res lib jni文件到宿主目录下面
-//        copyFiles();
+    public void smaliClassFilesAndModifyids() throws Exception {
+        smaliClass(null);
+//        reArrangeRsmalifileIDs());
+        copyFiles();
     }
+
+    private void copyFiles() throws IOException {
+
+        File unzipFile = new File(tmpDir, getAarFileName());
+        File valuesFile = new File(unzipFile,"/res/values");
+        if(valuesFile.exists()){
+
+            for(File xmlFile:valuesFile.listFiles()){
+
+                if(xmlFile.getName().endsWith(".xml")){
+                    String fileName = xmlFile.getName();
+                    String newName = fileName.replaceFirst("\\.","")
+                    File rename = new File(unzipFile,"/res/values/values-sdk.xml");
+                    boolean success = Utils.FileUtils.reNameFile(valuesFile.getAbsolutePath(),rename.getAbsolutePath());
+                }
+
+            }
+
+        }else {
+            LOGGER.info("res/values/ file not exist");
+        }
+
+//        if (in.containsDir("assets")) { 文件拷贝，
+//        if (in.containsDir("jni"))文件拷贝
+//        if (in.containsDir("res"))，文件合并
+//        if (in.containsDir("libs")) 直接生成到指定位置smali
+
+
+
+
+
+    }
+
+    public static void reArrangeRsmalifileIDs(String dir,String packName,Map ids) throws Exception {
+
+        File aardir = new File(dir,"abtest-lite-v5.1.3-sp");
+        File libs = new File(aardir,"libs");
+        File smalifiles = new File(libs,"sdksmali");
+
+        if(packName == null || packName.equals("")){
+            throw new Exception("aar file pacagename is null");
+        }
+
+        String rSmaliDirs_str = packName.replaceAll("\\.", String.valueOf(File.separatorChar));
+
+        File rSmalidir = new File(smalifiles,rSmaliDirs_str);
+        if(!rSmalidir.exists()){
+            throw new Exception("aar R smali file not exist");
+        }
+        for(File file: Objects.requireNonNull(rSmalidir.listFiles())){
+            if(file.getName().contains("$")){
+                System.out.println(file.getName());
+                StringBuilder stringBuilder = Utils.RFileUtils.smaliFileIdReplace(file,ids);
+                Utils.FileUtils.writeString2File(new File(file.getAbsolutePath()),stringBuilder.toString());
+            }
+        }
+
+    }
+
+    public static void smaliClass(String dir) throws Exception {
+        rClass2jar(dir);
+        dx2dexfiles(dir);
+        all2Smali(dir);
+        // changeR.smali ids
+
+    }
+
+    private static void all2Smali(String dir) throws Exception {
+        File aardir = new File(dir,"abtest-lite-v5.1.3-sp");
+        File libs = new File(aardir,"libs");
+        File inputdexfile = new File(libs,"classe000.dex");
+        File outDir = new File(libs,"sdksmali");
+        if(!libs.exists()){
+            throw new Exception("dexfile  not exist");
+        }
+        if(outDir.exists()){
+            OS.rmdir(outDir);
+        }else{
+            outDir.mkdirs();
+        }
+        List<String> cmd = new ArrayList<>();
+        File fileJar = Utils.BuildPackage.getBakSmali(AarManager.class);
+        cmd.add("java");
+        cmd.add("-jar");
+        cmd.add(fileJar.getAbsolutePath());
+        cmd.add("d");
+        cmd.add("-o");
+        cmd.add(outDir.getAbsolutePath());
+        cmd.add(inputdexfile.getAbsolutePath());
+        try {
+            OS.exec(cmd.toArray(new String[0]));
+            LOGGER.fine("command ran: ");
+            LOGGER.info(cmd.toString());
+        } catch (BrutException ex) {
+            throw new AndrolibException(ex);
+        }
+    }
+
+    private static void dx2dexfiles(String dir) throws Exception {
+
+        // tood change 2 getFilename
+        File aardir = new File(dir,"abtest-lite-v5.1.3-sp");
+        File libs = new File(aardir,"libs");
+        File outputfile = new File(libs,"classe000.dex");
+        if(!libs.exists()){
+            throw new Exception("libs not exist");
+        }
+        List<String> cmd = new ArrayList<>();
+        File fileJar = Utils.BuildPackage.getDxJar(AarManager.class);
+        cmd.add("java");
+        cmd.add("-jar");
+        cmd.add(fileJar.getAbsolutePath());
+        cmd.add("--dex");
+        cmd.add("--output="+outputfile.getAbsolutePath());
+        cmd.add(libs.getAbsolutePath());
+        try {
+            OS.exec(cmd.toArray(new String[0]));
+            LOGGER.fine("command ran: ");
+            LOGGER.info(cmd.toString());
+        } catch (BrutException ex) {
+            throw new AndrolibException(ex);
+        }
+
+    }
+
+    private static void rClass2jar(String dir) throws Exception {
+        File file  = new File(dir,"rFiles");
+        File[] files = file.listFiles();
+        if(files.length == 0){
+            throw new Exception("R class file not exist");
+        }
+        List<String> cmd = new ArrayList<>();
+        File fileJar = Utils.BuildPackage.getJarComm(AarManager.class);
+        File rclassJar = new File(dir,"rClasses.jar");
+        if(rclassJar.exists()){
+            rclassJar.delete();
+        }
+        cmd.add(fileJar.getAbsolutePath());
+//        cmd.add("jar");
+        cmd.add("cf");
+        cmd.add(rclassJar.getAbsolutePath());
+        cmd.add("-C");
+//        cmd.add(file.getAbsolutePath());
+        cmd.add(file.getAbsolutePath());
+        cmd.add(".");
+        try {
+            OS.exec(cmd.toArray(new String[0]));
+            LOGGER.fine("command ran: ");
+            LOGGER.info(cmd.toString());
+        } catch (BrutException ex) {
+            throw new AndrolibException(ex);
+        }
+        // copy rClasses.jar 2 libs
+        rclassJar.setExecutable(true);
+        if(!rclassJar.exists()){
+            throw new Exception("rClasses.jar 文件生成失败");
+        }
+        // tood change 2 getFilename
+        File aardir = new File(dir,"abtest-lite-v5.1.3-sp");
+        File libs = new File(aardir,"libs");
+        OS.cpfile2src(rclassJar,libs);
+
+    }
+    public static void main(String[] args) throws DirectoryException, IOException, ParserConfigurationException, SAXException, XPathExpressionException, TransformerException {
+
+//        AarManager aarManager = AarManager.getInstance();
+//        aarManager.init();
+//        try {
+//            aarManager.setHostPackageName("helloworld");
+//            aarManager.preCombin();
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+
+
+//        File file = new File("/Users/dongyuangui/Desktop/work/toy_workspace/aar/tmp/rFiles/com/adhoc/abtest/R.java");
+//        Map map = Utils.RFileUtils.readAarIds(file);
+//        for(Object value:ids.keySet()){
+//            System.out.println(value);
+//        }
+//        for(Object value:ids.values()){
+//            Map map = (Map) value;
+//            for(Object value1 : map.values()){
+//                System.out.println("value1" + value1);
+//                System.out.println("value1" + Integer.toHexString((Integer) value1));
+//            }
+//        }
+
+//        File sourceFile = new File("/Users/dongyuangui/Desktop/work/aar-workspace", "AndroidManifest.xml");
+//        File desFile = new File("/Users/dongyuangui/Desktop/work/aar-workspace", "abc.xml");
+//        Utils.XmlUtils.combin(sourceFile, desFile);
+
+//        String workdir = "/Users/jiaozhengxiang/Desktop/work/toy_workspace/aar/tmp1";
+//        AarManager manager = AarManager.getInstance().init("/Users/jiaozhengxiang/Desktop/work/toy_workspace","/Users/jiaozhengxiang/Desktop/work/aar-workspace/abtest-lite-v5.1.3-sp.aar");
+        String aarPackageName = "com.adhoc.abtest";
+        String rjavaFile = "/Users/jiaozhengxiang/Desktop/work/toy_workspace/aar/tmp1/R.java";
+
+        String workdir = "/Users/jiaozhengxiang/Desktop/work/toy_workspace/aar/tmp2";
+        File aarfile = new File(workdir,"abtest-lite-v5.1.3-sp");
+        File apkfiel = new File(workdir,"apk");
+
+
+        File aarRes = new File(aarfile,"res");
+        File apkRes = new File(apkfiel,"res");
+
+        try {
+            OS.cpdir(aarRes,apkRes);
+        } catch (BrutException e) {
+            e.printStackTrace();
+        }
+
+
+//        Map ids = Utils.RFileUtils.readAarIds(new File(rjavaFile));
+        try {
+//            String rSmaliDirs_str = aarPackageName.replaceAll("\\.", String.valueOf(File.separatorChar));
+//            System.out.println(rSmaliDirs_str);
+//            String[] paths = aarPackageName.split("\\.");
+//            for(String path:paths){
+//            }
+//            smaliClass(workdir);
+//            dx2dexfiles(workdir);
+//            all2Smali(workdir);
+//            reArrangeRsmalifileIDs(workdir,aarPackageName,ids);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
 }

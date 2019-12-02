@@ -2,7 +2,11 @@ package com.appadhoc.reversetoy.utils;
 
 
 import brut.androlib.res.xml.ResXmlPatcher;
+import brut.common.BrutException;
+import brut.util.AaptManager;
+import brut.util.Jar;
 import brut.util.OS;
+import brut.util.OSDetection;
 import org.jf.util.Hex;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
@@ -36,6 +40,22 @@ public class Utils {
     public static class FileUtils {
 
 
+
+        public static boolean reNameFile(String srcfile,String newName) throws IOException {
+            File file = new File(srcfile);
+
+// File (or directory) with new name
+            File destname = new File(newName);
+
+            if (destname.exists()){
+                throw new java.io.IOException("file exists");
+            }
+            return file.renameTo(destname);
+        }
+
+
+
+
         public static StringBuilder readStringFromFile(File file) throws IOException {
             BufferedReader br = new BufferedReader(new FileReader(file));
             StringBuilder builder = new StringBuilder();
@@ -61,6 +81,48 @@ public class Utils {
 
     }
     public static class RFileUtils {
+
+
+        public static StringBuilder  smaliFileIdReplace(File file,Map<String,LinkedHashMap> ids) throws IOException {
+            if(!file.exists() || file.getName().startsWith(".")){
+                return null;
+            }
+            String key = getKeyByFileName(file.getName());
+
+            LinkedHashMap<String,Integer> values = ids.get(key);
+
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            StringBuilder sb = new StringBuilder();
+            String line;
+            try {
+                while ((line = br.readLine()) != null) {
+                    if (line.contains("field public static final")) {
+                        String[] words = line.split(" ");
+                        String[] keys =  words[4].split(":");
+                        Integer integer_value = values.get(keys[0]);
+                        words[6] = "0x"+Integer.toHexString(integer_value);
+                        StringBuilder s = new StringBuilder();
+                        for(int i=0;i<words.length;i++){
+                            s.append(words[i]).append(" ");
+                        }
+                        line = s.toString().trim();
+                    }
+                    sb.append(line).append("\n");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                br.close();
+            }
+            return sb;
+        }
+
+        private static String getKeyByFileName(String name) {
+            String pre = name.substring(0,name.indexOf(".smali"));
+            return pre.substring(2);
+        }
+
+
         public static Map<String,LinkedHashMap> readAarIds(File file) throws IOException {
             Map<String,LinkedHashMap> map = new LinkedHashMap<String,LinkedHashMap>();
             BufferedReader br = new BufferedReader(new FileReader(file));
@@ -95,6 +157,7 @@ public class Utils {
             }
             return map;
         }
+
 
         private static String getIdType(String line) {
             if (line != null && !line.equals("")) {
@@ -217,17 +280,90 @@ public class Utils {
             transformer.transform(source, result);
         }
 
-
-
-
-
-
-
         private static final String ACCESS_EXTERNAL_DTD = "http://javax.xml.XMLConstants/property/accessExternalDTD";
         private static final String ACCESS_EXTERNAL_SCHEMA = "http://javax.xml.XMLConstants/property/accessExternalSchema";
         private static final String FEATURE_LOAD_DTD = "http://apache.org/xml/features/nonvalidating/load-external-dtd";
         private static final String FEATURE_DISABLE_DOCTYPE_DECL = "http://apache.org/xml/features/disallow-doctype-decl";
         private static final Logger LOGGER = Logger.getLogger(XmlUtils.class.getName());
+    }
+    public static class BuildPackage{
+
+        public static File getJavacFile() throws BrutException {
+            File jarBinary;
+
+            if (! OSDetection.is64Bit() && OSDetection.isMacOSX()) {
+                throw new BrutException("32 bit OS detected. No 32 bit binaries available.");
+            }
+            try {
+                if (OSDetection.isMacOSX()) {
+                    jarBinary = Jar.getResourceAsFile("/prebuilt/macosx/javac", Utils.class);
+                } else if (OSDetection.isUnix()) {
+                    jarBinary = Jar.getResourceAsFile("/prebuilt/linux/javac", Utils.class);
+                } else if (OSDetection.isWindows()) {
+                    jarBinary = Jar.getResourceAsFile("/prebuilt/windows/javac"+ ".exe", Utils.class);
+                } else {
+                    throw new BrutException("Could not identify platform: " + OSDetection.returnOS());
+                }
+            } catch (BrutException ex) {
+                throw new BrutException(ex);
+            }
+
+            if (jarBinary.setExecutable(true)) {
+                return jarBinary;
+            }
+
+            throw new BrutException("Can't set javac binary as executable");
+        }
+
+        public static File getJarComm(Class clzzz) throws BrutException {
+            File jarBinary;
+
+            if (! OSDetection.is64Bit() && OSDetection.isMacOSX()) {
+                throw new BrutException("32 bit OS detected. No 32 bit binaries available.");
+            }
+            try {
+                if (OSDetection.isMacOSX()) {
+                    jarBinary = Jar.getResourceAsFile("/prebuilt/macosx/jar", clzzz);
+                } else if (OSDetection.isUnix()) {
+                    jarBinary = Jar.getResourceAsFile("/prebuilt/linux/jar", clzzz);
+                } else if (OSDetection.isWindows()) {
+                    jarBinary = Jar.getResourceAsFile("/prebuilt/windows/jar"+ ".exe", clzzz);
+                } else {
+                    throw new BrutException("Could not identify platform: " + OSDetection.returnOS());
+                }
+            } catch (BrutException ex) {
+                throw new BrutException(ex);
+            }
+
+            if (jarBinary.setExecutable(true)) {
+                return jarBinary;
+            }
+
+            throw new BrutException("Can't set jar binary as executable");
+        }
+
+
+        public static File getAndroidJar(Class clazz) throws IOException, BrutException {
+            File file =  Jar.getResourceAsFile("/brut/androlib/android.jar", clazz);;
+            file.setExecutable(true);
+            return file;
+        }
+        public static File getDxJar(Class clazz) throws IOException, BrutException {
+            File file =  Jar.getResourceAsFile("/brut/androlib/dx.jar", clazz);;
+            file.setExecutable(true);
+            return file;
+        }
+        public static File getBakSmali(Class clazz) throws IOException, BrutException {
+            File file =  Jar.getResourceAsFile("/brut/androlib/baksmali-2.3.4.jar", clazz);;
+            file.setExecutable(true);
+            return file;
+        }
+        public static File getSigner(Class clazz) throws IOException, BrutException {
+            File file =  Jar.getResourceAsFile("/brut/androlib/apksigner.jar", clazz);;
+            file.setExecutable(true);
+            return file;
+        }
+
     }
 
 }

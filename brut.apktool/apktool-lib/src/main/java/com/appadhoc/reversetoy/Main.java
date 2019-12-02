@@ -8,11 +8,9 @@ import brut.androlib.ApkOptions;
 import brut.common.BrutException;
 import brut.directory.DirectoryException;
 import com.appadhoc.reversetoy.aar.AarManager;
-import com.appadhoc.reversetoy.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Map;
 
 //d /Users/jiaozhengxiang/Desktop/AbTestDemo-debug.apk -o /Users/jiaozhengxiang/Desktop/work
 public class Main {
@@ -36,6 +34,7 @@ public class Main {
         decoder.setOutDir(outFile);
         AarManager manager = AarManager.getInstance().init("/Users/jiaozhengxiang/Desktop/work/toy_workspace","/Users/jiaozhengxiang/Desktop/work/aar-workspace/abtest-lite-v5.1.3-sp.aar");
         decoder.decode(manager);
+//        manager.smaliClassFilesAndModifyids();
 
 //        manager.asdfasdfasdf();
 //        buildApk();

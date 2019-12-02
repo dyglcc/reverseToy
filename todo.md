@@ -5,7 +5,7 @@
 
 
 打包流程1.
-拆开包，读取AndroidManifest.xml文件，获取host包名 
+拆开包，读取AndroidManifest.xml文件，获取host包名 ok
 aar oper
 aar解压到一个临时文件里 获取aar的包名 ok
 并替换宿主包名 
@@ -40,7 +40,7 @@ W: /Users/jiaozhengxiang/Desktop/work/apks/emptyapplication-debug/./res/values/i
 
 看起来是ids是漏网的id，添加到ids.xml里面，加入ids，检查是是否在values里面已经存在了？
 解决办法：
-将values已经有的id，在ids.xml去重。
+将values已经有的id，在ids.xml去重。ok
 
 
 
@@ -50,7 +50,7 @@ W: /Users/jiaozhengxiang/Desktop/work/apks/emptyapplication-debug/./res/values/i
 
 /**
 javac R.java
-ddx --dex --output=Test.dex Test.class
+dx --dex --output=Test.dex Test.class
 java -jar baksmali.jar -o [输出文件夹] dex文件
 */
 
@@ -82,11 +82,11 @@ xml 操作文件帖子 https://blog.csdn.net/DXZCZH/article/details/51783573
 1.生成aar的R。java文件,使用aapt todo ...
 1.合并宿主manifest和aar manifest，待用 ok
 
-2.id合并模块，
-3.必须解压并生成到到一个文件夹下面，然后
-3.smali生成模块。
-3.生成aar的smali文件，
-3 根据R.txt生成R.java文件上面生成的R文件
+2.id合并模块，ok
+3.必须解压并生成到到一个文件夹下面，然后ok
+3.smali生成模块。ok
+3.生成aar的smali文件ok，
+3 根据R.txt生成R.java文件上面生成的R文件ok
 4.资源拷贝模块
 4.拷贝res jni，资源到宿主文件夹，smali文件夹生成，
 5.合并生成未签名apk

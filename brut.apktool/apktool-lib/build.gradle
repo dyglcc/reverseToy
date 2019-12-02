@@ -32,8 +32,8 @@ dependencies {
     compile("junit:junit:4.10") {
         exclude(module: 'hamcrest-core')
     }
-    compile files('libs/apksigner.jar')
-    compile files('libs/dx.jar')
+//    compile files('libs/apksigner.jar')
+//    compile files('libs/dx.jar')
     compile project(':brut.j.dir'),
             project(':brut.j.util'),
             project(':brut.j.common'),
