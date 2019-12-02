@@ -51,7 +51,6 @@ public class AarManager {
     private void setTmpPath(String tmpPath) {
         this.tmpPath = tmpPath;
     }
-bug, public.xml 文件找不到部分id
 
     public String getHostPackageName() {
         return hostPackageName;

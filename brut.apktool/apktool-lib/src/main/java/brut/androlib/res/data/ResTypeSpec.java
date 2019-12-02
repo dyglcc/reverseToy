@@ -106,8 +106,9 @@ public final class ResTypeSpec {
         return mResSpecs.containsKey(key);
     }
 
-    public int getTail() throws NoSuchFieldException, IllegalAccessException {
+    public int getTail() {
         if(maxValue !=-1){
+            maxValue++;
             return maxValue;
         }
         for(ResResSpec resResSpec :mResSpecs.values()){

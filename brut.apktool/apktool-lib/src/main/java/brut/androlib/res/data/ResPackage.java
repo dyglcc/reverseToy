@@ -1,18 +1,18 @@
 /**
- *  Copyright (C) 2019 Ryszard Wiśniewski <brut.alll@gmail.com>
- *  Copyright (C) 2019 Connor Tumbleson <connor.tumbleson@gmail.com>
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Copyright (C) 2019 Ryszard Wiśniewski <brut.alll@gmail.com>
+ * Copyright (C) 2019 Connor Tumbleson <connor.tumbleson@gmail.com>
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package brut.androlib.res.data;
 
@@ -22,6 +22,7 @@ import brut.androlib.res.data.value.ResFileValue;
 import brut.androlib.res.data.value.ResValueFactory;
 import brut.androlib.res.xml.ResValuesXmlSerializable;
 import brut.util.Duo;
+
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -229,11 +230,11 @@ public class ResPackage {
     private final static Logger LOGGER = Logger.getLogger(ResPackage.class.getName());
 
     // add by dyg
-    public ResID addAarRes(Integer integer, String type,String key) throws AndrolibException, NoSuchFieldException, IllegalAccessException {
+    public ResID addAarRes(Integer integer, String type, String key) throws AndrolibException, NoSuchFieldException, IllegalAccessException {
         ResTypeSpec resTypeSpec = getType(type);
         // 检查key是否已经存在
-        if(resTypeSpec.hasKey(key)){
-            LOGGER.info("有重复的key" +key+"返回宿主id");
+        if (resTypeSpec.hasKey(key)) {
+            LOGGER.info("有重复的key" + key + "返回宿主id");
             return resTypeSpec.getResSpec(key).getId();
         }
         int id = resTypeSpec.getTail() + 1;
@@ -241,28 +242,30 @@ public class ResPackage {
         ResID resID = new ResID(id);
 
         // 检查id是否有重复,获取一个
-        resID = checkdup(resID);
+        resID = checkdup(resID,resTypeSpec);
 
         ResResSpec spec = new ResResSpec(resID, key, this, resTypeSpec);
         resTypeSpec.addResSpec(spec);
         return resID;
     }
-    private ResID checkdup(ResID mresid){
-        for(ResID srcID:mResSpecs.keySet()){
-            if(mresid.id == srcID.id){
-                return checkdup(new ResID(mresid.id+1));
+
+    private ResID checkdup(ResID mresid,ResTypeSpec resTypeSpec) throws NoSuchFieldException, IllegalAccessException {
+        for (ResID srcID : mResSpecs.keySet()) {
+            if (mresid.id == srcID.id) {
+                LOGGER.info("ID有重复ID循环加一0x" + Integer.toHexString(srcID.id));
+                return checkdup(new ResID( resTypeSpec.getTail()+ 1),resTypeSpec);
             }
         }
         return mresid;
     }
 
-    public void reArrange(){
+    public void reArrange() {
         mResSpecs.clear();
-        for(ResTypeSpec entry:mTypes.values()){
+        for (ResTypeSpec entry : mTypes.values()) {
             Map<String, ResResSpec> map = entry.getmResSpecs();
-            for(ResResSpec resResSpec:map.values()){
+            for (ResResSpec resResSpec : map.values()) {
                 ResID resID = resResSpec.getId();
-                mResSpecs.put(resID,resResSpec);
+                mResSpecs.put(resID, resResSpec);
             }
         }
     }
