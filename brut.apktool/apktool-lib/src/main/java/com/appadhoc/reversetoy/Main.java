@@ -8,59 +8,73 @@ import brut.androlib.ApkOptions;
 import brut.common.BrutException;
 import brut.directory.DirectoryException;
 import com.appadhoc.reversetoy.aar.AarManager;
+import com.appadhoc.reversetoy.sign.SignTool;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Logger;
 
-//d /Users/jiaozhengxiang/Desktop/AbTestDemo-debug.apk -o /Users/jiaozhengxiang/Desktop/work
 public class Main {
+    private static final Logger logger = Logger.getLogger(Main.class.getName());
+
     public static void main(String[] args) throws BrutException, IOException {
-        // -----------------------------decode  apk-------------------
-//        decodeApkTest();
-        //------------------------------build apk---------------------
-//        buildApkTest();
+
+        // decode apk
+
         try {
-            decodeApkTest();
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException | TransformerException e) {
+            decodeApk();
+            File file = buildApk();
+            System.out.println(file.getAbsoluteFile());
+            File sign = SignTool.sign(file);
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
+
     }
 
-    public static void decodeApkTest() throws AndrolibException, IOException, DirectoryException, ParserConfigurationException, SAXException, TransformerException {
+    public static void decodeApk() throws Exception {
+
+        //-----------decoder setting--------------
         ApkDecoder decoder = new ApkDecoder();
         decoder.setForceDelete(true);
         ApkOptions options = new ApkOptions();
         options.verbose = true;
         File file = new File("/Users/jiaozhengxiang/Desktop/sample-debug.apk");
-        File outFile = new File("/Users/jiaozhengxiang/Desktop/work/toy_workspace");
+        File apkOutFile = new File("/Users/jiaozhengxiang/Desktop/work/toy_workspace/apk_workspace");
         decoder.setApkFile(file);
-        decoder.setOutDir(outFile);
-        AarManager manager = AarManager.getInstance().init("/Users/jiaozhengxiang/Desktop/work/toy_workspace","/Users/jiaozhengxiang/Desktop/work/aar-workspace/abtest-lite-v5.1.3-sp.aar");
+        decoder.setOutDir(apkOutFile);
+
+        //-----------------------------------------
+        //-------AarManager setting----------------
+        AarManager manager = AarManager.getInstance().init("/Users/jiaozhengxiang/Desktop/work/toy_workspace", "/Users/jiaozhengxiang/Desktop/work/aar-workspace/abtest-lite-v5.1.3-sp.aar");
         decoder.decode(manager);
+        logger.info("##########解压apk文件[完成]##########");
+        manager.smaliClassFilesAndModifyids(apkOutFile);
+        logger.info("##########重新编排ID并拷贝文件到宿主文件夹[完成]##########");
 //        manager.smaliClassFilesAndModifyids();
 
 //        manager.asdfasdfasdf();
-//        buildApk();
-//        signApk();
+//        File unsignfile = buildApk();
+
+//        signApk(unsignfile);
     }
 
-    private static void signApk() {
-    }
-
-    public static void buildApk(){
+    public static File buildApk() {
         ApkOptions options = new ApkOptions();
-        options.verbose=true;
+        options.verbose = true;
         options.debugMode = true;
+
+        File workdir = new File("/Users/jiaozhengxiang/Desktop/apktool_workspace");
+        File unsignFile = new File("/Users/jiaozhengxiang/Desktop/apktool_workspace", "helloBuildByapi.apk");
         try {
-            new Androlib(options).build(new File("/Users/jiaozhengxiang/Desktop/apktool_workspace"), new File("helloBuildByapi.apk"));
+            new Androlib(options).build(workdir, unsignFile);
         } catch (BrutException e) {
             e.printStackTrace();
         }
+        return unsignFile;
     }
 }

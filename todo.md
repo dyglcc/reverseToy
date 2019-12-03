@@ -3,7 +3,6 @@
 3.如果没有application对象创建application
 4.todo xmlpull 写入applicatio name
 
-
 打包流程1.
 拆开包，读取AndroidManifest.xml文件，获取host包名 ok
 aar oper
@@ -42,11 +41,9 @@ W: /Users/jiaozhengxiang/Desktop/work/apks/emptyapplication-debug/./res/values/i
 解决办法：
 将values已经有的id，在ids.xml去重。ok
 
-
-
 // 处理链接问题
-使用dx把aar 打成dex文件
-把dx编译成smali文件
+使用dx把aar 打成dex文件ok
+把dx编译成smali文件 ok
 
 /**
 javac R.java
@@ -87,18 +84,18 @@ xml 操作文件帖子 https://blog.csdn.net/DXZCZH/article/details/51783573
 3.smali生成模块。ok
 3.生成aar的smali文件ok，
 3 根据R.txt生成R.java文件上面生成的R文件ok
-4.资源拷贝模块
-4.拷贝res jni，资源到宿主文件夹，smali文件夹生成，
-5.合并生成未签名apk
-6.签名
+4.资源拷贝模块 ok
+4.拷贝res jni，资源到宿主文件夹，smali文件夹生成，ok
+5.合并生成未签名apk ok
+6.签名 ok
 
 
-重复的资源需要清除。
-W: /Users/dongyuangui/Desktop/work/toy_workspace/./res/values/values-sdk.xml:4: error: Resource entry colorAccent is already defined.
-W: /Users/dongyuangui/Desktop/work/toy_workspace/./res/values/colors.xml:25: Originally defined here.
-W: 
-W: /Users/dongyuangui/Desktop/work/toy_workspace/./res/values/values-sdk.xml:5: error: Resource entry colorPrimary is already defined.
-W: /Users/dongyuangui/Desktop/work/toy_workspace/./res/values/colors.xml:26: Originally defined here.
-W: 
-W: /Users/dongyuangui/Desktop/work/toy_workspace/./res/values/values-sdk.xml:6: error: Resource entry colorPrimaryDark is already defined.
-W: /Users/dongyuangui/Desktop/work/toy_workspace/./res/values/colors.xml:27: Originally defined here.
+
+TODO -----------
+
+生成smali文件生成apktool能够文件夹，并且拷贝到对应的位置。 ok
+
+application 代码sdk初始化逻辑代码。
+
+
+

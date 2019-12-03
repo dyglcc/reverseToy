@@ -24,7 +24,10 @@ import brut.common.BrutException;
 import brut.directory.DirectoryException;
 import brut.util.AaptManager;
 import org.apache.commons.cli.*;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.*;
@@ -34,7 +37,7 @@ import java.util.logging.*;
  * @author Connor Tumbleson <connor.tumbleson@gmail.com>
  */
 public class Main {
-    public static void main(String[] args) throws IOException, InterruptedException, BrutException {
+    public static void main(String[] args) throws IOException, InterruptedException, BrutException, ParserConfigurationException, TransformerException, SAXException {
 
         // headless
         System.setProperty("java.awt.headless", "true");
@@ -101,7 +104,7 @@ public class Main {
         }
     }
 
-    private static void cmdDecode(CommandLine cli) throws AndrolibException {
+    private static void cmdDecode(CommandLine cli) throws AndrolibException, TransformerException, SAXException, ParserConfigurationException {
         ApkDecoder decoder = new ApkDecoder();
 
         int paraCount = cli.getArgList().size();

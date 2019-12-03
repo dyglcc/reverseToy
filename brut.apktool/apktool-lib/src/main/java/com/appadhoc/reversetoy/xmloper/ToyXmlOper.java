@@ -19,24 +19,39 @@ import java.io.IOException;
 
 public class ToyXmlOper {
 
-    public static void main(String[] args) throws ParserConfigurationException, TransformerException {
-//            Document doc = createXml();
-////            Document doc01 = readXml("/Users/dongyuangui/Xmlfiles","student.xml");
-//            saveXml(doc, "/Users/dongyuangui/Xmlfiles");
-            removeChild();
+    public static void main(String[] args) throws ParserConfigurationException, TransformerException, IOException, SAXException {
+        Document doc = createXml();
+        saveXml(doc, "/Users/jiaozhengxiang/Xmlfiles");
+        removeChild();
 
     }
 
     private static void removeChild() {
         try {
-            Document document = readXml("/Users/dongyuangui/Xmlfiles","student.xml");
+            Document document = readXml(loadxml("/Users/jiaozhengxiang/Xmlfiles", "student.xml"));
             Node firstNode = document.getFirstChild();
             NodeList list = firstNode.getChildNodes();
-            for(int i = 0;i< list.getLength();i++){
-                firstNode.removeChild(list.item(0));
+            for (int i = 0; i < list.getLength(); i++) {
+
+                Node childNode  = list.item(i);
+                NamedNodeMap nodeMap  = childNode.getAttributes();
+                if(nodeMap!=null){
+                    Node idNode = nodeMap.getNamedItem("id");
+                    if(idNode!=null){
+                        if(idNode.getNodeValue().equals("4")){
+                            System.out.println("now remove 4");
+                            firstNode.removeChild(childNode);
+                            i--;
+                        }
+                    }
+                }
             }
-            saveXml(document, "/Users/dongyuangui/Xmlfiles");
-            System.out.println(document.toString());
+            saveXml(document, "/Users/jiaozhengxiang/Xmlfiles");
+
+            readXml(loadxml("/Users/jiaozhengxiang/Xmlfiles", "student.xml"));
+
+            File file = new File("/Users/jiaozhengxiang/Xmlfiles", "student.xml");
+            file.delete();
 
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
@@ -60,6 +75,7 @@ public class ToyXmlOper {
         for (int i = 0; i < 10; i++) {
             Element student = doc.createElement("xusheng");
             student.setAttribute("性别", "男");
+            student.setAttribute("id", "" + i);
             root.appendChild(student);
             Text text = doc.createTextNode("xusheng" + i);
             student.appendChild(text);
@@ -68,41 +84,55 @@ public class ToyXmlOper {
     }
 
     private static void saveXml(Document document, String filepath) throws TransformerException {
-
+        File filepathdir = new File(filepath);
+        if (!filepathdir.exists()) {
+            filepathdir.mkdirs();
+        }
         TransformerFactory factory = TransformerFactory.newInstance();
         Transformer transformer = factory.newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.transform(new DOMSource(document), new StreamResult(new File(filepath, "student.xml")));
+        transformer.transform(new DOMSource(document), new StreamResult(new File(filepathdir, "student.xml")));
 
     }
 
-    private static Document readXml(String filepath, String filename) throws ParserConfigurationException, IOException, SAXException {
+    private static Document readXml(Document document) throws ParserConfigurationException, IOException, SAXException {
 
+        Node nodefirst = document.getFirstChild();
+        NodeList nodeList = nodefirst.getChildNodes();
+        System.out.println("node list size is " + nodeList.getLength());
+        int len = nodeList.getLength();
+        for (int i = 0; i < len; i++) {
+            Node element = nodeList.item(i);
+            if (element.getNodeType() == Node.ELEMENT_NODE) {
+                String text = element.getNodeName();
+                System.out.println(text + "#" + element.getNodeValue());
+                NamedNodeMap attrs = element.getAttributes();
+                if (attrs != null) {
+                    Node sex = attrs.getNamedItem("id");
+                    if (sex != null) {
+                        System.out.println("id#" + sex.getNodeValue());
+                    }
+//                    Node idNode = attrs.getNamedItem("id");
+//                    if(idNode.getNodeValue().equals("4")){
+//                        System.out.println("has id 4");
+//                    }
+                }
+            }
+        }
+        return document;
+    }
+
+    private static Document loadxml(String filepath, String filename) throws ParserConfigurationException, IOException, SAXException {
+        File filedir = new File(filepath);
+        if (!filedir.exists()) {
+            filedir.mkdirs();
+        }
         File file = new File(filepath, filename);
 
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document document = builder.parse(file);
 
-        NodeList nodeList = document.getElementsByTagName("xusheng");
-        for (int i = 0; i< nodeList.getLength(); i++) {
-
-            Element element = (Element) nodeList.item(i);
-            if(i % 2 ==0){
-                element.setAttribute("性别","nv");
-            }else{
-                String text = element.getFirstChild().getTextContent();
-                System.out.println(text);
-            }
-
-        }
         return document;
-    }
-
-    private static void write2file(Document doc,String file) throws TransformerException, FileNotFoundException {
-        TransformerFactory factory = TransformerFactory.newInstance();
-        Transformer transformer = factory.newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT,"yes");
-        transformer.transform(new DOMSource(doc),new StreamResult(new FileOutputStream(new File(file,"student.xml"))));
     }
 }

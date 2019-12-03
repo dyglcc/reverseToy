@@ -8,6 +8,7 @@ import brut.util.Jar;
 import brut.util.OS;
 import brut.util.OSDetection;
 import com.appadhoc.reversetoy.data.AarID;
+import com.google.common.net.UrlEscapers;
 import org.jf.util.Hex;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
@@ -24,6 +25,7 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.*;
 import java.io.*;
 import java.lang.reflect.Field;
+import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -50,6 +52,23 @@ public class Utils {
                 throw new java.io.IOException("file exists");
             }
             return file.renameTo(destname);
+        }
+
+
+        public static int getMaxIndex(File hostdir){
+            int maxIndex = 1;
+            for (File file : hostdir.listFiles()) {
+                if (file.getName().contains("smali_classes")) {
+                    String index = file.getName().substring(13);
+                    if (!index.equals("")) {
+                        int intIndex = Integer.parseInt(index);
+                        if(intIndex > maxIndex){
+                            maxIndex = intIndex;
+                        }
+                    }
+                }
+            }
+            return maxIndex;
         }
 
 
@@ -177,12 +196,16 @@ public class Utils {
 
             Document documentValues = loadDocument(aarres);
             Node nodeFirst = documentValues.getFirstChild();
-//            NodeList resNodelist = documentValues.getElementsByTagName("resources");
             NodeList children = nodeFirst.getChildNodes();
             int len = children.getLength();
             for (int i = 0; i < len; i++) {
                 String type = null;
                 Node node = children.item(i);
+
+                if(node ==null){
+                    System.out.println("item " + i + "is null");
+                    continue;
+                }
                 NamedNodeMap attrs = node.getAttributes();
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     type = node.getNodeName();
@@ -198,6 +221,7 @@ public class Utils {
                             boolean isReadyRemove = checkIfRemoved(type, key,ids);
                             if(isReadyRemove){
                                 nodeFirst.removeChild(node);
+                                i--;
                             }
                         }
                     }
@@ -316,6 +340,21 @@ public class Utils {
         private static final String FEATURE_LOAD_DTD = "http://apache.org/xml/features/nonvalidating/load-external-dtd";
         private static final String FEATURE_DISABLE_DOCTYPE_DECL = "http://apache.org/xml/features/disallow-doctype-decl";
         private static final Logger LOGGER = Logger.getLogger(XmlUtils.class.getName());
+
+        public static String getPackageName(File manifest) throws ParserConfigurationException, SAXException, IOException {
+            Document document = loadDocument(manifest);
+            Node firstNode = document.getFirstChild();
+            if(firstNode!=null){
+                NamedNodeMap attrs = firstNode.getAttributes();
+                if(attrs!=null){
+                    Node packageNode = attrs.getNamedItem("package");
+                    if(packageNode!=null){
+                        return packageNode.getNodeValue();
+                    }
+                }
+            }
+            return "";
+        }
     }
 
     public static class BuildPackage {
@@ -399,6 +438,12 @@ public class Utils {
         public static File getSigner(Class clazz) throws IOException, BrutException {
             File file = Jar.getResourceAsFile("/brut/androlib/apksigner.jar", clazz);
             ;
+            file.setExecutable(true);
+            return file;
+        }
+        public static File getSignatureFile(Class clazz) throws IOException, BrutException {
+            URL url = clazz.getResource("/brut/androlib/reversetoy.jks");
+            File file = new File(url.getPath());
             file.setExecutable(true);
             return file;
         }
