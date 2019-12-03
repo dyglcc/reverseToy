@@ -1,15 +1,15 @@
 package com.appadhoc.reversetoy.xmloper;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
+import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.*;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
@@ -19,17 +19,30 @@ import java.io.IOException;
 
 public class ToyXmlOper {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ParserConfigurationException, TransformerException {
+//            Document doc = createXml();
+////            Document doc01 = readXml("/Users/dongyuangui/Xmlfiles","student.xml");
+//            saveXml(doc, "/Users/dongyuangui/Xmlfiles");
+            removeChild();
+
+    }
+
+    private static void removeChild() {
         try {
-            Document doc = createXml();
-            Document doc01 = readXml("/Users/dongyuangui/Xmlfiles","student.xml");
-            saveXml(doc01, "/Users/dongyuangui/Xmlfiles");
-            System.out.println(doc.toString());
+            Document document = readXml("/Users/dongyuangui/Xmlfiles","student.xml");
+            Node firstNode = document.getFirstChild();
+            NodeList list = firstNode.getChildNodes();
+            for(int i = 0;i< list.getLength();i++){
+                firstNode.removeChild(list.item(0));
+            }
+            saveXml(document, "/Users/dongyuangui/Xmlfiles");
+            System.out.println(document.toString());
+
         } catch (ParserConfigurationException e) {
             e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
         } catch (IOException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
             e.printStackTrace();
         } catch (TransformerException e) {
             e.printStackTrace();

@@ -8,7 +8,10 @@ import brut.androlib.ApkOptions;
 import brut.common.BrutException;
 import brut.directory.DirectoryException;
 import com.appadhoc.reversetoy.aar.AarManager;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.io.IOException;
 
@@ -19,11 +22,17 @@ public class Main {
 //        decodeApkTest();
         //------------------------------build apk---------------------
 //        buildApkTest();
-        decodeApkTest();
+        try {
+            decodeApkTest();
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException | TransformerException e) {
+            e.printStackTrace();
+        }
 
     }
 
-    public static void decodeApkTest() throws AndrolibException, IOException, DirectoryException {
+    public static void decodeApkTest() throws AndrolibException, IOException, DirectoryException, ParserConfigurationException, SAXException, TransformerException {
         ApkDecoder decoder = new ApkDecoder();
         decoder.setForceDelete(true);
         ApkOptions options = new ApkOptions();

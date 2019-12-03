@@ -22,6 +22,7 @@ import brut.androlib.res.data.value.ResFileValue;
 import brut.androlib.res.data.value.ResValueFactory;
 import brut.androlib.res.xml.ResValuesXmlSerializable;
 import brut.util.Duo;
+import com.appadhoc.reversetoy.data.AarID;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -230,13 +231,15 @@ public class ResPackage {
     private final static Logger LOGGER = Logger.getLogger(ResPackage.class.getName());
 
     // add by dyg
-    public ResID addAarRes(Integer integer, String type, String key) throws AndrolibException, NoSuchFieldException, IllegalAccessException {
+    public void addAarRes(AarID srcAarID, String type, String key) throws AndrolibException, NoSuchFieldException, IllegalAccessException {
         ResTypeSpec resTypeSpec = getType(type);
         LOGGER.info("type # key " + type +"&" + key);
         // 检查key是否已经存在
         if (resTypeSpec.hasKey(key)) {
             LOGGER.info("有重复的key" + key + "返回宿主id");
-            return resTypeSpec.getResSpec(key).getId();
+            srcAarID.setDuplicate(true);
+            srcAarID.setId(resTypeSpec.getResSpec(key).getId().id);
+            return;
         }
         int id = resTypeSpec.getTail() + 1;
 
@@ -247,7 +250,7 @@ public class ResPackage {
 
         ResResSpec spec = new ResResSpec(resID, key, this, resTypeSpec);
         resTypeSpec.addResSpec(spec);
-        return resID;
+        srcAarID.setId(resID.id);
     }
 
     private ResID checkdup(ResID mresid,ResTypeSpec resTypeSpec) throws NoSuchFieldException, IllegalAccessException {

@@ -1,7 +1,0 @@
-<Servers>
-    <server abc="valuea">any.domain</server>
-    <server>
-    <Ele>abc</Ele>
-    </server>
-
-</Servers>

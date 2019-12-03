@@ -91,3 +91,14 @@ xml 操作文件帖子 https://blog.csdn.net/DXZCZH/article/details/51783573
 4.拷贝res jni，资源到宿主文件夹，smali文件夹生成，
 5.合并生成未签名apk
 6.签名
+
+
+重复的资源需要清除。
+W: /Users/dongyuangui/Desktop/work/toy_workspace/./res/values/values-sdk.xml:4: error: Resource entry colorAccent is already defined.
+W: /Users/dongyuangui/Desktop/work/toy_workspace/./res/values/colors.xml:25: Originally defined here.
+W: 
+W: /Users/dongyuangui/Desktop/work/toy_workspace/./res/values/values-sdk.xml:5: error: Resource entry colorPrimary is already defined.
+W: /Users/dongyuangui/Desktop/work/toy_workspace/./res/values/colors.xml:26: Originally defined here.
+W: 
+W: /Users/dongyuangui/Desktop/work/toy_workspace/./res/values/values-sdk.xml:6: error: Resource entry colorPrimaryDark is already defined.
+W: /Users/dongyuangui/Desktop/work/toy_workspace/./res/values/colors.xml:27: Originally defined here.

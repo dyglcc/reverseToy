@@ -7,6 +7,7 @@ import brut.util.AaptManager;
 import brut.util.Jar;
 import brut.util.OS;
 import brut.util.OSDetection;
+import com.appadhoc.reversetoy.data.AarID;
 import org.jf.util.Hex;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
@@ -23,7 +24,6 @@ import javax.xml.transform.stream.StreamResult;
 import javax.xml.xpath.*;
 import java.io.*;
 import java.lang.reflect.Field;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -40,20 +40,17 @@ public class Utils {
     public static class FileUtils {
 
 
-
-        public static boolean reNameFile(String srcfile,String newName) throws IOException {
+        public static boolean reNameFile(String srcfile, String newName) throws IOException {
             File file = new File(srcfile);
 
 // File (or directory) with new name
             File destname = new File(newName);
 
-            if (destname.exists()){
+            if (destname.exists()) {
                 throw new java.io.IOException("file exists");
             }
             return file.renameTo(destname);
         }
-
-
 
 
         public static StringBuilder readStringFromFile(File file) throws IOException {
@@ -80,16 +77,17 @@ public class Utils {
         }
 
     }
+
     public static class RFileUtils {
 
 
-        public static StringBuilder  smaliFileIdReplace(File file,Map<String,LinkedHashMap> ids) throws IOException {
-            if(!file.exists() || file.getName().startsWith(".")){
+        public static StringBuilder smaliFileIdReplace(File file, Map<String, LinkedHashMap> ids) throws IOException {
+            if (!file.exists() || file.getName().startsWith(".")) {
                 return null;
             }
             String key = getKeyByFileName(file.getName());
 
-            LinkedHashMap<String,Integer> values = ids.get(key);
+            LinkedHashMap<String, Integer> values = ids.get(key);
 
             BufferedReader br = new BufferedReader(new FileReader(file));
             StringBuilder sb = new StringBuilder();
@@ -98,11 +96,11 @@ public class Utils {
                 while ((line = br.readLine()) != null) {
                     if (line.contains("field public static final")) {
                         String[] words = line.split(" ");
-                        String[] keys =  words[4].split(":");
+                        String[] keys = words[4].split(":");
                         Integer integer_value = values.get(keys[0]);
-                        words[6] = "0x"+Integer.toHexString(integer_value);
+                        words[6] = "0x" + Integer.toHexString(integer_value);
                         StringBuilder s = new StringBuilder();
-                        for(int i=0;i<words.length;i++){
+                        for (int i = 0; i < words.length; i++) {
                             s.append(words[i]).append(" ");
                         }
                         line = s.toString().trim();
@@ -118,22 +116,22 @@ public class Utils {
         }
 
         private static String getKeyByFileName(String name) {
-            String pre = name.substring(0,name.indexOf(".smali"));
+            String pre = name.substring(0, name.indexOf(".smali"));
             return pre.substring(2);
         }
 
 
-        public static Map<String,LinkedHashMap> readAarIds(File file) throws IOException {
-            Map<String,LinkedHashMap> map = new LinkedHashMap<String,LinkedHashMap>();
+        public static Map<String, LinkedHashMap> readAarIds(File file) throws IOException {
+            Map<String, LinkedHashMap> map = new LinkedHashMap<String, LinkedHashMap>();
             BufferedReader br = new BufferedReader(new FileReader(file));
             String line;
-            Map<String,Integer> mapValue = null;
+            Map<String, AarID> mapValue = null;
             try {
                 while ((line = br.readLine()) != null) {
                     if (line.contains("public static final class")) {
                         String type = getIdType(line);
                         if (!map.containsKey(type)) {
-                            map.put(type, new LinkedHashMap<String,Integer>());
+                            map.put(type, new LinkedHashMap<String, AarID>());
                         }
                         mapValue = map.get(type);
                     }
@@ -145,7 +143,7 @@ public class Utils {
                             kv = kv.replaceFirst(";", "");
                             String[] kvs = kv.split("=");
                             if (kvs.length == 2) {
-                                mapValue.put(kvs[0], Integer.parseInt(kvs[1].substring(2),16));
+                                mapValue.put(kvs[0], new AarID(Integer.parseInt(kvs[1].substring(2), 16)));
                             }
                         }
                     }
@@ -173,9 +171,58 @@ public class Utils {
 
     }
 
-    public static class XmlUtils{
+    public static class XmlUtils {
+
+        public static void removeDuplicateLine(Map<String, LinkedHashMap> ids, File aarres) throws ParserConfigurationException, SAXException, IOException, TransformerException {
+
+            Document documentValues = loadDocument(aarres);
+            Node nodeFirst = documentValues.getFirstChild();
+//            NodeList resNodelist = documentValues.getElementsByTagName("resources");
+            NodeList children = nodeFirst.getChildNodes();
+            int len = children.getLength();
+            for (int i = 0; i < len; i++) {
+                String type = null;
+                Node node = children.item(i);
+                NamedNodeMap attrs = node.getAttributes();
+                if (node.getNodeType() == Node.ELEMENT_NODE) {
+                    type = node.getNodeName();
+                    if (attrs != null) {
+                        Node typeNode = attrs.getNamedItem("type");
+                        if (typeNode != null) {
+                            type = typeNode.getNodeValue();
+                        }
+                        // get type remove duplicate tag
+                        Node keynode = attrs.getNamedItem("name");
+                        if (keynode != null) {
+                            String key = keynode.getNodeValue();
+                            boolean isReadyRemove = checkIfRemoved(type, key,ids);
+                            if(isReadyRemove){
+                                nodeFirst.removeChild(node);
+                            }
+                        }
+                    }
+                }
+            }
+            saveDocument(aarres,documentValues);
+        }
+
+        private static boolean checkIfRemoved(String type, String key, Map<String, LinkedHashMap> ids) {
+            LinkedHashMap<String, AarID> typeIds = null;
+            typeIds = ids.get(type);
+            if (typeIds == null) {
+                // 找不到说明出bug了
+                return false;
+            }
+
+            AarID aarID = typeIds.get(key);
+            if (aarID == null) {
+                return false;
+            }
+            return aarID.isDuplicate();
+        }
+
+
         /**
-         *
          * @param file File to load into Document
          * @return Document
          * @throws IOException
@@ -207,63 +254,47 @@ public class Utils {
             }
         }
 
-        public static void combin(File sourcefile,File destFile) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException, TransformerException {
-            //        <uses-permission
-//                <uses-feature
-//                <service
-//                <activity
-//                <provider
-//                <receiver
-//                <meta-data
+        public static void combin(File sourcefile, File destFile) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException, TransformerException {
+            // uses-permission,uses-feature ,service,activity,provider,receiver,meta-data
             Document documentSource = loadDocument(sourcefile);
             Document documentDest = loadDocument(destFile);
 
             Element manifestNode = (Element) documentDest.getFirstChild();
 
-            addSourceNode(manifestNode,"uses-permission",documentSource,documentDest);
+            addSourceNode(manifestNode, "uses-permission", documentSource, documentDest);
 
-            addSourceNode(manifestNode,"uses-feature",documentSource,documentDest);
+            addSourceNode(manifestNode, "uses-feature", documentSource, documentDest);
 
 
             Node applicationNoe = documentDest.getElementsByTagName("application").item(0);
-            addSourceNode(applicationNoe,"service",documentSource,documentDest);
+            addSourceNode(applicationNoe, "service", documentSource, documentDest);
 
-            addSourceNode(applicationNoe,"activity",documentSource,documentDest);
+            addSourceNode(applicationNoe, "activity", documentSource, documentDest);
 
-            addSourceNode(applicationNoe,"provider",documentSource,documentDest);
-            addSourceNode(applicationNoe,"receiver",documentSource,documentDest);
-            addSourceNode(applicationNoe,"meta-data",documentSource,documentDest);
+            addSourceNode(applicationNoe, "provider", documentSource, documentDest);
+            addSourceNode(applicationNoe, "receiver", documentSource, documentDest);
+            addSourceNode(applicationNoe, "meta-data", documentSource, documentDest);
 //
 //
-            saveDocument(destFile,documentDest);
+            saveDocument(destFile, documentDest);
 
 
         }
 
-        private static void addSourceNode(Node manifestNode, String tagName,Document documentSource,Document dest) throws XPathExpressionException {
+        private static void addSourceNode(Node manifestNode, String tagName, Document documentSource, Document dest) throws XPathExpressionException {
 
-            NodeList nodes =documentSource.getElementsByTagName(tagName);
+            NodeList nodes = documentSource.getElementsByTagName(tagName);
 
             for (int i = 0; i < nodes.getLength(); i++) {
                 Node nodeSourcePermission = nodes.item(i);
-                Node newNode = dest.importNode(nodeSourcePermission,true);
+                Node newNode = dest.importNode(nodeSourcePermission, true);
                 manifestNode.appendChild(newNode);
             }
         }
 
-//        private static Element copyNode(Node nodeSourcePermission, Document dest,String tagName) {
-//            Element node = dest.createElement(tagName);
-//            String content = nodeSourcePermission.getFirstChild().getTextContent();
-//            if(content!=null){
-//                node.setTextContent();
-//            }
-//        }
-
-
         /**
-         *
          * @param file File to save Document to (ie AndroidManifest.xml)
-         * @param doc Document being saved
+         * @param doc  Document being saved
          * @throws IOException
          * @throws SAXException
          * @throws ParserConfigurationException
@@ -276,7 +307,7 @@ public class Utils {
             Transformer transformer = transformerFactory.newTransformer();
             DOMSource source = new DOMSource(doc);
             StreamResult result = new StreamResult(file);
-            transformer.setOutputProperty(OutputKeys.INDENT,"yes");
+            transformer.setOutputProperty(OutputKeys.INDENT, "yes");
             transformer.transform(source, result);
         }
 
@@ -286,12 +317,13 @@ public class Utils {
         private static final String FEATURE_DISABLE_DOCTYPE_DECL = "http://apache.org/xml/features/disallow-doctype-decl";
         private static final Logger LOGGER = Logger.getLogger(XmlUtils.class.getName());
     }
-    public static class BuildPackage{
+
+    public static class BuildPackage {
 
         public static File getJavacFile() throws BrutException {
             File jarBinary;
 
-            if (! OSDetection.is64Bit() && OSDetection.isMacOSX()) {
+            if (!OSDetection.is64Bit() && OSDetection.isMacOSX()) {
                 throw new BrutException("32 bit OS detected. No 32 bit binaries available.");
             }
             try {
@@ -300,7 +332,7 @@ public class Utils {
                 } else if (OSDetection.isUnix()) {
                     jarBinary = Jar.getResourceAsFile("/prebuilt/linux/javac", Utils.class);
                 } else if (OSDetection.isWindows()) {
-                    jarBinary = Jar.getResourceAsFile("/prebuilt/windows/javac"+ ".exe", Utils.class);
+                    jarBinary = Jar.getResourceAsFile("/prebuilt/windows/javac" + ".exe", Utils.class);
                 } else {
                     throw new BrutException("Could not identify platform: " + OSDetection.returnOS());
                 }
@@ -318,7 +350,7 @@ public class Utils {
         public static File getJarComm(Class clzzz) throws BrutException {
             File jarBinary;
 
-            if (! OSDetection.is64Bit() && OSDetection.isMacOSX()) {
+            if (!OSDetection.is64Bit() && OSDetection.isMacOSX()) {
                 throw new BrutException("32 bit OS detected. No 32 bit binaries available.");
             }
             try {
@@ -327,7 +359,7 @@ public class Utils {
                 } else if (OSDetection.isUnix()) {
                     jarBinary = Jar.getResourceAsFile("/prebuilt/linux/jar", clzzz);
                 } else if (OSDetection.isWindows()) {
-                    jarBinary = Jar.getResourceAsFile("/prebuilt/windows/jar"+ ".exe", clzzz);
+                    jarBinary = Jar.getResourceAsFile("/prebuilt/windows/jar" + ".exe", clzzz);
                 } else {
                     throw new BrutException("Could not identify platform: " + OSDetection.returnOS());
                 }
@@ -344,22 +376,29 @@ public class Utils {
 
 
         public static File getAndroidJar(Class clazz) throws IOException, BrutException {
-            File file =  Jar.getResourceAsFile("/brut/androlib/android.jar", clazz);;
+            File file = Jar.getResourceAsFile("/brut/androlib/android.jar", clazz);
+            ;
             file.setExecutable(true);
             return file;
         }
+
         public static File getDxJar(Class clazz) throws IOException, BrutException {
-            File file =  Jar.getResourceAsFile("/brut/androlib/dx.jar", clazz);;
+            File file = Jar.getResourceAsFile("/brut/androlib/dx.jar", clazz);
+            ;
             file.setExecutable(true);
             return file;
         }
+
         public static File getBakSmali(Class clazz) throws IOException, BrutException {
-            File file =  Jar.getResourceAsFile("/brut/androlib/baksmali-2.3.4.jar", clazz);;
+            File file = Jar.getResourceAsFile("/brut/androlib/baksmali-2.3.4.jar", clazz);
+            ;
             file.setExecutable(true);
             return file;
         }
+
         public static File getSigner(Class clazz) throws IOException, BrutException {
-            File file =  Jar.getResourceAsFile("/brut/androlib/apksigner.jar", clazz);;
+            File file = Jar.getResourceAsFile("/brut/androlib/apksigner.jar", clazz);
+            ;
             file.setExecutable(true);
             return file;
         }

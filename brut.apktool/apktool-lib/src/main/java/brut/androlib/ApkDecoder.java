@@ -33,7 +33,10 @@ import brut.directory.DirectoryException;
 import brut.util.OS;
 import com.appadhoc.reversetoy.aar.AarManager;
 import com.google.common.base.Strings;
+import org.xml.sax.SAXException;
 
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -79,7 +82,7 @@ public class ApkDecoder {
         mApi = api;
     }
 
-    public void decode(AarManager aarManager) throws AndrolibException, IOException, DirectoryException {
+    public void decode(AarManager aarManager) throws AndrolibException, IOException, DirectoryException, ParserConfigurationException, SAXException, TransformerException {
         try {
             File outDir = getOutDir();
             AndrolibResources.sKeepBroken = mKeepBrokenResources;
