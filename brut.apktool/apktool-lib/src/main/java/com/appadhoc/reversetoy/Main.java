@@ -41,7 +41,7 @@ public class Main {
         decoder.setForceDelete(true);
         ApkOptions options = new ApkOptions();
         options.verbose = true;
-        File file = new File("/Users/jiaozhengxiang/adhoc_android/emptyapplication/build/outputs/apk/debug/emptyapplication-debug.apk");
+        File file = new File("/Users/jiaozhengxiang/Desktop/work/apks/com.linsen.theday_27.apk");
         File apkOutFile = new File("/Users/jiaozhengxiang/Desktop/work/toy_workspace/apk_workspace");
         if(apkOutFile.exists()){
             OS.rmdir(apkOutFile);

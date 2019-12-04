@@ -232,6 +232,9 @@ public class ResPackage {
 
     // add by dyg
     public void addAarRes(AarID srcAarID, String type, String key) throws AndrolibException, NoSuchFieldException, IllegalAccessException {
+        if(!hasType(type)){
+            return;
+        }
         ResTypeSpec resTypeSpec = getType(type);
         LOGGER.info("type # key " + type +"&" + key);
         // 检查key是否已经存在
