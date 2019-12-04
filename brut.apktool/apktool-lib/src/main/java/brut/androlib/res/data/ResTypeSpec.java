@@ -21,6 +21,7 @@ import brut.androlib.err.UndefinedResObject;
 import com.appadhoc.reversetoy.utils.Utils;
 
 import java.util.*;
+import java.util.logging.Logger;
 
 /**
  * @author Ryszard Wiśniewski <brut.alll@gmail.com>
@@ -31,6 +32,7 @@ public final class ResTypeSpec {
     public static final String RES_TYPE_NAME_PLURALS = "plurals";
     public static final String RES_TYPE_NAME_STYLES = "style";
     public static final String RES_TYPE_NAME_ATTR = "attr";
+    private static final Logger LOGGER = Logger.getLogger(ResTypeSpec.class.getName());
 
     private final String mName;
     private int maxValue = -1;
@@ -95,6 +97,7 @@ public final class ResTypeSpec {
         if (mResSpecs.put(spec.getName(), spec) != null) {
             throw new AndrolibException(String.format("Multiple res specs: %s/%s", getName(), spec.getName()));
         }
+//        LOGGER.info("add ResResSpec" + spec.getName());
     }
 
     @Override

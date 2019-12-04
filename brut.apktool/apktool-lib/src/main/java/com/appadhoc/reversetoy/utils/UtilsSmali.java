@@ -522,14 +522,15 @@ public class UtilsSmali {
                 throw new Exception("can not find src Application smali file ,file name path " + hostAppName);
             }
             System.out.println(needModiFile.getAbsolutePath());
-
             String srcStr = Utils.FileUtils.readStringFromFile(needModiFile).toString();
-            srcStr = srcStr.replaceFirst(".method\\s+static\\s+constructor\\s+<clinit>\\(\\)V(.*\\n)+?.end\\s+method","$0\n\n"+methodCodeReplaceMent);
+            srcStr = srcStr.replaceFirst(".method\\s+public\\s+constructor\\s+<init>\\(\\)V(.*\\n)+?.end\\s+method","$0\n\n"+methodCodeReplaceMent);
             srcStr = srcStr.replaceFirst(".method\\s+public\\s+onCreate\\(\\)V(.*\\n)+?\\s*.locals\\s+\\d+","$0\n\n"+callMethodCode);
             Utils.FileUtils.writeString2File(needModiFile, srcStr);
             boolean replaceSuccess = srcStr.contains("method private initSDK");
             boolean replaceCallSuccess = srcStr.contains("->initSDK()V");
-            if(!(replaceCallSuccess && replaceSuccess)){
+            if(replaceCallSuccess && replaceSuccess){
+
+            }else{
                 throw new Exception("modify "+ hostAppName +" smali modify failed");
             }
         }

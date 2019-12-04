@@ -82,7 +82,7 @@ public class ApkDecoder {
         mApi = api;
     }
 
-    public void decode(AarManager aarManager) throws AndrolibException, IOException, DirectoryException, ParserConfigurationException, SAXException, TransformerException {
+    public void decode(AarManager aarManager) throws Exception {
         try {
             File outDir = getOutDir();
             AndrolibResources.sKeepBroken = mKeepBrokenResources;

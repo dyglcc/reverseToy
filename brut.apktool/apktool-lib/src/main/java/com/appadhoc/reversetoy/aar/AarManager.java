@@ -133,7 +133,7 @@ public class AarManager {
     }
 
 
-    public void addAarids2ResTable(ResTable resTable) throws AndrolibException, IOException, SAXException, ParserConfigurationException, TransformerException {
+    public void addAarids2ResTable(ResTable resTable) throws Exception {
 
         ResPackage mainPackage = resTable.getPackage(127);
         // 将restyp里面的都替换一下
@@ -143,24 +143,14 @@ public class AarManager {
             Map<String, AarID> aarIdMap = (LinkedHashMap) ids.get(typeKey);
             for (String resKey : aarIdMap.keySet()) {
                 AarID source_aarID = aarIdMap.get(resKey);
-                try {
-                    mainPackage.addAarRes(source_aarID, typeKey, resKey);
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
+                mainPackage.addAarRes(source_aarID, typeKey, resKey);
             }
         }
         // 将resTable中的数据重新加载一次。
         mainPackage.reArrange();
 
         // 删除valuse文件里的重复的key
-        try {
-            Utils.XmlUtils.removeDuplicateLine(ids, getAarres());
-        } catch (Exception e) {
-            LOGGER.info("if no values just go on");
-        }
+        Utils.XmlUtils.removeDuplicateLine(ids, getAarres());
 
     }
 
@@ -183,7 +173,7 @@ public class AarManager {
 
     private void setAarPackageId() throws IOException, SAXException, ParserConfigurationException {
         File manifest = getAarManifest();
-        String packageName  = Utils.XmlUtils.getPackageName(manifest);
+        String packageName = Utils.XmlUtils.getPackageName(manifest);
         this.aarPackageName = packageName;
     }
 
@@ -211,8 +201,8 @@ public class AarManager {
 
     private File getRjavaFile() throws Exception {
 //        String rFilename = getRfileName();
-        File Rfile = new File(getRFileDir(), aarPackageName.replaceAll("\\.",File.separator)+File.separator+"R.java");
-        if(!Rfile.exists()){
+        File Rfile = new File(getRFileDir(), aarPackageName.replaceAll("\\.", File.separator) + File.separator + "R.java");
+        if (!Rfile.exists()) {
             throw new Exception("R file not exist");
         }
         return Rfile;
@@ -359,7 +349,7 @@ public class AarManager {
                     String fileName = xmlFile.getName();
                     fileName = fileName.substring(0, fileName.lastIndexOf(".xml"));
                     String newName = fileName + "_sdk.xml";
-                    File rename = new File(unzipFile, newName);
+                    File rename = new File(valuesFile, newName);
                     boolean success = Utils.FileUtils.reNameFile(xmlFile.getAbsolutePath(), rename.getAbsolutePath());
                     LOGGER.info("change file " + fileName + " 2 " + newName + " success " + success);
                 }
@@ -371,24 +361,27 @@ public class AarManager {
         // copy res
         File resHost = new File(hostdir, "res");
         File resAar = new File(unzipFile, "res");
-        if(resAar.exists()){
+        if (resAar.exists()) {
             OS.cpdir(resAar, resHost);
+            LOGGER.info("拷贝res文件到host文件");
         }
 
 
         // copy assets
         File assetsHost = new File(hostdir, "assets");
         File assetsAar = new File(unzipFile, "assets");
-        if(assetsAar.exists()){
+        if (assetsAar.exists()) {
             OS.cpdir(assetsAar, assetsHost);
+            LOGGER.info("拷贝assets文件到host文件");
         }
 
         // copy jni
 
         File jniHost = new File(hostdir, "jni");
         File jniAar = new File(unzipFile, "jni");
-        if(jniAar.exists()){
+        if (jniAar.exists()) {
             OS.cpdir(jniAar, jniHost);
+            LOGGER.info("拷贝jni文件到host文件");
         }
 
     }
@@ -396,7 +389,7 @@ public class AarManager {
     private void reArrangeRsmalifileIDs(File aarSmaliFilerDirs) throws Exception {
 
 
-        if(aarSmaliFilerDirs == null || !aarSmaliFilerDirs.exists()){
+        if (aarSmaliFilerDirs == null || !aarSmaliFilerDirs.exists()) {
             throw new Exception("need all aarSmaliFile but not found");
         }
 
@@ -427,13 +420,13 @@ public class AarManager {
         // changeR.smali ids
     }
 
-    private File getAarLibDir(){
-        File aardir = new File(tmpDir,getAarFileName());
+    private File getAarLibDir() {
+        File aardir = new File(tmpDir, getAarFileName());
         File libs = new File(aardir, "libs");
         return libs;
     }
 
-    private  File  all2Smali(File hostdir) throws Exception {
+    private File all2Smali(File hostdir) throws Exception {
 
         File libs = getAarLibDir();
         File inputdexfile = new File(libs, "classe000.dex");
@@ -447,8 +440,8 @@ public class AarManager {
             throw new Exception("host apk out dir not exist");
         }
         int maxIndex = Utils.FileUtils.getMaxIndex(hostdir) + 1;
-        String smaliAarFileNameOutDir = "smali_classes"+maxIndex;
-        File outDir = new File(hostdir,smaliAarFileNameOutDir);
+        String smaliAarFileNameOutDir = "smali_classes" + maxIndex;
+        File outDir = new File(hostdir, smaliAarFileNameOutDir);
         if (outDir.exists()) {
             throw new Exception("cp file to host apk dir wrong ,cause have already exist dir not ");
         } else {
@@ -472,10 +465,10 @@ public class AarManager {
         return outDir;
     }
 
-    private  void dx2dexfiles() throws Exception {
+    private void dx2dexfiles() throws Exception {
 
         // tood change 2 getFilename
-        File libs =getAarLibDir();
+        File libs = getAarLibDir();
         File outputfile = new File(libs, "classe000.dex");
         if (!libs.exists()) {
             throw new Exception("libs not exist");
@@ -498,7 +491,7 @@ public class AarManager {
 
     }
 
-    private  void rClass2jar() throws Exception {
+    private void rClass2jar() throws Exception {
         File rfiledir = getRFileDir();
         File[] files = rfiledir.listFiles();
         if (files.length == 0) {
@@ -594,7 +587,7 @@ public class AarManager {
         try {
 
             File file = new File("/Users/jiaozhengxiang/Desktop/apktool_workspace/AndroidManifest.xml");
-            String packageName  = Utils.XmlUtils.getPackageName(file);
+            String packageName = Utils.XmlUtils.getPackageName(file);
             System.out.println(packageName);
 //            String rSmaliDirs_str = aarPackageName.replaceAll("\\.", String.valueOf(File.separatorChar));
 //            System.out.println(rSmaliDirs_str);

@@ -228,13 +228,14 @@ public class Utils {
                             boolean isReadyRemove = checkIfRemoved(type, key, ids);
                             if (isReadyRemove) {
                                 nodeFirst.removeChild(node);
+                                LOGGER.info("remove values.xml key " + key);
                                 i--;
                             }
                         }
                     }
                 }
             }
-            saveDocument(aarres, documentValues);
+            saveDocument(valuesXml, documentValues);
         }
 
         private static boolean checkIfRemoved(String type, String key, Map<String, LinkedHashMap> ids) {

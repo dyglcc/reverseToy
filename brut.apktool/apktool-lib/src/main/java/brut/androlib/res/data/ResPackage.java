@@ -250,6 +250,7 @@ public class ResPackage {
 
         ResResSpec spec = new ResResSpec(resID, key, this, resTypeSpec);
         resTypeSpec.addResSpec(spec);
+        LOGGER.info("add key spec " +spec.getFullName() + "######### key  is " + key );
         srcAarID.setId(resID.id);
     }
 
