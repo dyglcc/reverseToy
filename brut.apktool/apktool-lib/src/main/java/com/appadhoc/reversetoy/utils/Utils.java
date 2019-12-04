@@ -55,14 +55,14 @@ public class Utils {
         }
 
 
-        public static int getMaxIndex(File hostdir){
+        public static int getMaxIndex(File hostdir) {
             int maxIndex = 1;
             for (File file : hostdir.listFiles()) {
                 if (file.getName().contains("smali_classes")) {
                     String index = file.getName().substring(13);
                     if (!index.equals("")) {
                         int intIndex = Integer.parseInt(index);
-                        if(intIndex > maxIndex){
+                        if (intIndex > maxIndex) {
                             maxIndex = intIndex;
                         }
                     }
@@ -106,7 +106,7 @@ public class Utils {
             }
             String key = getKeyByFileName(file.getName());
 
-            LinkedHashMap<String, Integer> values = ids.get(key);
+            LinkedHashMap<String, AarID> values = ids.get(key);
 
             BufferedReader br = new BufferedReader(new FileReader(file));
             StringBuilder sb = new StringBuilder();
@@ -116,8 +116,8 @@ public class Utils {
                     if (line.contains("field public static final")) {
                         String[] words = line.split(" ");
                         String[] keys = words[4].split(":");
-                        Integer integer_value = values.get(keys[0]);
-                        words[6] = "0x" + Integer.toHexString(integer_value);
+                        AarID integer_value = values.get(keys[0]);
+                        words[6] = "0x" + Integer.toHexString(integer_value.getId());
                         StringBuilder s = new StringBuilder();
                         for (int i = 0; i < words.length; i++) {
                             s.append(words[i]).append(" ");
@@ -140,7 +140,7 @@ public class Utils {
         }
 
 
-        public static Map<String, LinkedHashMap> readAarIds(File file) throws IOException {
+        public static Map<String, LinkedHashMap> readAarIds(File file) throws IOException, BrutException {
             Map<String, LinkedHashMap> map = new LinkedHashMap<String, LinkedHashMap>();
             BufferedReader br = new BufferedReader(new FileReader(file));
             String line;
@@ -172,6 +172,9 @@ public class Utils {
             } finally {
                 br.close();
             }
+            // delet R.java file
+            // rm R.java file
+            OS.rmfile(file.getAbsolutePath());
             return map;
         }
 
@@ -192,9 +195,13 @@ public class Utils {
 
     public static class XmlUtils {
 
-        public static void removeDuplicateLine(Map<String, LinkedHashMap> ids, File aarres) throws ParserConfigurationException, SAXException, IOException, TransformerException {
+        public static void removeDuplicateLine(Map<String, LinkedHashMap> ids, File aarres) throws Exception {
+            File valuesXml = new File(aarres, "values/values.xml");
+            if (!valuesXml.exists()) {
+                throw new Exception("aar values.xml not found");
+            }
 
-            Document documentValues = loadDocument(aarres);
+            Document documentValues = loadDocument(valuesXml);
             Node nodeFirst = documentValues.getFirstChild();
             NodeList children = nodeFirst.getChildNodes();
             int len = children.getLength();
@@ -202,7 +209,7 @@ public class Utils {
                 String type = null;
                 Node node = children.item(i);
 
-                if(node ==null){
+                if (node == null) {
                     System.out.println("item " + i + "is null");
                     continue;
                 }
@@ -218,8 +225,8 @@ public class Utils {
                         Node keynode = attrs.getNamedItem("name");
                         if (keynode != null) {
                             String key = keynode.getNodeValue();
-                            boolean isReadyRemove = checkIfRemoved(type, key,ids);
-                            if(isReadyRemove){
+                            boolean isReadyRemove = checkIfRemoved(type, key, ids);
+                            if (isReadyRemove) {
                                 nodeFirst.removeChild(node);
                                 i--;
                             }
@@ -227,7 +234,7 @@ public class Utils {
                     }
                 }
             }
-            saveDocument(aarres,documentValues);
+            saveDocument(aarres, documentValues);
         }
 
         private static boolean checkIfRemoved(String type, String key, Map<String, LinkedHashMap> ids) {
@@ -344,11 +351,11 @@ public class Utils {
         public static String getPackageName(File manifest) throws ParserConfigurationException, SAXException, IOException {
             Document document = loadDocument(manifest);
             Node firstNode = document.getFirstChild();
-            if(firstNode!=null){
+            if (firstNode != null) {
                 NamedNodeMap attrs = firstNode.getAttributes();
-                if(attrs!=null){
+                if (attrs != null) {
                     Node packageNode = attrs.getNamedItem("package");
-                    if(packageNode!=null){
+                    if (packageNode != null) {
                         return packageNode.getNodeValue();
                     }
                 }
@@ -441,6 +448,7 @@ public class Utils {
             file.setExecutable(true);
             return file;
         }
+
         public static File getSignatureFile(Class clazz) throws IOException, BrutException {
             URL url = clazz.getResource("/brut/androlib/reversetoy.jks");
             File file = new File(url.getPath());

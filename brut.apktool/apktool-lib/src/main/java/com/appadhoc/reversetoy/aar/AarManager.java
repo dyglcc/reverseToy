@@ -156,8 +156,11 @@ public class AarManager {
         mainPackage.reArrange();
 
         // 删除valuse文件里的重复的key
-        Utils.XmlUtils.removeDuplicateLine(ids, getAarres());
-        // 编译smali文件并替换smali里面的东西
+        try {
+            Utils.XmlUtils.removeDuplicateLine(ids, getAarres());
+        } catch (Exception e) {
+            LOGGER.info("if no values just go on");
+        }
 
     }
 
@@ -207,11 +210,11 @@ public class AarManager {
     }
 
     private File getRjavaFile() throws Exception {
-        String rFilename = getRfileName();
-        if (rFilename == null || rFilename.equals("")) {
+//        String rFilename = getRfileName();
+        File Rfile = new File(getRFileDir(), aarPackageName.replaceAll("\\.",File.separator)+File.separator+"R.java");
+        if(!Rfile.exists()){
             throw new Exception("R file not exist");
         }
-        File Rfile = new File(getRFileDir(), rFilename);
         return Rfile;
     }
 
@@ -219,8 +222,7 @@ public class AarManager {
 
         File Rfile = getRjavaFile();
         compileFile(Rfile);
-        // rm R.java file
-        OS.rmfile(Rfile.getAbsolutePath());
+
     }
 
     private void compileFile(File rfile)
@@ -241,15 +243,15 @@ public class AarManager {
 
     }
 
-    private String getRfileName() throws DirectoryException {
-        Directory directory = new FileDirectory(getRFileDir());
-        for (String file : directory.getFiles(true)) {
-            if (file.contains("R.java")) {
-                return file;
-            }
-        }
-        return null;
-    }
+//    private String getRfileName() throws DirectoryException {
+//        Directory directory = new FileDirectory(getRFileDir());
+//        for (String file : directory.getFiles(true)) {
+//            if (file.contains("R.java")) {
+//                return file;
+//            }
+//        }
+//        return null;
+//    }
 
     private void unzipAarFile()
             throws AndrolibException {
@@ -340,10 +342,11 @@ public class AarManager {
         }
     }
 
-    public void smaliClassFilesAndModifyids(File hostdir) throws Exception {
+    public File smaliClassFilesAndModifyids(File hostdir) throws Exception {
         File aarSmaliFile = smaliClass(hostdir);
         reArrangeRsmalifileIDs(aarSmaliFile);
         copyFiles(hostdir);
+        return aarSmaliFile;
     }
 
     private void copyFiles(File hostdir) throws IOException, BrutException {
@@ -368,19 +371,25 @@ public class AarManager {
         // copy res
         File resHost = new File(hostdir, "res");
         File resAar = new File(unzipFile, "res");
-        OS.cpdir(resAar, resAar);
+        if(resAar.exists()){
+            OS.cpdir(resAar, resHost);
+        }
 
 
         // copy assets
         File assetsHost = new File(hostdir, "assets");
         File assetsAar = new File(unzipFile, "assets");
-        OS.cpdir(assetsAar, assetsHost);
+        if(assetsAar.exists()){
+            OS.cpdir(assetsAar, assetsHost);
+        }
 
         // copy jni
 
         File jniHost = new File(hostdir, "jni");
         File jniAar = new File(unzipFile, "jni");
-        OS.cpdir(jniAar, jniHost);
+        if(jniAar.exists()){
+            OS.cpdir(jniAar, jniHost);
+        }
 
     }
 
@@ -527,7 +536,7 @@ public class AarManager {
 
     }
 
-    public static void main(String[] args) throws DirectoryException, IOException, ParserConfigurationException, SAXException, XPathExpressionException, TransformerException {
+    public static void main(String[] args) throws Exception {
 
 //        AarManager aarManager = AarManager.getInstance();
 //        aarManager.init();

@@ -99,3 +99,4 @@ application 代码sdk初始化逻辑代码。
 
 
 
+.method\s+static\s+constructor\s+<clinit>\(\)V(.*\n)+?.end\s+method
