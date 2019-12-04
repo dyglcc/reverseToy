@@ -7,12 +7,12 @@ import brut.androlib.res.data.ResTable;
 import brut.common.BrutException;
 import brut.directory.Directory;
 import brut.directory.DirectoryException;
-import brut.directory.FileDirectory;
 import brut.directory.ZipRODirectory;
 import brut.util.AaptManager;
 import brut.util.OS;
 import com.appadhoc.reversetoy.data.AarID;
 import com.appadhoc.reversetoy.utils.Utils;
+import com.appadhoc.reversetoy.utils.UtilsSmali;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -150,7 +150,7 @@ public class AarManager {
         mainPackage.reArrange();
 
         // 删除valuse文件里的重复的key
-        Utils.XmlUtils.removeDuplicateLine(ids, getAarres());
+        Utils.XmlUtils.removeDuplicateLineAndRemoveIdType(ids, getAarres());
 
     }
 
@@ -582,7 +582,7 @@ public class AarManager {
             aarID.setDuplicate(true);
         }
         String workdirRes = "/Users/jiaozhengxiang/Desktop/work/toy_workspace/aar/tmp2/values.xml";
-        Utils.XmlUtils.removeDuplicateLine(ids, new File(workdirRes));
+        Utils.XmlUtils.removeDuplicateLineAndRemoveIdType(ids, new File(workdirRes));
 
         try {
 
@@ -607,5 +607,8 @@ public class AarManager {
 
     }
 
+    public void addIDs2HostFile(File apkOutFile) throws Exception {
 
+        UtilsSmali.XmlUtils.addIDs2HostIds(ids,apkOutFile);
+    }
 }

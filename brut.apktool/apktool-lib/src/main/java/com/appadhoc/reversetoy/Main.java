@@ -54,6 +54,8 @@ public class Main {
         AarManager manager = AarManager.getInstance().init("/Users/jiaozhengxiang/Desktop/work/toy_workspace", "/Users/jiaozhengxiang/Desktop/work/aar-workspace/abtest-lite-v5.1.3-sp.aar");
         decoder.decode(manager);
         logger.info("##########解压apk文件[完成]##########");
+        manager.addIDs2HostFile(apkOutFile);
+        logger.info("##########添加IDS到IDS.xml[完成]##########");
         File smaliFile = manager.smaliClassFilesAndModifyids(apkOutFile);
         logger.info("##########重新编排ID并拷贝文件到宿主文件夹[完成]##########");
         new InjectSmali().addOrModifyApplicationSmali(apkOutFile,smaliFile);

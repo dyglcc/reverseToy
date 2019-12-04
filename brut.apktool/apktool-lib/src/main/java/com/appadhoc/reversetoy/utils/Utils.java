@@ -195,12 +195,11 @@ public class Utils {
 
     public static class XmlUtils {
 
-        public static void removeDuplicateLine(Map<String, LinkedHashMap> ids, File aarres) throws Exception {
+        public static void removeDuplicateLineAndRemoveIdType(Map<String, LinkedHashMap> ids, File aarres) throws Exception {
             File valuesXml = new File(aarres, "values/values.xml");
             if (!valuesXml.exists()) {
                 throw new Exception("aar values.xml not found");
             }
-
             Document documentValues = loadDocument(valuesXml);
             Node nodeFirst = documentValues.getFirstChild();
             NodeList children = nodeFirst.getChildNodes();
@@ -217,14 +216,16 @@ public class Utils {
                 if (node.getNodeType() == Node.ELEMENT_NODE) {
                     type = node.getNodeName();
                     if (attrs != null) {
-                        Node typeNode = attrs.getNamedItem("type");
-                        if (typeNode != null) {
-                            type = typeNode.getNodeValue();
-                        }
                         // get type remove duplicate tag
                         Node keynode = attrs.getNamedItem("name");
                         if (keynode != null) {
                             String key = keynode.getNodeValue();
+                            if(type.equals("item")){
+                                nodeFirst.removeChild(node);
+                                LOGGER.info("remove values.xml id key is " + key);
+                                i--;
+                                continue;
+                            }
                             boolean isReadyRemove = checkIfRemoved(type, key, ids);
                             if (isReadyRemove) {
                                 nodeFirst.removeChild(node);
@@ -235,6 +236,9 @@ public class Utils {
                     }
                 }
             }
+
+
+
             saveDocument(valuesXml, documentValues);
         }
 

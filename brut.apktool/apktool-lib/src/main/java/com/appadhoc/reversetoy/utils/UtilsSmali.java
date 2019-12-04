@@ -188,9 +188,27 @@ public class UtilsSmali {
 
     public static class XmlUtils {
 
+
+        public static void addIDs2HostIds(Map<String, LinkedHashMap> ids, File aarres) throws Exception {
+
+            File fileIds = new File(aarres,"res/values/ids.xml");
+            if(!fileIds.exists()){
+                throw new Exception("host dir values/ids.xml not exist");
+            }
+            Document documentValues = loadDocument(fileIds);
+            Node nodeFirst = documentValues.getFirstChild();
+            LinkedHashMap<String,AarID> idMaps = ids.get("id");
+            for(String key:idMaps.keySet()){
+                Element element = documentValues.createElement("item");
+                element.setAttribute("type","id");
+                element.setAttribute("name",key);
+                nodeFirst.appendChild(element);
+            }
+            saveDocument(fileIds,documentValues);
+        }
         public static void removeDuplicateLine(Map<String, LinkedHashMap> ids, File aarres) throws ParserConfigurationException, SAXException, IOException, TransformerException {
 
-            org.w3c.dom.Document documentValues = loadDocument(aarres);
+            Document documentValues = loadDocument(aarres);
             Node nodeFirst = documentValues.getFirstChild();
             NodeList children = nodeFirst.getChildNodes();
             int len = children.getLength();
