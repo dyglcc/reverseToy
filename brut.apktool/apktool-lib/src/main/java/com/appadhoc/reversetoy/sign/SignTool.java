@@ -13,10 +13,13 @@ import java.util.logging.Logger;
 public class SignTool {
     private static final Logger LOGGER = Logger.getLogger(SignTool.class.getName());
 
-    public static File sign(File file) throws Exception {
+    public static File sign(File file,File hostdir) throws Exception {
 
         if(!file.exists()){
             throw new Exception("unsign file not exist");
+        }
+        if(!hostdir.exists()){
+            hostdir = file.getParentFile().getAbsoluteFile();
         }
         List<String> cmd = new ArrayList<>();
 //        jarsigner -verbose -keystore /Users/jiaozhengxiang/adhoc_android/adhoc_key.jks -storepass 123456 -signedjar  signed.apk emptyapplication-debug.apk  reverse
@@ -47,8 +50,10 @@ public class SignTool {
         cmd.add("pass:123456");
 
         cmd.add("--out");
-        cmd.add("signed.apk");
+        File apk = new File(hostdir,"signed"+System.currentTimeMillis()+".apk");
+        cmd.add(apk.getAbsolutePath());
         cmd.add(file.getAbsolutePath());
+
 
         try {
             OS.exec(cmd.toArray(new String[0]));
@@ -57,17 +62,17 @@ public class SignTool {
         } catch (BrutException ex) {
             throw new AndrolibException(ex);
         }
-        File newSignfile = new File("signed.apk");
+//        File newSignfile = new File("signed---.apk");
         LOGGER.info("##########签名APK完成##################");
-        LOGGER.info("##########文件地址："+newSignfile.getAbsolutePath()+"##################");
-        return newSignfile;
+        LOGGER.info("##########文件地址："+apk.getAbsolutePath()+"##################");
+        return apk;
     }
 
     public static void main(String[] args){
         File fileapk = new File("/Users/jiaozhengxiang/adhoc_android/emptyapplication/build/outputs/apk/debug/emptyapplication-debug.apk");
         File file = null;
         try {
-            file = SignTool.sign(fileapk);
+            file = SignTool.sign(fileapk,null);
         } catch (Exception e) {
             e.printStackTrace();
         }

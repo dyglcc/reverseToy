@@ -7,6 +7,7 @@ import brut.androlib.ApkDecoder;
 import brut.androlib.ApkOptions;
 import brut.common.BrutException;
 import brut.directory.DirectoryException;
+import brut.util.OS;
 import com.appadhoc.reversetoy.aar.AarManager;
 import com.appadhoc.reversetoy.inject.InjectSmali;
 import com.appadhoc.reversetoy.sign.SignTool;
@@ -42,6 +43,9 @@ public class Main {
         options.verbose = true;
         File file = new File("/Users/jiaozhengxiang/Desktop/sample-debug.apk");
         File apkOutFile = new File("/Users/jiaozhengxiang/Desktop/work/toy_workspace/apk_workspace");
+        if(apkOutFile.exists()){
+            OS.rmdir(apkOutFile);
+        }
         decoder.setApkFile(file);
         decoder.setOutDir(apkOutFile);
 
@@ -54,24 +58,23 @@ public class Main {
         logger.info("##########重新编排ID并拷贝文件到宿主文件夹[完成]##########");
         new InjectSmali().addOrModifyApplicationSmali(apkOutFile,smaliFile);
         logger.info("##########添加或者修改Application smali代码[完成]##########");
-        File unsignfile = buildApk();
+        File unsignfile = buildApk(apkOutFile);
         logger.info("##########添加或者修改Application smali代码[完成]##########");
-        File signFile = SignTool.sign(unsignfile);
+        File signFile = SignTool.sign(unsignfile,apkOutFile);
         logger.info("##########添加或者修改Application smali代码[完成]##########");
         logger.info("#########################################################");
         logger.info("##########signfile path:"+signFile.getAbsolutePath()+"##########");
         logger.info("########################################################");
     }
 
-    public static File buildApk() {
+    public static File buildApk(File hostdir) {
         ApkOptions options = new ApkOptions();
         options.verbose = true;
         options.debugMode = true;
 
-        File workdir = new File("/Users/jiaozhengxiang/Desktop/apktool_workspace");
-        File unsignFile = new File("/Users/jiaozhengxiang/Desktop/apktool_workspace", "helloBuildByapi.apk");
+        File unsignFile = new File(hostdir, "helloBuildByapi.apk");
         try {
-            new Androlib(options).build(workdir, unsignFile);
+            new Androlib(options).build(hostdir, unsignFile);
         } catch (BrutException e) {
             e.printStackTrace();
         }
