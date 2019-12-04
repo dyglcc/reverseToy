@@ -52,9 +52,9 @@ public class AarManager {
 
     }
 
-    public AarManager init(String workspace, String aarFile) {
+    public AarManager init(String aarFile) {
         try {
-            setWorkSpace(workspace);
+            setWorkSpace(new File(aarFile).getParentFile().getAbsolutePath());
             setAarFile(aarFile);
         } catch (Exception e) {
             e.printStackTrace();

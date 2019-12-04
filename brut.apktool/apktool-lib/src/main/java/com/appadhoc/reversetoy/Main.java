@@ -42,16 +42,16 @@ public class Main {
         ApkOptions options = new ApkOptions();
         options.verbose = true;
         File file = new File("/Users/jiaozhengxiang/Desktop/work/apks/com.linsen.theday_27.apk");
-        File apkOutFile = new File("/Users/jiaozhengxiang/Desktop/work/toy_workspace/apk_workspace");
-        if(apkOutFile.exists()){
-            OS.rmdir(apkOutFile);
-        }
+        File apkOutFile = file.getParentFile();
+//        if(apkOutFile.exists()){
+//            OS.rmdir(apkOutFile);
+//        }
         decoder.setApkFile(file);
         decoder.setOutDir(apkOutFile);
 
         //-----------------------------------------
         //-------AarManager setting----------------
-        AarManager manager = AarManager.getInstance().init("/Users/jiaozhengxiang/Desktop/work/toy_workspace", "/Users/jiaozhengxiang/Desktop/work/aar-workspace/abtest-lite-v5.1.3-sp.aar");
+        AarManager manager = AarManager.getInstance().init("/Users/jiaozhengxiang/Desktop/work/aar-workspace/abtest-lite-v5.1.3-sp.aar");
         decoder.decode(manager);
         logger.info("##########解压apk文件[完成]##########");
         manager.addIDs2HostFile(apkOutFile);

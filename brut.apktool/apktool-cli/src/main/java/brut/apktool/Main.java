@@ -81,7 +81,11 @@ public class Main {
             } else if (opt.equalsIgnoreCase("b") || opt.equalsIgnoreCase("build")) {
                 cmdBuild(commandLine);
                 cmdFound = true;
-            } else if (opt.equalsIgnoreCase("if") || opt.equalsIgnoreCase("install-framework")) {
+            }  else if (opt.equalsIgnoreCase("m") || opt.equalsIgnoreCase("merge")) {
+
+
+
+            }else if (opt.equalsIgnoreCase("if") || opt.equalsIgnoreCase("install-framework")) {
                 cmdInstallFramework(commandLine);
                 cmdFound = true;
             } else if (opt.equalsIgnoreCase("empty-framework-dir")) {
@@ -194,6 +198,8 @@ public class Main {
         } catch (DirectoryException ex) {
             System.err.println("Could not modify internal dex files. Please ensure you have permission.");
             System.exit(1);
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             try {
                 decoder.close();
