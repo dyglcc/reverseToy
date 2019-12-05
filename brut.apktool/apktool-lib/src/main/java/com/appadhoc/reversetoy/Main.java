@@ -2,19 +2,14 @@ package com.appadhoc.reversetoy;
 
 
 import brut.androlib.Androlib;
-import brut.androlib.AndrolibException;
 import brut.androlib.ApkDecoder;
 import brut.androlib.ApkOptions;
 import brut.common.BrutException;
-import brut.directory.DirectoryException;
-import brut.util.OS;
 import com.appadhoc.reversetoy.aar.AarManager;
-import com.appadhoc.reversetoy.inject.InjectSmali;
+import com.appadhoc.reversetoy.inject.InjectManager;
 import com.appadhoc.reversetoy.sign.SignTool;
-import org.xml.sax.SAXException;
+import com.appadhoc.reversetoy.utils.Utils;
 
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Logger;
@@ -41,24 +36,22 @@ public class Main {
         decoder.setForceDelete(true);
         ApkOptions options = new ApkOptions();
         options.verbose = true;
-        File file = new File("/Users/jiaozhengxiang/Desktop/work/apks/com.linsen.theday_27.apk");
-        File apkOutFile = file.getParentFile();
-//        if(apkOutFile.exists()){
-//            OS.rmdir(apkOutFile);
-//        }
+        File file = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
+        File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
         decoder.setApkFile(file);
         decoder.setOutDir(apkOutFile);
 
         //-----------------------------------------
         //-------AarManager setting----------------
-        AarManager manager = AarManager.getInstance().init("/Users/jiaozhengxiang/Desktop/work/aar-workspace/abtest-lite-v5.1.3-sp.aar");
+//        AarManager manager = AarManager.getInstance().init("/Users/jiaozhengxiang/Desktop/work/aar-workspace/abtest-lite-v5.1.3-sp.aar");
+        AarManager manager = AarManager.getInstance().init("/Users/dongyuangui/Desktop/aar-1/abtest-release.aar");
         decoder.decode(manager);
         logger.info("##########解压apk文件[完成]##########");
         manager.addIDs2HostFile(apkOutFile);
         logger.info("##########添加IDS到IDS.xml[完成]##########");
         File smaliFile = manager.smaliClassFilesAndModifyids(apkOutFile);
         logger.info("##########重新编排ID并拷贝文件到宿主文件夹[完成]##########");
-        new InjectSmali().addOrModifyApplicationSmali(apkOutFile,smaliFile);
+        new InjectManager().addOrModifyApplicationSmali(apkOutFile,smaliFile);
         logger.info("##########添加或者修改Application smali代码[完成]##########");
         File unsignfile = buildApk(apkOutFile);
         logger.info("##########添加或者修改Application smali代码[完成]##########");

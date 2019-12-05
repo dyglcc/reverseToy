@@ -100,3 +100,35 @@ application 代码sdk初始化逻辑代码。
 
 
 .method\s+static\s+constructor\s+<clinit>\(\)V(.*\n)+?.end\s+method
+
+
+android.content.res.Resources$NotFoundException: Drawable com.xiaobailong.bluetoothfaultboardcontrol:bool/abc_action_bar_embed_tabs with resource ID #0x7f030000
+    Caused by: android.content.res.Resources$NotFoundException: Resource "com.xiaobailong.bluetoothfaultboardcontrol:bool/abc_action_bar_embed_tabs" (7f030000) is not a Drawable (color or path): TypedValue{t=0x12/d=0x0 a=5 r=0x7f030000}
+        at android.content.res.ResourcesImpl.loadDrawableForCookie(ResourcesImpl.java:1090)
+        at android.content.res.ResourcesImpl.loadDrawable(ResourcesImpl.java:917)
+        at android.content.res.Resources.getDrawableForDensity(Resources.java:1074)
+        at android.content.res.Resources.getDrawable(Resources.java:1013)
+        at android.content.Context.getDrawable(Context.java:630)
+        at android.widget.ImageView.resolveUri(ImageView.java:974)
+        at android.widget.ImageView.setImageResource(ImageView.java:530)
+        at com.adhoc.editor.testernew.AdhocFloatWindowManager.createView(AdhocFloatWindowManager.java:130)
+        at com.adhoc.editor.testernew.AdhocFloatWindowManager.add(AdhocFloatWindowManager.java:95)
+        at java.lang.reflect.Method.invoke(Native Method)
+        at com.adhoc.abl.a(Unknown Source:27)
+        at com.adhoc.aaj.onActivityResumed(Unknown Source:83)
+        at android.app.Application.dispatchActivityResumed(Application.java:251)
+        at android.app.Activity.onResume(Activity.java:1424)
+        at android.app.Instrumentation.callActivityOnResume(Instrumentation.java:1456)
+        at android.app.Activity.performResume(Activity.java:7614)
+        at android.app.ActivityThread.performResumeActivity(ActivityThread.java:4412)
+        at android.app.ActivityThread.handleResumeActivity(ActivityThread.java:4470)
+        at android.app.servertransaction.ResumeActivityItem.execute(ResumeActivityItem.java:51)
+        at android.app.servertransaction.TransactionExecutor.executeLifecycleState(TransactionExecutor.java:145)
+        at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:70)
+        at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2199)
+        at android.os.Handler.dispatchMessage(Handler.java:112)
+        at android.os.Looper.loop(Looper.java:216)
+        at android.app.ActivityThread.main(ActivityThread.java:7625)
+        at java.lang.reflect.Method.invoke(Native Method)
+        at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:524)
+        at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:987)

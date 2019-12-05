@@ -12,7 +12,6 @@ import brut.util.AaptManager;
 import brut.util.OS;
 import com.appadhoc.reversetoy.data.AarID;
 import com.appadhoc.reversetoy.utils.Utils;
-import com.appadhoc.reversetoy.utils.UtilsSmali;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -36,7 +35,7 @@ public class AarManager {
     }
 
     private String getAarFileName() {
-        return aarFile == null ? "" : aarFile.getName().replaceFirst("\\.[^.]+$", "");
+        return aarFile == null ? "" : Utils.getNameRemovedSuffix(aarFile.getName());
     }
 
     public String getHostPackageName() {
@@ -273,15 +272,9 @@ public class AarManager {
             if (in.containsDir("libs")) {
                 in.copyToDir(unzipFile, "libs");
             }
-            // cp .jar 文件到libs
-            File dirFile = new File(unzipFile, "libs");
-            if (!dirFile.exists()) {
-                dirFile.mkdirs();
-            }
-            // may be can rename jar avoid over write
             for (String file : in.getFiles()) {
                 if (file.endsWith(".jar")) {
-                    in.copyToDir(dirFile, file);
+                    in.copyToDir(unzipFile, file);
                 }
             }
             // ----以上cp .jar 文件到libs
@@ -292,9 +285,24 @@ public class AarManager {
             if (in.containsFile("R.txt")) {
                 in.copyToDir(unzipFile, "R.txt");
             }
+            // cp .jar 文件到libs
+            File aarlibs = new File(unzipFile, "libs");
+            if (!aarlibs.exists()) {
+                aarlibs.mkdirs();
+            }
+            for (File file : Objects.requireNonNull(unzipFile.listFiles())) {
+                if (file.getName().endsWith(".jar")) {
+                    File newName = new File(unzipFile, System.currentTimeMillis()+".jar");
+                    Utils.FileUtils.reNameFile(file.getAbsolutePath(), newName.getAbsolutePath());
+                    OS.cpfile2src(newName,aarlibs);
+                }
+            }
+
         } catch (DirectoryException ex) {
             throw new AndrolibException(ex);
-        } catch (BrutException e) {
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -582,7 +590,7 @@ public class AarManager {
             aarID.setDuplicate(true);
         }
         String workdirRes = "/Users/jiaozhengxiang/Desktop/work/toy_workspace/aar/tmp2/values.xml";
-        Utils.XmlUtils.removeDuplicateLineAndRemoveIdType(ids, new File(workdirRes));
+//        Utils.XmlUtils.removeDuplicateLineAndRemoveIdType(ids, new File(workdirRes));
 
         try {
 
@@ -609,6 +617,6 @@ public class AarManager {
 
     public void addIDs2HostFile(File apkOutFile) throws Exception {
 
-        UtilsSmali.XmlUtils.addIDs2HostIds(ids,apkOutFile);
+        Utils.XmlUtils.addIDs2HostIds(ids,apkOutFile);
     }
 }

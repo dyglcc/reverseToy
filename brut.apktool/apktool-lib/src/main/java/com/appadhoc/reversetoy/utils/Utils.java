@@ -1,15 +1,10 @@
 package com.appadhoc.reversetoy.utils;
 
-
-import brut.androlib.res.xml.ResXmlPatcher;
 import brut.common.BrutException;
-import brut.util.AaptManager;
 import brut.util.Jar;
 import brut.util.OS;
 import brut.util.OSDetection;
 import com.appadhoc.reversetoy.data.AarID;
-import com.google.common.net.UrlEscapers;
-import org.jf.util.Hex;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -22,13 +17,14 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.*;
+import javax.xml.xpath.XPathExpressionException;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
 
 public class Utils {
 
@@ -37,6 +33,12 @@ public class Utils {
         Field tail = map.getClass().getDeclaredField("tail");
         tail.setAccessible(true);
         return (Map.Entry<K, V>) tail.get(map);
+    }
+
+    public static String getNameRemovedSuffix(String name){
+
+        return name.replaceFirst("\\.[^.]+$", "");
+
     }
 
     public static class FileUtils {
@@ -55,14 +57,14 @@ public class Utils {
         }
 
 
-        public static int getMaxIndex(File hostdir) {
+        public static int getMaxIndex(File hostdir){
             int maxIndex = 1;
             for (File file : hostdir.listFiles()) {
                 if (file.getName().contains("smali_classes")) {
                     String index = file.getName().substring(13);
                     if (!index.equals("")) {
                         int intIndex = Integer.parseInt(index);
-                        if (intIndex > maxIndex) {
+                        if(intIndex > maxIndex){
                             maxIndex = intIndex;
                         }
                     }
@@ -140,7 +142,7 @@ public class Utils {
         }
 
 
-        public static Map<String, LinkedHashMap> readAarIds(File file) throws IOException, BrutException {
+        public static Map<String, LinkedHashMap> readAarIds(File file) throws IOException {
             Map<String, LinkedHashMap> map = new LinkedHashMap<String, LinkedHashMap>();
             BufferedReader br = new BufferedReader(new FileReader(file));
             String line;
@@ -172,9 +174,6 @@ public class Utils {
             } finally {
                 br.close();
             }
-            // delet R.java file
-            // rm R.java file
-            OS.rmfile(file.getAbsolutePath());
             return map;
         }
 
@@ -242,6 +241,61 @@ public class Utils {
             saveDocument(valuesXml, documentValues);
         }
 
+        public static void addIDs2HostIds(Map<String, LinkedHashMap> ids, File aarres) throws Exception {
+
+            File fileIds = new File(aarres,"res/values/ids.xml");
+            if(!fileIds.exists()){
+                throw new Exception("host dir values/ids.xml not exist");
+            }
+            Document documentValues = loadDocument(fileIds);
+            Node nodeFirst = documentValues.getFirstChild();
+            LinkedHashMap<String,AarID> idMaps = ids.get("id");
+            for(String key:idMaps.keySet()){
+                Element element = documentValues.createElement("item");
+                element.setAttribute("type","id");
+                element.setAttribute("name",key);
+                nodeFirst.appendChild(element);
+            }
+            saveDocument(fileIds,documentValues);
+        }
+//        public static void removeDuplicateLine(Map<String, LinkedHashMap> ids, File aarres) throws ParserConfigurationException, SAXException, IOException, TransformerException {
+//
+//            Document documentValues = loadDocument(aarres);
+//            Node nodeFirst = documentValues.getFirstChild();
+//            NodeList children = nodeFirst.getChildNodes();
+//            int len = children.getLength();
+//            for (int i = 0; i < len; i++) {
+//                String type = null;
+//                Node node = children.item(i);
+//
+//                if(node ==null){
+//                    System.out.println("item " + i + "is null");
+//                    continue;
+//                }
+//                NamedNodeMap attrs = node.getAttributes();
+//                if (node.getNodeType() == Node.ELEMENT_NODE) {
+//                    type = node.getNodeName();
+//                    if (attrs != null) {
+//                        Node typeNode = attrs.getNamedItem("type");
+//                        if (typeNode != null) {
+//                            type = typeNode.getNodeValue();
+//                        }
+//                        // get type remove duplicate tag
+//                        Node keynode = attrs.getNamedItem("name");
+//                        if (keynode != null) {
+//                            String key = keynode.getNodeValue();
+//                            boolean isReadyRemove = checkIfRemoved(type, key,ids);
+//                            if(isReadyRemove){
+//                                nodeFirst.removeChild(node);
+//                                i--;
+//                            }
+//                        }
+//                    }
+//                }
+//            }
+//            saveDocument(aarres,documentValues);
+//        }
+
         private static boolean checkIfRemoved(String type, String key, Map<String, LinkedHashMap> ids) {
             LinkedHashMap<String, AarID> typeIds = null;
             typeIds = ids.get(type);
@@ -265,7 +319,7 @@ public class Utils {
          * @throws SAXException
          * @throws ParserConfigurationException
          */
-        private static Document loadDocument(File file)
+        private static org.w3c.dom.Document loadDocument(File file)
                 throws IOException, SAXException, ParserConfigurationException {
 
             DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
@@ -292,8 +346,8 @@ public class Utils {
 
         public static void combin(File sourcefile, File destFile) throws ParserConfigurationException, SAXException, IOException, XPathExpressionException, TransformerException {
             // uses-permission,uses-feature ,service,activity,provider,receiver,meta-data
-            Document documentSource = loadDocument(sourcefile);
-            Document documentDest = loadDocument(destFile);
+            org.w3c.dom.Document documentSource = loadDocument(sourcefile);
+            org.w3c.dom.Document documentDest = loadDocument(destFile);
 
             Element manifestNode = (Element) documentDest.getFirstChild();
 
@@ -317,7 +371,7 @@ public class Utils {
 
         }
 
-        private static void addSourceNode(Node manifestNode, String tagName, Document documentSource, Document dest) throws XPathExpressionException {
+        private static void addSourceNode(Node manifestNode, String tagName, org.w3c.dom.Document documentSource, org.w3c.dom.Document dest) throws XPathExpressionException {
 
             NodeList nodes = documentSource.getElementsByTagName(tagName);
 
@@ -336,7 +390,7 @@ public class Utils {
          * @throws ParserConfigurationException
          * @throws TransformerException
          */
-        private static void saveDocument(File file, Document doc)
+        private static void saveDocument(File file, org.w3c.dom.Document doc)
                 throws IOException, SAXException, ParserConfigurationException, TransformerException {
 
             TransformerFactory transformerFactory = TransformerFactory.newInstance();
@@ -351,25 +405,62 @@ public class Utils {
         private static final String ACCESS_EXTERNAL_SCHEMA = "http://javax.xml.XMLConstants/property/accessExternalSchema";
         private static final String FEATURE_LOAD_DTD = "http://apache.org/xml/features/nonvalidating/load-external-dtd";
         private static final String FEATURE_DISABLE_DOCTYPE_DECL = "http://apache.org/xml/features/disallow-doctype-decl";
-        private static final Logger LOGGER = Logger.getLogger(XmlUtils.class.getName());
+        private static final Logger LOGGER = Logger.getLogger(Utils.XmlUtils.class.getName());
 
         public static String getPackageName(File manifest) throws ParserConfigurationException, SAXException, IOException {
-            Document document = loadDocument(manifest);
+            org.w3c.dom.Document document = loadDocument(manifest);
             Node firstNode = document.getFirstChild();
-            if (firstNode != null) {
+            if(firstNode!=null){
                 NamedNodeMap attrs = firstNode.getAttributes();
-                if (attrs != null) {
+                if(attrs!=null){
                     Node packageNode = attrs.getNamedItem("package");
-                    if (packageNode != null) {
+                    if(packageNode!=null){
                         return packageNode.getNodeValue();
                     }
                 }
             }
             return "";
         }
+
+        public static String setApplicationName(File hostdir, String appname) throws Exception {
+
+            File manifest = new File(hostdir,"AndroidManifest.xml");
+            if(!manifest.exists()){
+                throw new Exception("dir manifest xml not exist");
+            }
+            Document document = XmlUtils.loadDocument(manifest);
+
+            Element nodeAppplication = (Element) document.getElementsByTagName("application").item(0);
+            NamedNodeMap attr = nodeAppplication.getAttributes();
+            if(attr!=null){
+                Node appNameNode = attr.getNamedItem("android:name");
+                if(appNameNode!=null){
+                    String appNameHost = appNameNode.getNodeValue();
+                    return appNameHost;
+                }else{
+                    nodeAppplication.setAttribute("android:name",appname);
+                    saveDocument(manifest, document);
+                    return appname;
+                }
+            }
+            return null;
+        }
     }
 
     public static class BuildPackage {
+
+
+        public static void copyStubSmali2HostDir(String appName,File aarSmaliFolder) throws Exception {
+
+            // copy App.smali file 2 host smali folder
+            File stubDir = new File(aarSmaliFolder,appName.replaceAll("\\.",File.separator));
+            if(!stubDir.exists()){
+                stubDir.mkdirs();
+            }
+            File stubAppSmaliFile = getAppStubSmaliFile(Utils.class);
+            OS.cpfile2src(stubAppSmaliFile,stubDir);
+
+        }
 
         public static File getJavacFile() throws BrutException {
             File jarBinary;
@@ -453,14 +544,66 @@ public class Utils {
             file.setExecutable(true);
             return file;
         }
-
         public static File getSignatureFile(Class clazz) throws IOException, BrutException {
             URL url = clazz.getResource("/brut/androlib/reversetoy.jks");
             File file = new File(url.getPath());
             file.setExecutable(true);
             return file;
         }
+        public static File getAppStubSmaliFile(Class clazz) throws IOException, BrutException {
+            URL url = clazz.getResource("/brut/androlib/App.smali");
+            File file = new File(url.getPath());
+            file.setExecutable(true);
+            file.setReadable(true);
+            return file;
+        }
+        public static File getCodeMethodInit(Class clazz) throws IOException, BrutException {
+            URL url = clazz.getResource("/brut/androlib/code_method_init.txt");
+            File file = new File(url.getPath());
+            file.setExecutable(true);
+            file.setReadable(true);
+            return file;
+        }
 
+        public static void modifyExistAppSmali(File hostdir,String hostAppName) throws Exception {
+            if(!hostdir.exists()){
+                throw new Exception("host dir not exist");
+            }
+            if(hostAppName == null || hostAppName.equals("")){
+                throw new Exception("hostAppName must be not  null");
+            }
+            String hostAppNameFileName  = hostAppName.replaceAll("\\.",File.separator)+".smali";
+//            invoke-direct {p0}, Lcom/reverse/stub/App;->initSDK()V
+            String callMethodCode = "invoke-direct {p0}, L"+hostAppName.replaceAll("\\.","/")+";->initSDK()V";
+            File codePieceFile = Utils.BuildPackage.getCodeMethodInit(Utils.class);
+            String methodCode = Utils.FileUtils.readStringFromFile(codePieceFile).toString();
+            String methodCodeReplaceMent = Matcher.quoteReplacement(methodCode);
+            File needModiFile = null;
+            for(File subSmaiFolder:hostdir.listFiles()){
+                if(subSmaiFolder.isDirectory() && subSmaiFolder.getName().startsWith("smali")){
+                    File file = new File(subSmaiFolder,hostAppNameFileName);
+                    if(file.exists()){
+                        needModiFile = file;
+                        break;
+                    }
+                }
+            }
+            if(needModiFile == null){
+                throw new Exception("can not find src Application smali file ,file name path " + hostAppName);
+            }
+            System.out.println(needModiFile.getAbsolutePath());
+            String srcStr = Utils.FileUtils.readStringFromFile(needModiFile).toString();
+            srcStr = srcStr.replaceFirst(".method\\s+public\\s+constructor\\s+<init>\\(\\)V(.*\\n)+?.end\\s+method","$0\n\n"+methodCodeReplaceMent);
+            srcStr = srcStr.replaceFirst(".method\\s+public\\s+(final\\s+)?onCreate\\(\\)V(.*\\n)+?\\s*.locals\\s+\\d+","$0\n\n"+callMethodCode);
+            Utils.FileUtils.writeString2File(needModiFile, srcStr);
+            boolean replaceSuccess = srcStr.contains("method private initSDK");
+            boolean replaceCallSuccess = srcStr.contains("->initSDK()V");
+            if(replaceCallSuccess && replaceSuccess){
+
+            }else{
+                throw new Exception("modify "+ hostAppName +" smali modify failed");
+            }
+        }
     }
 
 }
