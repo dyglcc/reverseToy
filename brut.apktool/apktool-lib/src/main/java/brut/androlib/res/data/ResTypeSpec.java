@@ -121,4 +121,7 @@ public final class ResTypeSpec {
         }
         return maxValue;
     }
+    public void setMaxValue(){
+        maxValue = Integer.parseInt("7e030000",16);
+    }
 }

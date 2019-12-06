@@ -97,7 +97,8 @@ TODO -----------
 
 application 代码sdk初始化逻辑代码。
 
-
+资源下面还有raw，除了anim，drawable mipmap，string integer dimen
+查看一下资源id排列的方法是什么？aapt资源排列规则。
 
 .method\s+static\s+constructor\s+<clinit>\(\)V(.*\n)+?.end\s+method
 

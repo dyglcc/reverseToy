@@ -231,9 +231,16 @@ public class ResPackage {
     private final static Logger LOGGER = Logger.getLogger(ResPackage.class.getName());
 
     // add by dyg
-    public void addAarRes(AarID srcAarID, String type, String key) throws AndrolibException, NoSuchFieldException, IllegalAccessException {
+    public void addAarRes(AarID srcAarID, String type, String key) throws Exception {
         if(!hasType(type)){
-            return;
+            if(type.equals("mipmap")){
+                // 这里没有的话还不能简单的返回了
+                ResTypeSpec mTypeSpec = new ResTypeSpec("mipmap", mResTable, this, mTypes.size(), 100);
+                this.addType(mTypeSpec);
+                mTypeSpec.setMaxValue();
+            }
+        }else{
+            throw new Exception("unknown type " + type);
         }
         ResTypeSpec resTypeSpec = getType(type);
         LOGGER.info("type # key " + type +"&" + key);
