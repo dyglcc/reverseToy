@@ -238,9 +238,9 @@ public class ResPackage {
                 ResTypeSpec mTypeSpec = new ResTypeSpec("mipmap", mResTable, this, mTypes.size(), 100);
                 this.addType(mTypeSpec);
                 mTypeSpec.setMaxValue();
+            }else{
+                throw new Exception("append AarID encounter unknown type is " + type);
             }
-        }else{
-            throw new Exception("unknown type " + type);
         }
         ResTypeSpec resTypeSpec = getType(type);
         LOGGER.info("type # key " + type +"&" + key);

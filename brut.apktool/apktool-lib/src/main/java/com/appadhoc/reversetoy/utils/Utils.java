@@ -35,7 +35,7 @@ public class Utils {
         return (Map.Entry<K, V>) tail.get(map);
     }
 
-    public static String getNameRemovedSuffix(String name){
+    public static String getNameRemovedSuffix(String name) {
 
         return name.replaceFirst("\\.[^.]+$", "");
 
@@ -57,14 +57,14 @@ public class Utils {
         }
 
 
-        public static int getMaxIndex(File hostdir){
+        public static int getMaxIndex(File hostdir) {
             int maxIndex = 1;
             for (File file : hostdir.listFiles()) {
                 if (file.getName().contains("smali_classes")) {
                     String index = file.getName().substring(13);
                     if (!index.equals("")) {
                         int intIndex = Integer.parseInt(index);
-                        if(intIndex > maxIndex){
+                        if (intIndex > maxIndex) {
                             maxIndex = intIndex;
                         }
                     }
@@ -219,7 +219,7 @@ public class Utils {
                         Node keynode = attrs.getNamedItem("name");
                         if (keynode != null) {
                             String key = keynode.getNodeValue();
-                            if(type.equals("item")){
+                            if (type.equals("item")) {
                                 nodeFirst.removeChild(node);
                                 LOGGER.info("remove values.xml id key is " + key);
                                 i--;
@@ -237,26 +237,25 @@ public class Utils {
             }
 
 
-
             saveDocument(valuesXml, documentValues);
         }
 
         public static void addIDs2HostIds(Map<String, LinkedHashMap> ids, File aarres) throws Exception {
 
-            File fileIds = new File(aarres,"res/values/ids.xml");
-            if(!fileIds.exists()){
+            File fileIds = new File(aarres, "res/values/ids.xml");
+            if (!fileIds.exists()) {
                 throw new Exception("host dir values/ids.xml not exist");
             }
             Document documentValues = loadDocument(fileIds);
             Node nodeFirst = documentValues.getFirstChild();
-            LinkedHashMap<String,AarID> idMaps = ids.get("id");
-            for(String key:idMaps.keySet()){
+            LinkedHashMap<String, AarID> idMaps = ids.get("id");
+            for (String key : idMaps.keySet()) {
                 Element element = documentValues.createElement("item");
-                element.setAttribute("type","id");
-                element.setAttribute("name",key);
+                element.setAttribute("type", "id");
+                element.setAttribute("name", key);
                 nodeFirst.appendChild(element);
             }
-            saveDocument(fileIds,documentValues);
+            saveDocument(fileIds, documentValues);
         }
 //        public static void removeDuplicateLine(Map<String, LinkedHashMap> ids, File aarres) throws ParserConfigurationException, SAXException, IOException, TransformerException {
 //
@@ -410,11 +409,11 @@ public class Utils {
         public static String getPackageName(File manifest) throws ParserConfigurationException, SAXException, IOException {
             org.w3c.dom.Document document = loadDocument(manifest);
             Node firstNode = document.getFirstChild();
-            if(firstNode!=null){
+            if (firstNode != null) {
                 NamedNodeMap attrs = firstNode.getAttributes();
-                if(attrs!=null){
+                if (attrs != null) {
                     Node packageNode = attrs.getNamedItem("package");
-                    if(packageNode!=null){
+                    if (packageNode != null) {
                         return packageNode.getNodeValue();
                     }
                 }
@@ -424,21 +423,21 @@ public class Utils {
 
         public static String setApplicationName(File hostdir, String appname) throws Exception {
 
-            File manifest = new File(hostdir,"AndroidManifest.xml");
-            if(!manifest.exists()){
+            File manifest = new File(hostdir, "AndroidManifest.xml");
+            if (!manifest.exists()) {
                 throw new Exception("dir manifest xml not exist");
             }
             Document document = XmlUtils.loadDocument(manifest);
 
             Element nodeAppplication = (Element) document.getElementsByTagName("application").item(0);
             NamedNodeMap attr = nodeAppplication.getAttributes();
-            if(attr!=null){
+            if (attr != null) {
                 Node appNameNode = attr.getNamedItem("android:name");
-                if(appNameNode!=null){
+                if (appNameNode != null) {
                     String appNameHost = appNameNode.getNodeValue();
                     return appNameHost;
-                }else{
-                    nodeAppplication.setAttribute("android:name",appname);
+                } else {
+                    nodeAppplication.setAttribute("android:name", appname);
                     saveDocument(manifest, document);
                     return appname;
                 }
@@ -449,18 +448,6 @@ public class Utils {
 
     public static class BuildPackage {
 
-
-        public static void copyStubSmali2HostDir(String appName,File aarSmaliFolder) throws Exception {
-
-            // copy App.smali file 2 host smali folder
-            File stubDir = new File(aarSmaliFolder,appName.replaceAll("\\.",File.separator));
-            if(!stubDir.exists()){
-                stubDir.mkdirs();
-            }
-            File stubAppSmaliFile = getAppStubSmaliFile(Utils.class);
-            OS.cpfile2src(stubAppSmaliFile,stubDir);
-
-        }
 
         public static File getJavacFile() throws BrutException {
             File jarBinary;
@@ -519,91 +506,110 @@ public class Utils {
 
         public static File getAndroidJar(Class clazz) throws IOException, BrutException {
             File file = Jar.getResourceAsFile("/brut/androlib/android.jar", clazz);
-            ;
             file.setExecutable(true);
             return file;
         }
 
         public static File getDxJar(Class clazz) throws IOException, BrutException {
             File file = Jar.getResourceAsFile("/brut/androlib/dx.jar", clazz);
-            ;
             file.setExecutable(true);
             return file;
         }
 
         public static File getBakSmali(Class clazz) throws IOException, BrutException {
             File file = Jar.getResourceAsFile("/brut/androlib/baksmali-2.3.4.jar", clazz);
-            ;
             file.setExecutable(true);
             return file;
         }
 
         public static File getSigner(Class clazz) throws IOException, BrutException {
             File file = Jar.getResourceAsFile("/brut/androlib/apksigner.jar", clazz);
-            ;
             file.setExecutable(true);
             return file;
         }
+
         public static File getSignatureFile(Class clazz) throws IOException, BrutException {
-            URL url = clazz.getResource("/brut/androlib/reversetoy.jks");
-            File file = new File(url.getPath());
-            file.setExecutable(true);
-            return file;
-        }
-        public static File getAppStubSmaliFile(Class clazz) throws IOException, BrutException {
-            URL url = clazz.getResource("/brut/androlib/App.smali");
-            File file = new File(url.getPath());
-            file.setExecutable(true);
-            file.setReadable(true);
-            return file;
-        }
-        public static File getCodeMethodInit(Class clazz) throws IOException, BrutException {
-            URL url = clazz.getResource("/brut/androlib/code_method_init.txt");
-            File file = new File(url.getPath());
-            file.setExecutable(true);
+            File file = Resource.getResourceAsFile("/brut/androlib/reversetoy.jks", clazz);
             file.setReadable(true);
             return file;
         }
 
-        public static void modifyExistAppSmali(File hostdir,String hostAppName) throws Exception {
-            if(!hostdir.exists()){
-                throw new Exception("host dir not exist");
-            }
-            if(hostAppName == null || hostAppName.equals("")){
-                throw new Exception("hostAppName must be not  null");
-            }
-            String hostAppNameFileName  = hostAppName.replaceAll("\\.",File.separator)+".smali";
-//            invoke-direct {p0}, Lcom/reverse/stub/App;->initSDK()V
-            String callMethodCode = "invoke-direct {p0}, L"+hostAppName.replaceAll("\\.","/")+";->initSDK()V";
-            File codePieceFile = Utils.BuildPackage.getCodeMethodInit(Utils.class);
-            String methodCode = Utils.FileUtils.readStringFromFile(codePieceFile).toString();
-            String methodCodeReplaceMent = Matcher.quoteReplacement(methodCode);
-            File needModiFile = null;
-            for(File subSmaiFolder:hostdir.listFiles()){
-                if(subSmaiFolder.isDirectory() && subSmaiFolder.getName().startsWith("smali")){
-                    File file = new File(subSmaiFolder,hostAppNameFileName);
-                    if(file.exists()){
-                        needModiFile = file;
-                        break;
-                    }
-                }
-            }
-            if(needModiFile == null){
-                throw new Exception("can not find src Application smali file ,file name path " + hostAppName);
-            }
-            System.out.println(needModiFile.getAbsolutePath());
-            String srcStr = Utils.FileUtils.readStringFromFile(needModiFile).toString();
-            srcStr = srcStr.replaceFirst(".method\\s+public\\s+constructor\\s+<init>\\(\\)V(.*\\n)+?.end\\s+method","$0\n\n"+methodCodeReplaceMent);
-            srcStr = srcStr.replaceFirst(".method\\s+public\\s+(final\\s+)?onCreate\\(\\)V(.*\\n)+?\\s*.locals\\s+\\d+","$0\n\n"+callMethodCode);
-            Utils.FileUtils.writeString2File(needModiFile, srcStr);
-            boolean replaceSuccess = srcStr.contains("method private initSDK");
-            boolean replaceCallSuccess = srcStr.contains("->initSDK()V");
-            if(replaceCallSuccess && replaceSuccess){
+//        public static File getAppStubSmaliFile(Class clazz, String type) throws IOException, BrutException {
+//            File file = null;
+//            if(type.equals("yaohe")){
+//                file = Resource.getResourceAsFile("/brut/androlib/YaoheApp.smali" + type, clazz);
+//            }else if(type.equals("yiguan")){
+//                file = Resource.getResourceAsFile("/brut/androlib/YiguanApp.smali" + type, clazz);
+//            }
+//            file.setReadable(true);
+//            return file;
+//        }
+//
+//        public static File getCodeMethodInit(Class clazz,String type) throws IOException, BrutException {
+//            File file = null;
+//            if("yaohe".equals(type)){
+//                file = Resource.getResourceAsFile("/brut/androlib/Yaohe-code_method_init.txt", clazz);
+//            }else if("yiguan".equals(type)){
+//                file = Resource.getResourceAsFile("/brut/androlib/Yiguan-code_method_init.txt", clazz);
+//            }
+//            file.setReadable(true);
+//            return file;
+//        }
 
-            }else{
-                throw new Exception("modify "+ hostAppName +" smali modify failed");
-            }
-        }
+//        public static void modifyExistAppSmali(File hostdir, String hostAppName,String sdktype) throws Exception {
+//            if (!hostdir.exists()) {
+//                throw new Exception("host dir not exist");
+//            }
+//            if (hostAppName == null || hostAppName.equals("")) {
+//                throw new Exception("hostAppName must be not  null");
+//            }
+//            String hostAppNameFileName = hostAppName.replaceAll("\\.", File.separator) + ".smali";
+////            invoke-direct {p0}, Lcom/reverse/stub/App;->initSDK()V
+//            String callMethodCode = "invoke-direct {p0}, L" + hostAppName.replaceAll("\\.", "/") + ";->initSDK()V";
+//            File codePieceFile = Utils.BuildPackage.getCodeMethodInit(Utils.class,sdktype);
+//            String methodCode = Utils.FileUtils.readStringFromFile(codePieceFile).toString();
+//            String methodCodeReplaceMent = Matcher.quoteReplacement(methodCode);
+//            File needModiFile = null;
+//            for (File subSmaiFolder : hostdir.listFiles()) {
+//                if (subSmaiFolder.isDirectory() && subSmaiFolder.getName().startsWith("smali")) {
+//                    File file = new File(subSmaiFolder, hostAppNameFileName);
+//                    if (file.exists()) {
+//                        needModiFile = file;
+//                        break;
+//                    }
+//                }
+//            }
+//            if (needModiFile == null) {
+//                throw new Exception("can not find src Application smali file ,file name path " + hostAppName);
+//            }
+//            System.out.println(needModiFile.getAbsolutePath());
+//            String srcStr = Utils.FileUtils.readStringFromFile(needModiFile).toString();
+//            srcStr = srcStr.replaceFirst(".method\\s+public\\s+constructor\\s+<init>\\(\\)V(.*\\n)+?.end\\s+method", "$0\n\n" + methodCodeReplaceMent);
+//            srcStr = srcStr.replaceFirst(".method\\s+public\\s+(final\\s+)?onCreate\\(\\)V(.*\\n)+?\\s*.locals\\s+\\d+", "$0\n\n" + callMethodCode);
+//            Utils.FileUtils.writeString2File(needModiFile, srcStr);
+//            boolean replaceSuccess = srcStr.contains("method private initSDK");
+//            boolean replaceCallSuccess = srcStr.contains("->initSDK()V");
+//            if (replaceCallSuccess && replaceSuccess) {
+//
+//            } else {
+//                throw new Exception("modify " + hostAppName + " smali modify failed");
+//            }
+//        }
     }
 
+    public static class IDUtils {
+        private static int range = 2000;
+
+        public static int getMipmapStartId() {
+            return Integer.parseInt("7fff0000", 16);
+        }
+
+        public static int getDrawableStartId() {
+            return getMipmapStartId() - range;
+        }
+
+        public static int getStringStartId() {
+            return getDrawableStartId() - range;
+        }
+    }
 }

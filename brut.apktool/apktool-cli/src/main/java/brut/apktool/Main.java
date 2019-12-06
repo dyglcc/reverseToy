@@ -23,6 +23,8 @@ import brut.androlib.err.OutDirExistsException;
 import brut.common.BrutException;
 import brut.directory.DirectoryException;
 import brut.util.AaptManager;
+import com.appadhoc.reversetoy.exception.AarFileNotExistException;
+import com.appadhoc.reversetoy.exception.ApkFileNotExistException;
 import org.apache.commons.cli.*;
 import org.xml.sax.SAXException;
 
@@ -82,9 +84,8 @@ public class Main {
                 cmdBuild(commandLine);
                 cmdFound = true;
             }  else if (opt.equalsIgnoreCase("m") || opt.equalsIgnoreCase("merge")) {
-
-
-
+                cmdMerge(commandLine);
+                cmdFound = true;
             }else if (opt.equalsIgnoreCase("if") || opt.equalsIgnoreCase("install-framework")) {
                 cmdInstallFramework(commandLine);
                 cmdFound = true;
@@ -105,6 +106,30 @@ public class Main {
             } else {
                 usage();
             }
+        }
+    }
+
+    private static void cmdMerge(CommandLine cli) {
+        int paraCount = cli.getArgList().size();
+        String aarFileName = cli.getArgList().get(paraCount - 1);
+        String apkFile = cli.getArgList().get(paraCount-2);
+
+        String sdk_type = null;
+        // check for merge options
+        if (cli.hasOption("st") || cli.hasOption("sdk-type")) {
+            sdk_type = cli.getOptionValue("st");
+        }
+        try {
+            com.appadhoc.reversetoy.Main.reverse(new File(apkFile),new File(aarFileName),sdk_type);
+        } catch (ApkFileNotExistException e){
+            System.out.println("APK file not found or can not read");
+            System.exit(1);
+        }catch (AarFileNotExistException e){
+            System.out.println("AAR file not found or can not read");
+            System.exit(1);
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -457,6 +482,13 @@ public class Main {
         Option verboseOption = Option.builder("v")
                 .longOpt("verbose")
                 .build();
+        // aar合并
+
+        Option mergetOption = Option.builder("st")
+                .longOpt("sdk-type")
+                .desc("集成SDK类型，yiguan or yaohe")
+                .argName("tag")
+                .build();
 
         // check for advance mode
         if (isAdvanceMode()) {
@@ -529,6 +561,9 @@ public class Main {
         allOptions.addOption(aapt2Option);
         allOptions.addOption(noCrunchOption);
         allOptions.addOption(onlyMainClassesOption);
+
+        // 合并
+        mergeOptions.addOption(mergetOption);
     }
 
     private static String verbosityHelp() {
@@ -546,7 +581,8 @@ public class Main {
 
         // print out license info prior to formatter.
         System.out.println(
-                "Apktool v" + Androlib.getVersion() + " - a tool for reengineering Android apk files\n" +
+                        "**********增强版的apktool 将apk文件和aar文件合并的并且已签名的apk文件**********\n " +
+                        "Apktool v" + Androlib.getVersion() + " - a tool for reengineering Android apk files\n" +
                         "with smali v" + ApktoolProperties.get("smaliVersion") +
                         " and baksmali v" + ApktoolProperties.get("baksmaliVersion") + "\n" +
                         "Copyright 2014 Ryszard Wiśniewski <brut.alll@gmail.com>\n" +
@@ -562,6 +598,7 @@ public class Main {
         formatter.printHelp("apktool " + verbosityHelp() + "if|install-framework [options] <framework.apk>", frameOptions);
         formatter.printHelp("apktool " + verbosityHelp() + "d[ecode] [options] <file_apk>", DecodeOptions);
         formatter.printHelp("apktool " + verbosityHelp() + "b[uild] [options] <app_path>", BuildOptions);
+        formatter.printHelp("apktool " + verbosityHelp() + "m[erge] <file_apk> <Aar_file>", mergeOptions);
         if (isAdvanceMode()) {
             formatter.printHelp("apktool " + verbosityHelp() + "publicize-resources <file_path>", emptyOptions);
             formatter.printHelp("apktool " + verbosityHelp() + "empty-framework-dir [options]", emptyFrameworkOptions);
@@ -655,6 +692,7 @@ public class Main {
     private final static Options allOptions;
     private final static Options emptyOptions;
     private final static Options emptyFrameworkOptions;
+    private final static Options mergeOptions;
 
     static {
         //normal and advance usage output
@@ -665,5 +703,6 @@ public class Main {
         allOptions = new Options();
         emptyOptions = new Options();
         emptyFrameworkOptions = new Options();
+        mergeOptions = new Options();
     }
 }

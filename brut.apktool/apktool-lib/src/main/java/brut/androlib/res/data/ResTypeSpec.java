@@ -1,18 +1,18 @@
 /**
- *  Copyright (C) 2019 Ryszard Wiśniewski <brut.alll@gmail.com>
- *  Copyright (C) 2019 Connor Tumbleson <connor.tumbleson@gmail.com>
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Copyright (C) 2019 Ryszard Wiśniewski <brut.alll@gmail.com>
+ * Copyright (C) 2019 Connor Tumbleson <connor.tumbleson@gmail.com>
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package brut.androlib.res.data;
 
@@ -35,7 +35,7 @@ public final class ResTypeSpec {
     private static final Logger LOGGER = Logger.getLogger(ResTypeSpec.class.getName());
 
     private final String mName;
-    private int maxValue = -1;
+    private int maxValue;
 
     public Map<String, ResResSpec> getmResSpecs() {
         return mResSpecs;
@@ -110,18 +110,26 @@ public final class ResTypeSpec {
     }
 
     public int getTail() {
-        if(maxValue !=-1){
+        if (maxValue != 0) {
             maxValue++;
             return maxValue;
         }
-        for(ResResSpec resResSpec :mResSpecs.values()){
-            if(resResSpec.getId().id > maxValue){
+        for (ResResSpec resResSpec : mResSpecs.values()) {
+            if (resResSpec.getId().id > maxValue) {
                 maxValue = resResSpec.getId().id;
             }
         }
         return maxValue;
     }
-    public void setMaxValue(){
-        maxValue = Integer.parseInt("7e030000",16);
+
+    public void setMaxValue() {
+        if ("mipmap".equals(getName())) {
+            maxValue = Utils.IDUtils.getMipmapStartId();
+        } else if ("drawable".equals(getName())) {
+            maxValue = Utils.IDUtils.getDrawableStartId();
+        } else if ("string".equals(getName())) {
+            maxValue = Utils.IDUtils.getStringStartId();
+        }
+        // 遇到了再添加
     }
 }

@@ -29,6 +29,9 @@ public class AarManager {
     private File toyWorkspace;
     private File tmpDir;
     private File rFiledir;
+    private String sdkType = "yaohe";
+    private String hostPackageName;
+    private File aarFile;
 
     public static AarManager getInstance() {
         return instance;
@@ -42,10 +45,16 @@ public class AarManager {
         return hostPackageName;
     }
 
-    private String hostPackageName;
+    public String getSdkType() {
+        return sdkType;
+    }
 
-    private File aarFile;
-
+    public void setSdkType(String sdkType) throws Exception {
+        if(sdkType == null || sdkType.equals("")){
+            throw new Exception("-sk 参数输入异常 [yaohe] 或者【yiguan】");
+        }
+        this.sdkType = sdkType;
+    }
 
     private AarManager() {
 
@@ -53,6 +62,7 @@ public class AarManager {
 
     public AarManager init(String aarFile) {
         try {
+            LOGGER.info("##########aarFile  name "+aarFile+"##########");
             setWorkSpace(new File(aarFile).getParentFile().getAbsolutePath());
             setAarFile(aarFile);
         } catch (Exception e) {
