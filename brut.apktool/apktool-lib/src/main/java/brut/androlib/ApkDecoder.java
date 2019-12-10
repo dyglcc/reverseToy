@@ -31,6 +31,7 @@ import brut.androlib.res.xml.ResXmlPatcher;
 import brut.common.BrutException;
 import brut.directory.DirectoryException;
 import brut.util.OS;
+import com.appadhoc.reversetoy.AbstractManager;
 import com.appadhoc.reversetoy.aar.AarManager;
 import com.google.common.base.Strings;
 import org.xml.sax.SAXException;
@@ -82,7 +83,7 @@ public class ApkDecoder {
         mApi = api;
     }
 
-    public void decode(AarManager aarManager) throws Exception {
+    public void decode(AbstractManager aarManager) throws Exception {
         try {
             File outDir = getOutDir();
             AndrolibResources.sKeepBroken = mKeepBrokenResources;

@@ -1,9 +1,11 @@
 package com.appadhoc.reversetoy.utils;
 
+import brut.androlib.AndrolibException;
 import brut.common.BrutException;
 import brut.util.Jar;
 import brut.util.OS;
 import brut.util.OSDetection;
+import com.appadhoc.reversetoy.aar.AarManager;
 import com.appadhoc.reversetoy.data.AarID;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
@@ -21,7 +23,9 @@ import javax.xml.xpath.XPathExpressionException;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -447,6 +451,70 @@ public class Utils {
     }
 
     public static class BuildPackage {
+        private final static Logger LOGGER = Logger.getLogger(BuildPackage.class.getName());
+        public static File all2Smali(File hostdir,File dexFile,Class clazz) throws Exception {
+
+//        File libs = getAarLibDir();
+//        File inputdexfile = new File(libs, "classe000.dex");
+            if (!dexFile.exists()) {
+                throw new Exception("dexfile  not exist");
+            }
+
+            List<String> cmd = new ArrayList<>();
+            File fileJar = Utils.BuildPackage.getBakSmali(clazz);
+            if (hostdir == null || !hostdir.exists()) {
+                throw new Exception("host apk out dir not exist");
+            }
+            int maxIndex = Utils.FileUtils.getMaxIndex(hostdir) + 1;
+            String smaliAarFileNameOutDir = "smali_classes" + maxIndex;
+            File outDir = new File(hostdir, smaliAarFileNameOutDir);
+            if (outDir.exists()) {
+                throw new Exception("cp file to host apk dir wrong ,cause have already exist dir not ");
+            } else {
+                outDir.mkdirs();
+            }
+
+            cmd.add("java");
+            cmd.add("-jar");
+            cmd.add(fileJar.getAbsolutePath());
+            cmd.add("d");
+            cmd.add("-o");
+            cmd.add(outDir.getAbsolutePath());
+            cmd.add(dexFile.getAbsolutePath());
+            try {
+                OS.exec(cmd.toArray(new String[0]));
+                LOGGER.fine("command ran: ");
+                LOGGER.info(cmd.toString());
+            } catch (BrutException ex) {
+                throw new AndrolibException(ex);
+            }
+            return outDir;
+        }
+        public static File dx2dexfiles(File parentDir,Class clazz) throws Exception {
+
+            // tood change 2 getFilename
+//        File libs = getAarLibDir();
+            File dexFile = new File(parentDir, "classe000.dex");
+            if (!parentDir.exists()) {
+                throw new Exception("libs not exist");
+            }
+            List<String> cmd = new ArrayList<>();
+            File fileJar = Utils.BuildPackage.getDxJar(clazz);
+            cmd.add("java");
+            cmd.add("-jar");
+            cmd.add(fileJar.getAbsolutePath());
+            cmd.add("--dex");
+            cmd.add("--output=" + dexFile.getAbsolutePath());
+            cmd.add(parentDir.getAbsolutePath());
+            try {
+                OS.exec(cmd.toArray(new String[0]));
+                LOGGER.fine("command ran: ");
+                LOGGER.info(cmd.toString());
+            } catch (BrutException ex) {
+                throw new AndrolibException(ex);
+            }
+            return dexFile;
+        }
 
 
         public static File getJavacFile() throws BrutException {

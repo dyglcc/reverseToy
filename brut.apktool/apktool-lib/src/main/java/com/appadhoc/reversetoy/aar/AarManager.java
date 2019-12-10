@@ -10,6 +10,7 @@ import brut.directory.DirectoryException;
 import brut.directory.ZipRODirectory;
 import brut.util.AaptManager;
 import brut.util.OS;
+import com.appadhoc.reversetoy.AbstractManager;
 import com.appadhoc.reversetoy.data.AarID;
 import com.appadhoc.reversetoy.utils.Utils;
 import org.xml.sax.SAXException;
@@ -21,21 +22,15 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.Logger;
 
-public class AarManager {
+public class AarManager extends AbstractManager {
     private final static Logger LOGGER = Logger.getLogger(AarManager.class.getName());
-    private static AarManager instance = new AarManager();
     private String aarPackageName;
     private Map<String, LinkedHashMap> ids;
     private File toyWorkspace;
     private File tmpDir;
     private File rFiledir;
-    private String sdkType = "yaohe";
     private String hostPackageName;
     private File aarFile;
-
-    public static AarManager getInstance() {
-        return instance;
-    }
 
     private String getAarFileName() {
         return aarFile == null ? "" : Utils.getNameRemovedSuffix(aarFile.getName());
@@ -45,22 +40,7 @@ public class AarManager {
         return hostPackageName;
     }
 
-    public String getSdkType() {
-        return sdkType;
-    }
-
-    public void setSdkType(String sdkType) throws Exception {
-        if(sdkType == null || sdkType.equals("")){
-            throw new Exception("-sk 参数输入异常 [yaohe] 或者【yiguan】");
-        }
-        this.sdkType = sdkType;
-    }
-
-    private AarManager() {
-
-    }
-
-    public AarManager init(String aarFile) {
+    public AarManager(String aarFile) {
         try {
             LOGGER.info("##########aarFile  name "+aarFile+"##########");
             setWorkSpace(new File(aarFile).getParentFile().getAbsolutePath());
@@ -68,7 +48,6 @@ public class AarManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return this;
     }
 
     private void setAarFile(String aarfile) throws Exception {
@@ -357,6 +336,11 @@ public class AarManager {
         return aarSmaliFile;
     }
 
+    @Override
+    public void setHostDir(File hostDir) throws Exception {
+
+    }
+
     private void copyFiles(File hostdir) throws IOException, BrutException {
         File unzipFile = new File(tmpDir, getAarFileName());
         File valuesFile = new File(unzipFile, "/res/values");
@@ -433,8 +417,9 @@ public class AarManager {
 
     private File smaliClass(File hostdir) throws Exception {
         rClass2jar();
-        dx2dexfiles();
-        return all2Smali(hostdir);
+        File libs = getAarLibDir();
+        File dexFile = Utils.BuildPackage.dx2dexfiles(libs,AarManager.class);
+        return Utils.BuildPackage.all2Smali(hostdir,dexFile,AarManager.class);
         // changeR.smali ids
     }
 
@@ -442,71 +427,6 @@ public class AarManager {
         File aardir = new File(tmpDir, getAarFileName());
         File libs = new File(aardir, "libs");
         return libs;
-    }
-
-    private File all2Smali(File hostdir) throws Exception {
-
-        File libs = getAarLibDir();
-        File inputdexfile = new File(libs, "classe000.dex");
-        if (!libs.exists()) {
-            throw new Exception("dexfile  not exist");
-        }
-
-        List<String> cmd = new ArrayList<>();
-        File fileJar = Utils.BuildPackage.getBakSmali(AarManager.class);
-        if (hostdir == null || !hostdir.exists()) {
-            throw new Exception("host apk out dir not exist");
-        }
-        int maxIndex = Utils.FileUtils.getMaxIndex(hostdir) + 1;
-        String smaliAarFileNameOutDir = "smali_classes" + maxIndex;
-        File outDir = new File(hostdir, smaliAarFileNameOutDir);
-        if (outDir.exists()) {
-            throw new Exception("cp file to host apk dir wrong ,cause have already exist dir not ");
-        } else {
-            outDir.mkdirs();
-        }
-
-        cmd.add("java");
-        cmd.add("-jar");
-        cmd.add(fileJar.getAbsolutePath());
-        cmd.add("d");
-        cmd.add("-o");
-        cmd.add(outDir.getAbsolutePath());
-        cmd.add(inputdexfile.getAbsolutePath());
-        try {
-            OS.exec(cmd.toArray(new String[0]));
-            LOGGER.fine("command ran: ");
-            LOGGER.info(cmd.toString());
-        } catch (BrutException ex) {
-            throw new AndrolibException(ex);
-        }
-        return outDir;
-    }
-
-    private void dx2dexfiles() throws Exception {
-
-        // tood change 2 getFilename
-        File libs = getAarLibDir();
-        File outputfile = new File(libs, "classe000.dex");
-        if (!libs.exists()) {
-            throw new Exception("libs not exist");
-        }
-        List<String> cmd = new ArrayList<>();
-        File fileJar = Utils.BuildPackage.getDxJar(AarManager.class);
-        cmd.add("java");
-        cmd.add("-jar");
-        cmd.add(fileJar.getAbsolutePath());
-        cmd.add("--dex");
-        cmd.add("--output=" + outputfile.getAbsolutePath());
-        cmd.add(libs.getAbsolutePath());
-        try {
-            OS.exec(cmd.toArray(new String[0]));
-            LOGGER.fine("command ran: ");
-            LOGGER.info(cmd.toString());
-        } catch (BrutException ex) {
-            throw new AndrolibException(ex);
-        }
-
     }
 
     private void rClass2jar() throws Exception {
