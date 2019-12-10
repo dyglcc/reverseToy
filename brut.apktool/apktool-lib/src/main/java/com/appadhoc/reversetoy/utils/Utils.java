@@ -374,6 +374,25 @@ public class Utils {
 
         }
 
+        public static void combinWithList(List<String> list, File destFile) throws Exception {
+            // uses-permission
+            org.w3c.dom.Document documentDest = loadDocument(destFile);
+
+            Element manifestNode = (Element) documentDest.getFirstChild();
+            if (list == null) {
+                throw new Exception("添加permission 异常");
+            }
+            for (int i = 0; i < list.size(); i++) {
+                Element nodePermission = documentDest.createElement("uses-permission");
+                nodePermission.setAttribute("android:name", list.get(i));
+                manifestNode.appendChild(nodePermission);
+            }
+
+            saveDocument(destFile, documentDest);
+
+
+        }
+
         private static void addSourceNode(Node manifestNode, String tagName, org.w3c.dom.Document documentSource, org.w3c.dom.Document dest) throws XPathExpressionException {
 
             NodeList nodes = documentSource.getElementsByTagName(tagName);
@@ -452,7 +471,8 @@ public class Utils {
 
     public static class BuildPackage {
         private final static Logger LOGGER = Logger.getLogger(BuildPackage.class.getName());
-        public static File all2Smali(File hostdir,File dexFile,Class clazz) throws Exception {
+
+        public static File all2Smali(File hostdir, File dexFile, Class clazz) throws Exception {
 
 //        File libs = getAarLibDir();
 //        File inputdexfile = new File(libs, "classe000.dex");
@@ -490,7 +510,8 @@ public class Utils {
             }
             return outDir;
         }
-        public static File dx2dexfiles(File parentDir,Class clazz) throws Exception {
+
+        public static File dx2dexfiles(File parentDir, Class clazz) throws Exception {
 
             // tood change 2 getFilename
 //        File libs = getAarLibDir();
@@ -499,10 +520,10 @@ public class Utils {
                 throw new Exception("libs not exist");
             }
             List<String> cmd = new ArrayList<>();
-            File fileJar = Utils.BuildPackage.getDxJar(clazz);
+            File fileJarCmd = Utils.BuildPackage.getDxJar(clazz);
             cmd.add("java");
             cmd.add("-jar");
-            cmd.add(fileJar.getAbsolutePath());
+            cmd.add(fileJarCmd.getAbsolutePath());
             cmd.add("--dex");
             cmd.add("--output=" + dexFile.getAbsolutePath());
             cmd.add(parentDir.getAbsolutePath());
@@ -597,72 +618,11 @@ public class Utils {
         }
 
         public static File getSignatureFile(Class clazz) throws IOException, BrutException {
-            File file = Resource.getResourceAsFile("/brut/androlib/reversetoy.jks", clazz);
+            File file = Jar.getResourceAsFile("/brut/androlib/reversetoy.jks", clazz);
             file.setReadable(true);
             return file;
         }
 
-//        public static File getAppStubSmaliFile(Class clazz, String type) throws IOException, BrutException {
-//            File file = null;
-//            if(type.equals("yaohe")){
-//                file = Resource.getResourceAsFile("/brut/androlib/YaoheApp.smali" + type, clazz);
-//            }else if(type.equals("yiguan")){
-//                file = Resource.getResourceAsFile("/brut/androlib/YiguanApp.smali" + type, clazz);
-//            }
-//            file.setReadable(true);
-//            return file;
-//        }
-//
-//        public static File getCodeMethodInit(Class clazz,String type) throws IOException, BrutException {
-//            File file = null;
-//            if("yaohe".equals(type)){
-//                file = Resource.getResourceAsFile("/brut/androlib/Yaohe-code_method_init.txt", clazz);
-//            }else if("yiguan".equals(type)){
-//                file = Resource.getResourceAsFile("/brut/androlib/Yiguan-code_method_init.txt", clazz);
-//            }
-//            file.setReadable(true);
-//            return file;
-//        }
-
-//        public static void modifyExistAppSmali(File hostdir, String hostAppName,String sdktype) throws Exception {
-//            if (!hostdir.exists()) {
-//                throw new Exception("host dir not exist");
-//            }
-//            if (hostAppName == null || hostAppName.equals("")) {
-//                throw new Exception("hostAppName must be not  null");
-//            }
-//            String hostAppNameFileName = hostAppName.replaceAll("\\.", File.separator) + ".smali";
-////            invoke-direct {p0}, Lcom/reverse/stub/App;->initSDK()V
-//            String callMethodCode = "invoke-direct {p0}, L" + hostAppName.replaceAll("\\.", "/") + ";->initSDK()V";
-//            File codePieceFile = Utils.BuildPackage.getCodeMethodInit(Utils.class,sdktype);
-//            String methodCode = Utils.FileUtils.readStringFromFile(codePieceFile).toString();
-//            String methodCodeReplaceMent = Matcher.quoteReplacement(methodCode);
-//            File needModiFile = null;
-//            for (File subSmaiFolder : hostdir.listFiles()) {
-//                if (subSmaiFolder.isDirectory() && subSmaiFolder.getName().startsWith("smali")) {
-//                    File file = new File(subSmaiFolder, hostAppNameFileName);
-//                    if (file.exists()) {
-//                        needModiFile = file;
-//                        break;
-//                    }
-//                }
-//            }
-//            if (needModiFile == null) {
-//                throw new Exception("can not find src Application smali file ,file name path " + hostAppName);
-//            }
-//            System.out.println(needModiFile.getAbsolutePath());
-//            String srcStr = Utils.FileUtils.readStringFromFile(needModiFile).toString();
-//            srcStr = srcStr.replaceFirst(".method\\s+public\\s+constructor\\s+<init>\\(\\)V(.*\\n)+?.end\\s+method", "$0\n\n" + methodCodeReplaceMent);
-//            srcStr = srcStr.replaceFirst(".method\\s+public\\s+(final\\s+)?onCreate\\(\\)V(.*\\n)+?\\s*.locals\\s+\\d+", "$0\n\n" + callMethodCode);
-//            Utils.FileUtils.writeString2File(needModiFile, srcStr);
-//            boolean replaceSuccess = srcStr.contains("method private initSDK");
-//            boolean replaceCallSuccess = srcStr.contains("->initSDK()V");
-//            if (replaceCallSuccess && replaceSuccess) {
-//
-//            } else {
-//                throw new Exception("modify " + hostAppName + " smali modify failed");
-//            }
-//        }
     }
 
     public static class IDUtils {

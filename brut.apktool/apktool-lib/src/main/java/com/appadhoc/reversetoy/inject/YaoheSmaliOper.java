@@ -30,6 +30,7 @@ public class YaoheSmaliOper extends ISmaliOper {
         File file = null;
         try {
             file = Resource.getResourceAsFile("/brut/androlib/YaoheApp.smali", this.getClass());
+//            file.renameTo(new File("YaoheApp.smali"));
         } catch (BrutException e) {
             e.printStackTrace();
         }

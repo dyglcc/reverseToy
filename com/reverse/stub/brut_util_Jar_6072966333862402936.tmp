@@ -1,3 +1,18 @@
+.class public Lcom/reverse/stub/YaoheApp;
+.super Landroid/app/Application;
+.source "YaoheApp.java"
+
+
+# direct methods
+.method public constructor <init>()V
+    .locals 0
+
+    .line 8
+    invoke-direct {p0}, Landroid/app/Application;-><init>()V
+
+    return-void
+.end method
+
 .method private initSDK()V
     .locals 2
 
@@ -40,5 +55,20 @@
     invoke-static {v0}, Lcom/adhoc/adhocsdk/AdhocTracker;->init(Lcom/adhoc/config/AdhocConfig;)V
 
     .line 23
+    return-void
+.end method
+
+
+# virtual methods
+.method public onCreate()V
+    .locals 0
+
+    .line 11
+    invoke-super {p0}, Landroid/app/Application;->onCreate()V
+
+    .line 12
+    invoke-direct {p0}, Lcom/reverse/stub/App;->initSDK()V
+
+    .line 13
     return-void
 .end method

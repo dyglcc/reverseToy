@@ -1,0 +1,81 @@
+.method private initSDK()V
+    .locals 4
+
+    .line 44
+    const/4 v0, 0x2
+
+    invoke-static {p0, v0}, Lcom/analysys/AnalysysAgent;->setDebugMode(Landroid/content/Context;I)V
+
+    .line 46
+    new-instance v0, Lcom/analysys/AnalysysConfig;
+
+    invoke-direct {v0}, Lcom/analysys/AnalysysConfig;-><init>()V
+
+    .line 48
+    .local v0, "config":Lcom/analysys/AnalysysConfig;
+    const-string v1, "2709692586aa3e42"
+
+    invoke-virtual {v0, v1}, Lcom/analysys/AnalysysConfig;->setAppKey(Ljava/lang/String;)V
+
+    .line 50
+    const-string v1, "AnalsysyDemo"
+
+    invoke-virtual {v0, v1}, Lcom/analysys/AnalysysConfig;->setChannel(Ljava/lang/String;)V
+
+    .line 52
+    const/4 v1, 0x1
+
+    invoke-virtual {v0, v1}, Lcom/analysys/AnalysysConfig;->setAutoProfile(Z)V
+
+    .line 54
+    sget-object v2, Lcom/analysys/EncryptEnum;->AES:Lcom/analysys/EncryptEnum;
+
+    invoke-virtual {v0, v2}, Lcom/analysys/AnalysysConfig;->setEncryptType(Lcom/analysys/EncryptEnum;)V
+
+    .line 56
+    invoke-virtual {v0, v1}, Lcom/analysys/AnalysysConfig;->setAllowTimeCheck(Z)V
+
+    .line 58
+    const-wide/16 v2, 0x12c
+
+    invoke-virtual {v0, v2, v3}, Lcom/analysys/AnalysysConfig;->setMaxDiffTimeInterval(J)V
+
+    .line 60
+    invoke-virtual {v0, v1}, Lcom/analysys/AnalysysConfig;->setAutoInstallation(Z)V
+
+    .line 62
+    const/4 v2, 0x0
+
+    invoke-virtual {v0, v2}, Lcom/analysys/AnalysysConfig;->setAutoHeatMap(Z)V
+
+    .line 64
+    invoke-virtual {v0, v1}, Lcom/analysys/AnalysysConfig;->setAutoTrackPageView(Z)V
+
+    .line 66
+    invoke-virtual {v0, v2}, Lcom/analysys/AnalysysConfig;->setAutoTrackFragmentPageView(Z)V
+
+    .line 68
+    invoke-virtual {v0, v2}, Lcom/analysys/AnalysysConfig;->setAutoTrackClick(Z)V
+
+    .line 70
+    invoke-virtual {v0, v1}, Lcom/analysys/AnalysysConfig;->setEnableException(Z)V
+
+    .line 72
+    invoke-static {p0, v0}, Lcom/analysys/AnalysysAgent;->init(Landroid/content/Context;Lcom/analysys/AnalysysConfig;)V
+
+    .line 74
+    const-string v1, "https://arkpaastest.analysys.cn:4089"
+
+    invoke-static {p0, v1}, Lcom/analysys/AnalysysAgent;->setUploadURL(Landroid/content/Context;Ljava/lang/String;)V
+
+    .line 76
+    const-string v2, "wss://arkpaastest.analysys.cn:4091"
+
+    invoke-static {p0, v2}, Lcom/analysys/AnalysysAgent;->setVisitorDebugURL(Landroid/content/Context;Ljava/lang/String;)V
+
+    .line 78
+    invoke-static {p0, v1}, Lcom/analysys/AnalysysAgent;->setVisitorConfigURL(Landroid/content/Context;Ljava/lang/String;)V
+
+    .line 79
+    return-void
+.end method

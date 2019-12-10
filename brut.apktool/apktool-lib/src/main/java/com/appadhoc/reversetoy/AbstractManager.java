@@ -22,7 +22,7 @@ public abstract class AbstractManager {
 
     public void setSdkType(String sdkType) throws Exception {
         if(sdkType == null || sdkType.equals("")){
-            throw new Exception("-sk 参数输入异常 [yaohe] 或者【yiguan】");
+            throw new Exception("-sk 参数输入异常 [yaohe] 或者【eguan】");
         }
         this.sdkType = sdkType;
     }

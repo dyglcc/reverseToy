@@ -486,7 +486,7 @@ public class Main {
 
         Option mergetOption = Option.builder("st")
                 .longOpt("sdk-type")
-                .desc("集成SDK类型，yiguan or yaohe")
+                .desc("集成SDK类型，eguan or yaohe")
                 .argName("tag")
                 .build();
 

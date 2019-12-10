@@ -6,17 +6,17 @@ import com.appadhoc.reversetoy.utils.Utils;
 
 import java.io.File;
 
-public class YiguanSmaliOper extends ISmaliOper {
-    private static final String appNameStub_yiguan = "com.reverse.stub.YiguanApp";
+public class EguanSmaliOper extends ISmaliOper {
+    private static final String appNameStub_Eguan = "com.reverse.stub.EguanApp";
 
-    YiguanSmaliOper(String sdktype) {
+    EguanSmaliOper(String sdktype) {
         super(sdktype);
     }
 
     @Override
     public void addOrModifyApplicationSmali(File hostDir, File aarSmaliFolder) throws Exception {
-        String appName = Utils.XmlUtils.setApplicationName(hostDir, appNameStub_yiguan);
-        if (appName.equals(appNameStub_yiguan)) {
+        String appName = Utils.XmlUtils.setApplicationName(hostDir, appNameStub_Eguan);
+        if (appName.equals(appNameStub_Eguan)) {
             copyStubSmali2HostDir(stubDir, aarSmaliFolder);
         } else {
             modifyExistAppSmali(hostDir, appName);
@@ -27,7 +27,7 @@ public class YiguanSmaliOper extends ISmaliOper {
     public File getAppStubSmaliFile() {
         File file = null;
         try {
-            file = Resource.getResourceAsFile("/brut/androlib/YiguanApp.smali", getClass());
+            file = Resource.getResourceAsFile("/brut/androlib/EguanApp.smali", getClass());
         } catch (BrutException e) {
             e.printStackTrace();
         }
@@ -39,7 +39,7 @@ public class YiguanSmaliOper extends ISmaliOper {
     public File getCodeMethodInit() {
         File file = null;
         try {
-            file = Resource.getResourceAsFile("/brut/androlib/Yiguan-code_method_init.txt", getClass());
+            file = Resource.getResourceAsFile("/brut/androlib/Eguan-code_method_init.txt", getClass());
         } catch (BrutException e) {
             e.printStackTrace();
         }

@@ -81,6 +81,7 @@ public class OS {
             }
         }
     }
+
     public static void cpfile2src(File srcfile, File dest) throws Exception {
 
         if (srcfile == null || !srcfile.exists() || srcfile.isDirectory()) {
@@ -93,7 +94,33 @@ public class OS {
 
         File destFile = new File(dest.getPath() + File.separatorChar
                 + srcfile.getName());
-        if(destFile.exists()){
+        if (destFile.exists()) {
+            destFile.delete();
+        }
+        try {
+            InputStream in = new FileInputStream(srcfile);
+            OutputStream out = new FileOutputStream(destFile);
+            IOUtils.copy(in, out);
+            in.close();
+            out.close();
+        } catch (IOException ex) {
+            throw new BrutException("Could not copy file: " + srcfile, ex);
+        }
+    }
+
+    public static void cpfile2src(File srcfile, File dest, String fileName) throws Exception {
+
+        if (srcfile == null || !srcfile.exists() || srcfile.isDirectory()) {
+            throw new Exception("src file must be a file");
+        }
+
+        if (dest == null || !dest.exists() || !dest.isDirectory()) {
+            throw new Exception("destSrc must be a directory");
+        }
+
+        File destFile = new File(dest.getPath() + File.separatorChar
+                + fileName == null ? srcfile.getName() : fileName);
+        if (destFile.exists()) {
             destFile.delete();
         }
         try {

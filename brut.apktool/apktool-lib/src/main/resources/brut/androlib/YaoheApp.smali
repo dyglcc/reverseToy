@@ -1,6 +1,6 @@
-.class public Lcom/reverse/stub/App;
+.class public Lcom/reverse/stub/YaoheApp;
 .super Landroid/app/Application;
-.source "App.java"
+.source "YaoheApp.java"
 
 
 # direct methods
