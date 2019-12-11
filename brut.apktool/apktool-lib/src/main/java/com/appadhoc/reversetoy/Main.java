@@ -65,10 +65,10 @@ public class Main {
     }
     public static void reverse(File apkfile,File aar,String sdktype,String appkey) throws Exception{
         if(!apkfile.exists()){
-            throw new ApkFileNotExistException("");
+            throw new ApkFileNotExistException("apk file not exist or can not read");
         }
         if(!aar.exists()){
-            throw new AarFileNotExistException("");
+            throw new AarFileNotExistException("aar/jar file not exist or can not read");
         }
         //-----------decoder setting--------------
         ApkDecoder decoder = new ApkDecoder();

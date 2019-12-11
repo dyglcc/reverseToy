@@ -110,11 +110,11 @@ public class Main {
         }
     }
 
+    private static Logger logger = Logger.getLogger("cliMain");
     private static void cmdMerge(CommandLine cli) {
         int paraCount = cli.getArgList().size();
         String aarFileName = cli.getArgList().get(paraCount - 1);
         String apkFile = cli.getArgList().get(paraCount-2);
-
         String sdk_type = null;
         String appkey = null;
         // check for merge options
@@ -132,8 +132,7 @@ public class Main {
         }catch (AarFileNotExistException e){
             System.out.println("AAR file not found or can not read");
             System.exit(1);
-        }
-        catch (Exception e) {
+        }catch (Exception e) {
             e.printStackTrace();
         }
     }
