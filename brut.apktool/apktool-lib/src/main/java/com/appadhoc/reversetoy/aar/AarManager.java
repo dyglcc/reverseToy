@@ -42,7 +42,7 @@ public class AarManager extends AbstractManager {
 
     public AarManager(String aarFile) {
         try {
-            LOGGER.info("##########aarFile  name "+aarFile+"##########");
+            LOGGER.fine("##########aarFile  name "+aarFile+"##########");
             setWorkSpace(new File(aarFile).getParentFile().getAbsolutePath());
             setAarFile(aarFile);
         } catch (Exception e) {
@@ -108,9 +108,7 @@ public class AarManager extends AbstractManager {
 
         File manifest = getAarManifest();
 
-
         StringBuilder builder = Utils.FileUtils.readStringFromFile(manifest);
-
 
         String result = builder.toString().replaceAll("\\$\\{applicationId\\}", getHostPackageName());
 
@@ -183,8 +181,6 @@ public class AarManager extends AbstractManager {
         } catch (XPathExpressionException e) {
             e.printStackTrace();
         }
-
-
     }
 
     private File getRjavaFile() throws Exception {
@@ -211,31 +207,15 @@ public class AarManager extends AbstractManager {
         cmd.add(aaptCommand);
 
         cmd.add(rfile.getAbsolutePath());
-        try {
-            OS.exec(cmd.toArray(new String[0]));
-            LOGGER.fine("command ran: ");
-            LOGGER.info(cmd.toString());
-        } catch (BrutException ex) {
-            throw new AndrolibException(ex);
-        }
+        Utils.OSCMD.runCMD(cmd);
 
     }
 
-//    private String getRfileName() throws DirectoryException {
-//        Directory directory = new FileDirectory(getRFileDir());
-//        for (String file : directory.getFiles(true)) {
-//            if (file.contains("R.java")) {
-//                return file;
-//            }
-//        }
-//        return null;
-//    }
-
     private void unzipAarFile()
             throws AndrolibException {
-        LOGGER.info("Copying assets and libs...");
+        LOGGER.fine("Copying assets and libs...");
         if (toyWorkspace == null) {
-            LOGGER.info("please set workspace");
+            LOGGER.fine("please set workspace");
             return;
         }
         try {
@@ -319,14 +299,7 @@ public class AarManager extends AbstractManager {
         cmd.add("-M");
 
         cmd.add(getAarManifest().getAbsolutePath());
-
-        try {
-            OS.exec(cmd.toArray(new String[0]));
-            LOGGER.fine("command ran: ");
-            LOGGER.info(cmd.toString());
-        } catch (BrutException ex) {
-            throw new AndrolibException(ex);
-        }
+        Utils.OSCMD.runCMD(cmd);
     }
 
     public File smaliClassFilesAndModifyids(File hostdir) throws Exception {
@@ -420,7 +393,7 @@ public class AarManager extends AbstractManager {
         File libs = getAarLibDir();
         File dexFile = Utils.BuildPackage.dx2dexfiles(libs,AarManager.class);
         return Utils.BuildPackage.all2Smali(hostdir,dexFile,AarManager.class);
-        // changeR.smali ids
+        // change R.smali ids
     }
 
     private File getAarLibDir() {
@@ -449,13 +422,7 @@ public class AarManager extends AbstractManager {
 //        cmd.add(file.getAbsolutePath());
         cmd.add(rfiledir.getAbsolutePath());
         cmd.add(".");
-        try {
-            OS.exec(cmd.toArray(new String[0]));
-            LOGGER.fine("command ran: ");
-            LOGGER.info(cmd.toString());
-        } catch (BrutException ex) {
-            throw new AndrolibException(ex);
-        }
+        Utils.OSCMD.runCMD(cmd);
         // copy rClasses.jar 2 libs
         rclassJar.setExecutable(true);
         if (!rclassJar.exists()) {
@@ -465,6 +432,11 @@ public class AarManager extends AbstractManager {
         File libs = getAarLibDir();
         OS.cpfile2src(rclassJar, libs);
 
+    }
+
+    public void addIDs2HostFile(File apkOutFile) throws Exception {
+
+        Utils.XmlUtils.addIDs2HostIds(ids,apkOutFile);
     }
 
     public static void main(String[] args) throws Exception {
@@ -542,11 +514,6 @@ public class AarManager extends AbstractManager {
             e.printStackTrace();
         }
 
-
     }
 
-    public void addIDs2HostFile(File apkOutFile) throws Exception {
-
-        Utils.XmlUtils.addIDs2HostIds(ids,apkOutFile);
-    }
 }

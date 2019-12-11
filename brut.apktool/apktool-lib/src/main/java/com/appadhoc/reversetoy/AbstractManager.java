@@ -1,14 +1,20 @@
 package com.appadhoc.reversetoy;
 
 import brut.androlib.res.data.ResTable;
+import brut.common.BrutException;
+import com.appadhoc.reversetoy.inject.YaoheSmaliOper;
 
 import java.io.File;
 
 public abstract class AbstractManager {
-    private String sdkType = "yaohe";
+    public static final String TYPE_Eguan = "eguan";
+    public static final String TYPE_Yaohe = "yaohe";
+
+    protected String sdkType = TYPE_Eguan;
+    private String appkey = null;
     public abstract  void setHostPackageName(String packageNmae);
 
-    public abstract  void preCombin(File outputdir);
+    public abstract  void preCombin(File outputdir) throws BrutException;
 
     public abstract  void addAarids2ResTable(ResTable resTable) throws Exception;
 
@@ -19,12 +25,21 @@ public abstract class AbstractManager {
     public String getSdkType() {
         return sdkType;
     }
-
     public void setSdkType(String sdkType) throws Exception {
-        if(sdkType == null || sdkType.equals("")){
-            throw new Exception("-sk 参数输入异常 [yaohe] 或者【eguan】");
+        if(sdkType != null ){
+            if(!(sdkType.equals(TYPE_Eguan) || sdkType.equals(TYPE_Yaohe))){
+                throw new Exception("-t 参数输入异常 【"+TYPE_Eguan+"】或者["+TYPE_Yaohe+"] ");
+            }
         }
         this.sdkType = sdkType;
     }
 
+    public void setAppkey(String appkey) throws Exception {
+        if(appkey != null){
+            if(appkey.trim().equals("")){
+                throw new Exception("appkey is null");
+            }
+        }
+        this.appkey = appkey;
+    }
 }

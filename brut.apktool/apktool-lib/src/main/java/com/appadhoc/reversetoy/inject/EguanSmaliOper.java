@@ -5,45 +5,49 @@ import com.appadhoc.reversetoy.utils.Resource;
 import com.appadhoc.reversetoy.utils.Utils;
 
 import java.io.File;
+import java.io.InputStream;
 
 public class EguanSmaliOper extends ISmaliOper {
     private static final String appNameStub_Eguan = "com.reverse.stub.EguanApp";
+    private String smaliAppName = "EguanApp.smali";
 
     EguanSmaliOper(String sdktype) {
         super(sdktype);
     }
-
     @Override
     public void addOrModifyApplicationSmali(File hostDir, File aarSmaliFolder) throws Exception {
         String appName = Utils.XmlUtils.setApplicationName(hostDir, appNameStub_Eguan);
         if (appName.equals(appNameStub_Eguan)) {
-            copyStubSmali2HostDir(stubDir, aarSmaliFolder);
+            super.copyStubSmali2HostDir(stubDir, aarSmaliFolder);
         } else {
-            modifyExistAppSmali(hostDir, appName);
+            super.modifyExistAppSmali(hostDir, appName);
         }
     }
 
     @Override
-    public File getAppStubSmaliFile() {
-        File file = null;
+    public InputStream getAppStubSmaliFile() {
+        InputStream inputStream  = null;
         try {
-            file = Resource.getResourceAsFile("/brut/androlib/EguanApp.smali", getClass());
+            inputStream = Resource.getResourceAsStream("/brut/androlib/EguanApp.smali", getClass());
         } catch (BrutException e) {
             e.printStackTrace();
         }
-        file.setReadable(true);
-        return file;
+        return inputStream;
     }
 
     @Override
-    public File getCodeMethodInit() {
-        File file = null;
+    public InputStream getCodeMethodInit() {
+        InputStream inputStream  = null;
         try {
-            file = Resource.getResourceAsFile("/brut/androlib/Eguan-code_method_init.txt", getClass());
+            inputStream = Resource.getResourceAsStream("/brut/androlib/Eguan-code_method_init.txt", getClass());
         } catch (BrutException e) {
             e.printStackTrace();
         }
-        file.setReadable(true);
-        return file;
+        return inputStream;
+    }
+
+    @Override
+    public String getSmaliApplicationName() {
+        return smaliAppName;
     }
 }

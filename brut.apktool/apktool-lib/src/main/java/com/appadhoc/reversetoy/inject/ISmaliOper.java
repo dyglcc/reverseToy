@@ -1,18 +1,38 @@
 package com.appadhoc.reversetoy.inject;
 
-import brut.util.OS;
 import com.appadhoc.reversetoy.utils.Utils;
 
 import java.io.File;
+import java.io.InputStream;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
 public abstract class ISmaliOper {
+    private final static Logger LOGGER = Logger.getLogger(ISmaliOper.class.getName());
     String stubDir = "com.reverse.stub";
     String sdktype;
 
+    public String getAppkey() {
+        return appkey;
+    }
+
+    public void setAppkey(String appkey) {
+        if (appkey != null) {
+            appkey = appkey.trim();
+            if (!appkey.equals("")) {
+                this.appkey = appkey;
+            }
+        }
+    }
+
+    String appkey;
+
     public abstract void addOrModifyApplicationSmali(File hostDir, File aarSmaliFolder) throws Exception;
-    public abstract File getAppStubSmaliFile();
-    public abstract File getCodeMethodInit();
+
+    public abstract InputStream getAppStubSmaliFile();
+
+    public abstract InputStream getCodeMethodInit();
+    public abstract String getSmaliApplicationName();
 
     ISmaliOper(String sdktype) {
         this.sdktype = sdktype;
@@ -28,9 +48,14 @@ public abstract class ISmaliOper {
         String hostAppNameFileName = hostAppName.replaceAll("\\.", File.separator) + ".smali";
 //            invoke-direct {p0}, Lcom/reverse/stub/App;->initSDK()V
         String callMethodCode = "invoke-direct {p0}, L" + hostAppName.replaceAll("\\.", "/") + ";->initSDK()V";
-        File codePieceFile = getCodeMethodInit();
-        String methodCode = Utils.FileUtils.readStringFromFile(codePieceFile).toString();
+        InputStream codePieceFileIputSream = getCodeMethodInit();
+
+        String methodCode = Utils.FileUtils.readStringFromStream(codePieceFileIputSream).toString();
+
         String methodCodeReplaceMent = Matcher.quoteReplacement(methodCode);
+        if (appkey != null && !appkey.equals("")) {
+//            todo  change appkey
+        }
         File needModiFile = null;
         for (File subSmaiFolder : hostdir.listFiles()) {
             if (subSmaiFolder.isDirectory() && subSmaiFolder.getName().startsWith("smali")) {
@@ -65,7 +90,13 @@ public abstract class ISmaliOper {
         if (!stubDir.exists()) {
             stubDir.mkdirs();
         }
-        File stubAppSmaliFile = getAppStubSmaliFile();
-        OS.cpfile2src(stubAppSmaliFile, stubDir);
+        InputStream stubAppSmaliFile = getAppStubSmaliFile();
+        String code = Utils.FileUtils.readStringFromStream(stubAppSmaliFile).toString();
+
+        if (appkey != null && !appkey.equals("")) {
+            LOGGER.info("change appkey");
+        }
+        File saveApplicationFile = new File(stubDir,getSmaliApplicationName());
+        Utils.FileUtils.writeString2File(saveApplicationFile, code);
     }
 }

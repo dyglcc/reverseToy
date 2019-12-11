@@ -17,7 +17,6 @@ aapt生成R.java文件。因为aar文件中没有R.java文件需要生成放在a
 把R.java编译生成class文件，ok
 把R.class放在aar包 包路径下面ok
 
-
 拆开包，读取AndroidManifest.xml文件，获取包名 （aar包需要）ok
 合并public.xml,将R.java的资源追加到public.id后面，如果需要的话，还需要处理values下面的其它文件
 遍历aar文件合并资源文件，anim,图片.字符串.so，assets 纯copy
@@ -62,23 +61,14 @@ package hash map key 为packagename
 AndrolibResources 的loadMainPkg 加载到所有的ids,可以在这里处理添加aar的ids
 
 mResSpecs 是一个map里面所有可以操作的id、string ，map等。都在里面。
-
-
 0x1 开始的是系统的id
 0x7f开头的是mainpackage的。
-
-
-
-
 xml 操作文件帖子 https://blog.csdn.net/DXZCZH/article/details/51783573
-
 必须完成的模块
-
 1.(1)aar中的将aar文件manifest替换的模块，解压放在tmp文件夹中.ok
 1.解压宿主apk文件，回头处理aar文件，替换aar manifest文件ok
 1.生成aar的R。java文件,使用aapt todo ...
 1.合并宿主manifest和aar manifest，待用 ok
-
 2.id合并模块，ok
 3.必须解压并生成到到一个文件夹下面，然后ok
 3.smali生成模块。ok
@@ -88,19 +78,12 @@ xml 操作文件帖子 https://blog.csdn.net/DXZCZH/article/details/51783573
 4.拷贝res jni，资源到宿主文件夹，smali文件夹生成，ok
 5.合并生成未签名apk ok
 6.签名 ok
-
 TODO -----------
-
 生成smali文件生成apktool能够文件夹，并且拷贝到对应的位置。 ok
-
 application 代码sdk初始化逻辑代码。
-
 资源下面还有raw，除了anim，drawable mipmap，string integer dimen
 查看一下资源id排列的方法是什么？aapt资源排列规则。
-
 .method\s+static\s+constructor\s+<clinit>\(\)V(.*\n)+?.end\s+method
-
-
 jar包合并
 1.创建当前工作目录，把文件javac成class，class dex 到samli，在host包下面创建smali文件夹，完成。
 2.重新打包文件成为apk。

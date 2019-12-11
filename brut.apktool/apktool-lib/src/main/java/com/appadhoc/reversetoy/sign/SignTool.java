@@ -1,8 +1,5 @@
 package com.appadhoc.reversetoy.sign;
 
-import brut.androlib.AndrolibException;
-import brut.common.BrutException;
-import brut.util.OS;
 import com.appadhoc.reversetoy.utils.Utils;
 
 import java.io.File;
@@ -54,14 +51,14 @@ public class SignTool {
         cmd.add(apk.getAbsolutePath());
         cmd.add(file.getAbsolutePath());
 
-
-        try {
-            OS.exec(cmd.toArray(new String[0]));
-            LOGGER.fine("command ran: ");
-            LOGGER.info(cmd.toString());
-        } catch (BrutException ex) {
-            throw new AndrolibException(ex);
-        }
+        Utils.OSCMD.runCMD(cmd);
+//        try {
+//            OS.exec(cmd.toArray(new String[0]));
+//            LOGGER.fine("command ran: ");
+//            LOGGER.info(cmd.toString());
+//        } catch (BrutException ex) {
+//            throw new AndrolibException(ex);
+//        }
 //        File newSignfile = new File("signed---.apk");
         LOGGER.info("##########签名APK完成##################");
         LOGGER.info("##########文件地址："+apk.getAbsolutePath()+"##################");

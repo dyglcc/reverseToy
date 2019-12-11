@@ -5,10 +5,11 @@ import com.appadhoc.reversetoy.utils.Resource;
 import com.appadhoc.reversetoy.utils.Utils;
 
 import java.io.File;
+import java.io.InputStream;
 
 public class YaoheSmaliOper extends ISmaliOper {
     private static final String appNameStub_yaohe = "com.reverse.stub.YaoheApp";
-
+    private String smaliAppName = "YaoheApp.smali";
     YaoheSmaliOper(String sdktype) {
         super(sdktype);
     }
@@ -19,36 +20,36 @@ public class YaoheSmaliOper extends ISmaliOper {
 
         if (appName.equals(appNameStub_yaohe)) {
 
-            copyStubSmali2HostDir(stubDir, aarSmaliFolder);
+            super.copyStubSmali2HostDir(stubDir, aarSmaliFolder);
         } else {
-            modifyExistAppSmali(hostDir, appName);
+            super.modifyExistAppSmali(hostDir, appName);
         }
     }
 
     @Override
-    public File getAppStubSmaliFile() {
-        File file = null;
+    public InputStream getAppStubSmaliFile() {
+        InputStream inputstream = null;
         try {
-            file = Resource.getResourceAsFile("/brut/androlib/YaoheApp.smali", this.getClass());
-//            file.renameTo(new File("YaoheApp.smali"));
+            inputstream = Resource.getResourceAsStream("/brut/androlib/YaoheApp.smali", this.getClass());
         } catch (BrutException e) {
             e.printStackTrace();
         }
-        file.setReadable(true);
-        return file;
-
+        return inputstream;
+    }
+    @Override
+    public InputStream getCodeMethodInit() {
+        InputStream inputstream = null;
+        try {
+            inputstream = Resource.getResourceAsStream("/brut/androlib/Yaohe-code_method_init.txt", getClass());
+        } catch (BrutException e) {
+            e.printStackTrace();
+        }
+        return inputstream;
     }
 
     @Override
-    public File getCodeMethodInit() {
-        File file = null;
-        try {
-            file = Resource.getResourceAsFile("/brut/androlib/Yaohe-code_method_init.txt", getClass());
-        } catch (BrutException e) {
-            e.printStackTrace();
-        }
-        file.setReadable(true);
-        return file;
+    public String getSmaliApplicationName() {
+        return smaliAppName;
     }
 
 }

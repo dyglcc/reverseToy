@@ -32,6 +32,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 import java.util.logging.*;
 
 /**
@@ -115,12 +116,16 @@ public class Main {
         String apkFile = cli.getArgList().get(paraCount-2);
 
         String sdk_type = null;
+        String appkey = null;
         // check for merge options
-        if (cli.hasOption("st") || cli.hasOption("sdk-type")) {
-            sdk_type = cli.getOptionValue("st");
+        if (cli.hasOption("t") || cli.hasOption("sdk-type")) {
+            sdk_type = cli.getOptionValue("t");
+        }
+        if (cli.hasOption("k") || cli.hasOption("appkey")) {
+            appkey = cli.getOptionValue("k");
         }
         try {
-            com.appadhoc.reversetoy.Main.reverse(new File(apkFile),new File(aarFileName),sdk_type);
+            com.appadhoc.reversetoy.Main.reverse(new File(apkFile),new File(aarFileName),sdk_type,appkey);
         } catch (ApkFileNotExistException e){
             System.out.println("APK file not found or can not read");
             System.exit(1);
@@ -484,9 +489,14 @@ public class Main {
                 .build();
         // aar合并
 
-        Option mergetOption = Option.builder("st")
+        Option mergetOption = Option.builder("t")
                 .longOpt("sdk-type")
-                .desc("集成SDK类型，eguan or yaohe")
+                .desc("集成SDK类型，eguan or yaohe 默认添加 eguan")
+                .argName("tag")
+                .build();
+        Option mergeAppkeyOption = Option.builder("k")
+                .longOpt("appkey")
+                .desc("更换appkey")
                 .argName("tag")
                 .build();
 
@@ -564,6 +574,7 @@ public class Main {
 
         // 合并
         mergeOptions.addOption(mergetOption);
+        mergeOptions.addOption(mergeAppkeyOption);
     }
 
     private static String verbosityHelp() {
@@ -598,7 +609,8 @@ public class Main {
         formatter.printHelp("apktool " + verbosityHelp() + "if|install-framework [options] <framework.apk>", frameOptions);
         formatter.printHelp("apktool " + verbosityHelp() + "d[ecode] [options] <file_apk>", DecodeOptions);
         formatter.printHelp("apktool " + verbosityHelp() + "b[uild] [options] <app_path>", BuildOptions);
-        formatter.printHelp("apktool " + verbosityHelp() + "m[erge] <file_apk> <Aar_file>", mergeOptions);
+        formatter.printHelp("apktool " + verbosityHelp() + "m[erge] [options] <file_apk> <[AAR]_file>", mergeOptions);
+        formatter.printHelp("apktool " + verbosityHelp() + "m[erge] [options] <file_apk> <[LIB]_dir>", mergeOptions);
         if (isAdvanceMode()) {
             formatter.printHelp("apktool " + verbosityHelp() + "publicize-resources <file_path>", emptyOptions);
             formatter.printHelp("apktool " + verbosityHelp() + "empty-framework-dir [options]", emptyFrameworkOptions);

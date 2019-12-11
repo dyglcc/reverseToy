@@ -4,6 +4,7 @@ import brut.androlib.Androlib;
 import brut.androlib.ApkDecoder;
 import brut.androlib.ApkOptions;
 import brut.common.BrutException;
+import com.appadhoc.reversetoy.exception.AarFileNotExistException;
 import com.appadhoc.reversetoy.exception.ApkFileNotExistException;
 import com.appadhoc.reversetoy.inject.ISmaliOper;
 import com.appadhoc.reversetoy.inject.InjectManager;
@@ -18,19 +19,20 @@ public class Main {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
     public static void main(String[] args) throws BrutException, IOException {
         try {
-            test_reverse("jar");
+            test_reverse("jar","app-keyaasdf");
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public static void test_reverse(String jar) throws Exception {
+    public static void test_reverse(String jar,String appkey) throws Exception {
 
         ApkDecoder decoder = new ApkDecoder();
         decoder.setForceDelete(true);
         ApkOptions options = new ApkOptions();
         options.verbose = true;
 //        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/myapplication-debug----abc.apk");
-        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
+        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/app-debug-coolshop.apk");
+//        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
 //        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/myapplication-debug.apk");
         File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
         decoder.setApkFile(file);
@@ -41,7 +43,7 @@ public class Main {
         }else{
             manager = ManagerFactory.getIToyManager("/Users/jiaozhengxiang/Desktop/aar-1/abtest-release.aar");
         }
-        manager.setSdkType("eguan");
+//        manager.setSdkType("eguan");
         decoder.decode(manager);
         manager.setHostDir(apkOutFile);
         logger.info("##########解压apk文件[完成]##########");
@@ -50,6 +52,7 @@ public class Main {
         File smaliFile = manager.smaliClassFilesAndModifyids(apkOutFile);
         logger.info("##########重新编排ID并拷贝文件到宿主文件夹[完成]##########");
         ISmaliOper oper = InjectManager.createOper(manager.getSdkType());
+        oper.setAppkey(appkey);
         oper.addOrModifyApplicationSmali(apkOutFile,smaliFile);
         logger.info("##########添加或者修改Application smali代码[完成]##########");
         File unsignfile = buildApk(apkOutFile);
@@ -60,12 +63,12 @@ public class Main {
         logger.info("##########"+signFile.getAbsolutePath()+"##########");
         logger.info("########################################################");
     }
-    public static void reverse(File apkfile,File aar,String sdktype) throws Exception{
+    public static void reverse(File apkfile,File aar,String sdktype,String appkey) throws Exception{
         if(!apkfile.exists()){
             throw new ApkFileNotExistException("");
         }
         if(!aar.exists()){
-            throw new ApkFileNotExistException("");
+            throw new AarFileNotExistException("");
         }
         //-----------decoder setting--------------
         ApkDecoder decoder = new ApkDecoder();
@@ -77,11 +80,10 @@ public class Main {
         decoder.setApkFile(apkfile);
         decoder.setOutDir(apkOutFile);
 
-        //-----------------------------------------
-        //-------AarManager setting----------------
-//        AarManager manager = AarManager.getInstance().init("/Users/jiaozhengxiang/Desktop/work/aar-workspace/abtest-lite-v5.1.3-sp.aar");
+        // pre decode file, unzip aar or jar file
         AbstractManager manager = ManagerFactory.getIToyManager(aar.getAbsolutePath());
         manager.setSdkType(sdktype);
+        manager.setAppkey(appkey);
         decoder.decode(manager);
         manager.setHostDir(apkOutFile);
         logger.info("##########解压apk文件[完成]##########");
@@ -90,6 +92,7 @@ public class Main {
         File smaliFile = manager.smaliClassFilesAndModifyids(apkOutFile);
         logger.info("##########重新编排ID并拷贝文件到宿主文件夹[完成]##########");
         ISmaliOper oper = InjectManager.createOper(manager.getSdkType());
+        oper.setAppkey(appkey);
         oper.addOrModifyApplicationSmali(apkOutFile,smaliFile);
         logger.info("##########添加或者修改Application smali代码[完成]##########");
         File unsignfile = buildApk(apkOutFile);
@@ -100,11 +103,6 @@ public class Main {
         logger.info("##########signfile path:"+signFile.getAbsolutePath()+"##########");
         logger.info("########################################################");
     }
-    public static void reverse(File apkfile,File aar) throws Exception {
-        reverse(apkfile,aar,null);
-
-    }
-
     public static File buildApk(File hostdir) {
         ApkOptions options = new ApkOptions();
         options.verbose = true;

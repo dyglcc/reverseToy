@@ -23,21 +23,13 @@ import javax.xml.xpath.XPathExpressionException;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 
 public class Utils {
-
-    public static <K, V> Map.Entry<K, V> getTailByReflection(LinkedHashMap<K, V> map)
-            throws NoSuchFieldException, IllegalAccessException {
-        Field tail = map.getClass().getDeclaredField("tail");
-        tail.setAccessible(true);
-        return (Map.Entry<K, V>) tail.get(map);
-    }
 
     public static String getNameRemovedSuffix(String name) {
 
@@ -45,8 +37,56 @@ public class Utils {
 
     }
 
+    public static class OSCMD{
+        private final static Logger LOGGER = Logger.getLogger(AarManager.class.getName());
+        public static void runCMD(List<String> cmd) throws AndrolibException {
+            try {
+                OS.exec(cmd.toArray(new String[0]));
+                LOGGER.fine("command ran: " + cmd.toString());
+//                LOGGER.info(cmd.toString());
+            } catch (BrutException ex) {
+                throw new AndrolibException(ex);
+            }
+        }
+    }
+
     public static class FileUtils {
 
+
+        public static void unzip(String assets,File outDir,File jarFile) throws IOException {
+
+            ZipFile zipFile = new ZipFile(jarFile);
+            for(Enumeration entries = zipFile.entries(); entries.hasMoreElements();){
+                ZipEntry entry = (ZipEntry)entries.nextElement();
+                String zipEntryName = entry.getName();
+                if(!zipEntryName.startsWith(assets)){
+                    continue;
+                }
+                InputStream in = zipFile.getInputStream(entry);
+                //指定解压后的文件夹+当前zip文件的名称
+                String outPath = (outDir.getAbsolutePath()+"/"+zipEntryName).replace("/", File.separator);
+                //判断路径是否存在,不存在则创建文件路径
+                File file = new File(outPath.substring(0, outPath.lastIndexOf(File.separator)));
+                if(!file.exists()){
+                    file.mkdirs();
+                }
+                //判断文件全路径是否为文件夹,如果是上面已经上传,不需要解压
+                if(new File(outPath).isDirectory()){
+                    continue;
+                }
+                //保存文件路径信息（可利用md5.zip名称的唯一性，来判断是否已经解压）
+                OutputStream out = new FileOutputStream(outPath);
+                byte[] buf1 = new byte[2048];
+                int len;
+                while((len=in.read(buf1))>0){
+                    out.write(buf1,0,len);
+                }
+                in.close();
+                out.close();
+            }
+            //必须关闭，要不然这个zip文件一直被占用着，要删删不掉，改名也不可以，移动也不行，整多了，系统还崩了。
+            zipFile.close();
+        }
 
         public static boolean reNameFile(String srcfile, String newName) throws IOException {
             File file = new File(srcfile);
@@ -93,6 +133,17 @@ public class Utils {
                 br.close();
             }
             return builder;
+        }
+        public static StringBuilder readStringFromStream(InputStream inputStream) throws IOException {
+
+            StringBuilder stringBuilder = new StringBuilder();
+            BufferedReader reader1 = new BufferedReader(new InputStreamReader(inputStream));
+            String line = null;
+            while((line = reader1.readLine())!=null){
+                stringBuilder.append(line).append("\n");
+            }
+            reader1.close();
+            return stringBuilder;
         }
 
         public static void writeString2File(File file, String str) throws IOException {
@@ -474,12 +525,9 @@ public class Utils {
 
         public static File all2Smali(File hostdir, File dexFile, Class clazz) throws Exception {
 
-//        File libs = getAarLibDir();
-//        File inputdexfile = new File(libs, "classe000.dex");
             if (!dexFile.exists()) {
                 throw new Exception("dexfile  not exist");
             }
-
             List<String> cmd = new ArrayList<>();
             File fileJar = Utils.BuildPackage.getBakSmali(clazz);
             if (hostdir == null || !hostdir.exists()) {
@@ -493,7 +541,6 @@ public class Utils {
             } else {
                 outDir.mkdirs();
             }
-
             cmd.add("java");
             cmd.add("-jar");
             cmd.add(fileJar.getAbsolutePath());
@@ -501,20 +548,13 @@ public class Utils {
             cmd.add("-o");
             cmd.add(outDir.getAbsolutePath());
             cmd.add(dexFile.getAbsolutePath());
-            try {
-                OS.exec(cmd.toArray(new String[0]));
-                LOGGER.fine("command ran: ");
-                LOGGER.info(cmd.toString());
-            } catch (BrutException ex) {
-                throw new AndrolibException(ex);
-            }
+            Utils.OSCMD.runCMD(cmd);
             return outDir;
         }
 
         public static File dx2dexfiles(File parentDir, Class clazz) throws Exception {
 
-            // tood change 2 getFilename
-//        File libs = getAarLibDir();
+            // change 2 getFilename
             File dexFile = new File(parentDir, "classe000.dex");
             if (!parentDir.exists()) {
                 throw new Exception("libs not exist");
@@ -527,13 +567,7 @@ public class Utils {
             cmd.add("--dex");
             cmd.add("--output=" + dexFile.getAbsolutePath());
             cmd.add(parentDir.getAbsolutePath());
-            try {
-                OS.exec(cmd.toArray(new String[0]));
-                LOGGER.fine("command ran: ");
-                LOGGER.info(cmd.toString());
-            } catch (BrutException ex) {
-                throw new AndrolibException(ex);
-            }
+            Utils.OSCMD.runCMD(cmd);
             return dexFile;
         }
 

@@ -1,11 +1,7 @@
 package com.appadhoc.reversetoy.jar;
 
-import brut.androlib.AndrolibException;
 import brut.androlib.res.data.ResTable;
 import brut.common.BrutException;
-import brut.directory.Directory;
-import brut.directory.DirectoryException;
-import brut.directory.ZipRODirectory;
 import brut.util.OS;
 import com.appadhoc.reversetoy.AbstractManager;
 import com.appadhoc.reversetoy.utils.Utils;
@@ -14,15 +10,13 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 
 public class JarManager extends AbstractManager {
-    // todo assets jar下面有assets文件
     private final static Logger LOGGER = Logger.getLogger(JarManager.class.getName());
     private File hostdir;
     private File jarFile = null;
@@ -38,52 +32,40 @@ public class JarManager extends AbstractManager {
     }
 
     private void setTmpdir() throws BrutException {
-        if(jarFile.isFile()){
-            tmpDir = new File(jarFile.getParentFile(),"tmp_jar");
-        }else{
-            tmpDir = new File(jarFile,"tmp_dir");
+        if (jarFile.isFile()) {
+            tmpDir = new File(jarFile.getParentFile(), "tmp_jar");
+        } else {
+            tmpDir = new File(jarFile, "tmp_dir");
         }
-        if(tmpDir.exists()){
+        if (tmpDir.exists()) {
             OS.rmdir(tmpDir);
         }
         tmpDir.mkdirs();
     }
 
-    public void unzipAarFile()
-            throws AndrolibException {
-        try {
-            if(jarFile.isFile()){
-                Directory in = new ZipRODirectory(jarFile);
-                if (in.containsDir("assets")) {
-                    in.copyToDir(tmpDir, "assets");
-                }
-            }else if(jarFile.isDirectory()){
-                for(File zipfile : jarFile.listFiles()){
-                    Directory in = new ZipRODirectory(zipfile);
-                    if (in.containsDir("assets")) {
-                        in.copyToDir(tmpDir, "assets");
-                    }
+    public void unzipJarFile()
+            throws  IOException {
+        if (jarFile.isFile()) {
+            Utils.FileUtils.unzip("assets", tmpDir, jarFile);
+        } else if (jarFile.isDirectory()) {
+            for (File file : Objects.requireNonNull(jarFile.listFiles())) {
+                if (file.getName().endsWith(".jar")) {
+                    Utils.FileUtils.unzip("assets", tmpDir, file);
                 }
             }
-        } catch (DirectoryException ex) {
-            throw new AndrolibException(ex);
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
-
 
     private void copyFiles(File hostdir) throws IOException, BrutException {
-
         // copy assets
         File assetsHost = new File(hostdir, "assets");
-        File assetsAar = new File(tmpDir, "assets");
-        if (assetsAar.exists()) {
-            OS.cpdir(assetsAar, assetsHost);
-            LOGGER.info("拷贝assets文件到host文件");
+        File assetsJar = new File(tmpDir, "assets");
+        if (assetsJar.exists()) {
+            OS.cpdir(assetsJar, assetsHost);
+            LOGGER.info("拷贝assets文件到host dir assets 文件夹");
         }
-
     }
+
     private void setJarFile(String aarfile) throws Exception {
         jarFile = new File(aarfile);
         if (!jarFile.exists()) {
@@ -110,13 +92,9 @@ public class JarManager extends AbstractManager {
 
     private File getWorkDir() throws BrutException {
         File workDir;
-        if(jarFile.isFile()){
-             workDir = new File(jarFile.getAbsolutePath().replaceFirst("\\.[^.]+$", ""));
-//            if (workDir.exists()) {
-//                OS.rmdir(workDir);
-//            }
-//            workDir.mkdirs();
-        }else{
+        if (jarFile.isFile()) {
+            workDir = new File(jarFile.getAbsolutePath().replaceFirst("\\.[^.]+$", ""));
+        } else {
             workDir = jarFile;
         }
         return workDir;
@@ -126,7 +104,8 @@ public class JarManager extends AbstractManager {
     public void setHostPackageName(String packageNmae) {
 
     }
-    private void combinHostManifestWithAar(List<String> list,File hostUnzipDir) {
+
+    private void combinHostManifestWithAar(List<String> list, File hostUnzipDir) {
 
         File hostManifest = new File(hostUnzipDir, "AndroidManifest.xml");
         // aar manifest
@@ -147,10 +126,10 @@ public class JarManager extends AbstractManager {
             e.printStackTrace();
         }
 
-
     }
+
     @Override
-    public void preCombin(File outputdir) {
+    public void preCombin(File outputdir) throws BrutException {
 
         List<String> permissions = new ArrayList<>();
         permissions.add("android.permission.INTERNET");
@@ -158,11 +137,11 @@ public class JarManager extends AbstractManager {
         permissions.add("android.permission.READ_PHONE_STATE");
         permissions.add("android.permission.ACCESS_WIFI_STATE");
 
-        combinHostManifestWithAar(permissions,outputdir);
+        combinHostManifestWithAar(permissions, outputdir);
 
         try {
-            unzipAarFile();
-        } catch (AndrolibException e) {
+            unzipJarFile();
+        } catch ( IOException e) {
             e.printStackTrace();
         }
     }
@@ -202,15 +181,16 @@ public class JarManager extends AbstractManager {
         this.hostdir = hostDir;
     }
 
-    public static void main(String[] args){
-//        JarManager jarManager = new JarManager("/Users/jiaozhengxiang/Desktop/aar-1/libs");
-        JarManager jarManager = new JarManager("/Users/jiaozhengxiang/Desktop/aar-1/abtest-release.aar");
+    public static void main(String[] args) {
+        JarManager jarManager = new JarManager("/Users/jiaozhengxiang/Desktop/aar-1/libs");
+//        JarManager jarManager = new JarManager("/Users/jiaozhengxiang/Desktop/aar-1/abtest-release.aar");
         File hostdir = new File("/Users/jiaozhengxiang/Desktop/apk-blue/app-debug-remove-statusbutton");
         try {
             jarManager.setHostDir(hostdir);
-            jarManager.unzipAarFile();
+            jarManager.unzipJarFile();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
 }
