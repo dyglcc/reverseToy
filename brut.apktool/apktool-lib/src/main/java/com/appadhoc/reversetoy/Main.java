@@ -20,7 +20,7 @@ public class Main {
 
     public static void main(String[] args) throws BrutException, IOException {
         try {
-            test_reverse("jar", "app-keyaasdf");
+            test_reverse("jaaar", "app-keyaasdf");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -42,7 +42,7 @@ public class Main {
         } else {
             manager = ManagerFactory.getIToyManager("/Users/jiaozhengxiang/Desktop/aar-1/abtest-release.aar");
         }
-//        manager.setSdkType("eguan");
+        manager.setSdkType("yaohe");
         decoder.decode(manager);
         manager.setHostDir(apkOutFile);
         logger.info("##########解压apk文件[完成]##########");
