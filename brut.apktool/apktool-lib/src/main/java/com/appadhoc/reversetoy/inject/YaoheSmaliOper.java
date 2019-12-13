@@ -10,6 +10,7 @@ import java.io.InputStream;
 public class YaoheSmaliOper extends ISmaliOper {
     private static final String appNameStub_yaohe = "com.reverse.stub.YaoheApp";
     private String smaliAppName = "YaoheApp.smali";
+
     YaoheSmaliOper(String sdktype) {
         super(sdktype);
     }
@@ -36,6 +37,7 @@ public class YaoheSmaliOper extends ISmaliOper {
         }
         return inputstream;
     }
+
     @Override
     public InputStream getCodeMethodInit() {
         InputStream inputstream = null;
@@ -50,6 +52,15 @@ public class YaoheSmaliOper extends ISmaliOper {
     @Override
     public String getSmaliApplicationName() {
         return smaliAppName;
+    }
+
+    @Override
+    public String replaceAppkey(String appkey, String code) throws Exception {
+        if (code == null || code.equals("")) {
+            throw new Exception("请检查是否存在Yaohe SDK的代码片段或者是否存在YaoheApp.smali文件");
+        }
+        return code.replaceAll("ADHOC_[0-9a-z-]+"
+                , appkey);
     }
 
 }

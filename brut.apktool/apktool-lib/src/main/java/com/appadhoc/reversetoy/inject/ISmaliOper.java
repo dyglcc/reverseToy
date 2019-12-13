@@ -16,12 +16,11 @@ public abstract class ISmaliOper {
         return appkey;
     }
 
-    public void setAppkey(String appkey) {
-        if (appkey != null) {
-            appkey = appkey.trim();
-            if (!appkey.equals("")) {
-                this.appkey = appkey;
-            }
+    public void setAppkey(String appkey) throws Exception {
+        this.appkey = appkey;
+        LOGGER.info("appkey is " + appkey);
+        if(appkey == null || appkey.trim().equals("")){
+            throw new Exception("appkey is empty");
         }
     }
 
@@ -32,7 +31,10 @@ public abstract class ISmaliOper {
     public abstract InputStream getAppStubSmaliFile();
 
     public abstract InputStream getCodeMethodInit();
+
     public abstract String getSmaliApplicationName();
+
+    public abstract String replaceAppkey(String appkey, String code) throws Exception;
 
     ISmaliOper(String sdktype) {
         this.sdktype = sdktype;
@@ -52,10 +54,11 @@ public abstract class ISmaliOper {
 
         String methodCode = Utils.FileUtils.readStringFromStream(codePieceFileIputSream).toString();
 
-        String methodCodeReplaceMent = Matcher.quoteReplacement(methodCode);
         if (appkey != null && !appkey.equals("")) {
-//            todo  change appkey
+            methodCode = replaceAppkey(appkey, methodCode);
         }
+        String methodCodeReplaceMent = Matcher.quoteReplacement(methodCode);
+        LOGGER.info("change result is " + methodCodeReplaceMent);
         File needModiFile = null;
         for (File subSmaiFolder : hostdir.listFiles()) {
             if (subSmaiFolder.isDirectory() && subSmaiFolder.getName().startsWith("smali")) {
@@ -76,9 +79,7 @@ public abstract class ISmaliOper {
         Utils.FileUtils.writeString2File(needModiFile, srcStr);
         boolean replaceSuccess = srcStr.contains("method private initSDK");
         boolean replaceCallSuccess = srcStr.contains("->initSDK()V");
-        if (replaceCallSuccess && replaceSuccess) {
-
-        } else {
+        if (!replaceCallSuccess || !replaceSuccess) {
             throw new Exception("modify " + hostAppName + " smali modify failed");
         }
     }
@@ -94,9 +95,10 @@ public abstract class ISmaliOper {
         String code = Utils.FileUtils.readStringFromStream(stubAppSmaliFile).toString();
 
         if (appkey != null && !appkey.equals("")) {
-            LOGGER.info("change appkey");
+            code = replaceAppkey(appkey, code);
         }
-        File saveApplicationFile = new File(stubDir,getSmaliApplicationName());
+        LOGGER.info("change result is copy" + code);
+        File saveApplicationFile = new File(stubDir, getSmaliApplicationName());
         Utils.FileUtils.writeString2File(saveApplicationFile, code);
     }
 }

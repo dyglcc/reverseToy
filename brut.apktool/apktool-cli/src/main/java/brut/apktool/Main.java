@@ -121,8 +121,8 @@ public class Main {
         if (cli.hasOption("t") || cli.hasOption("sdk-type")) {
             sdk_type = cli.getOptionValue("t");
         }
-        if (cli.hasOption("k") || cli.hasOption("appkey")) {
-            appkey = cli.getOptionValue("k");
+        if (cli.hasOption("a") || cli.hasOption("appkey")) {
+            appkey = cli.getOptionValue("a");
         }
         try {
             com.appadhoc.reversetoy.Main.reverse(new File(apkFile),new File(aarFileName),sdk_type,appkey);
@@ -493,7 +493,7 @@ public class Main {
                 .desc("集成SDK类型，eguan or yaohe 默认添加 eguan")
                 .argName("tag")
                 .build();
-        Option mergeAppkeyOption = Option.builder("k")
+        Option mergeAppkeyOption = Option.builder("a")
                 .longOpt("appkey")
                 .desc("更换appkey")
                 .argName("tag")
@@ -572,8 +572,8 @@ public class Main {
         allOptions.addOption(onlyMainClassesOption);
 
         // 合并
-        mergeOptions.addOption(mergetOption);
         mergeOptions.addOption(mergeAppkeyOption);
+        mergeOptions.addOption(mergetOption);
     }
 
     private static String verbosityHelp() {

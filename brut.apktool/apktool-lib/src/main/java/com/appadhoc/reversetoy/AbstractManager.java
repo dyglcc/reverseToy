@@ -11,7 +11,6 @@ public abstract class AbstractManager {
     public static final String TYPE_Yaohe = "yaohe";
 
     protected String sdkType = TYPE_Eguan;
-    private String appkey = null;
     public abstract  void setHostPackageName(String packageNmae);
 
     public abstract  void preCombin(File outputdir) throws BrutException;
@@ -32,14 +31,5 @@ public abstract class AbstractManager {
             }
         }
         this.sdkType = sdkType;
-    }
-
-    public void setAppkey(String appkey) throws Exception {
-        if(appkey != null){
-            if(appkey.trim().equals("")){
-                throw new Exception("appkey is null");
-            }
-        }
-        this.appkey = appkey;
     }
 }
