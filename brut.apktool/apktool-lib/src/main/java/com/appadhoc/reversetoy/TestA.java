@@ -10,9 +10,13 @@ import java.io.InputStream;
 public class TestA {
     public static void main(String[] args){
         try {
-            InputStream file = Resource.getResourceAsStream("/brut/androlib/EguanApp.smali", TestA.class);
+            InputStream file = Resource.getResourceAsStream("/brut/androlib/YaoheApp.smali", TestA.class);
             String str = Utils.FileUtils.readStringFromStream(file).toString();
-            System.out.println(str);
+            String replaceMent = "abcdeerser";
+            System.out.println(str
+                    .replaceAll
+                            ("ADHOC_[0-9a-z-]+"
+                                    ,replaceMent));
         } catch (BrutException | IOException e) {
             e.printStackTrace();
         }

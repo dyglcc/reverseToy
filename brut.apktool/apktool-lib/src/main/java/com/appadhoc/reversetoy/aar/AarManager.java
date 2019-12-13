@@ -42,7 +42,7 @@ public class AarManager extends AbstractManager {
 
     public AarManager(String aarFile) {
         try {
-            LOGGER.fine("##########aarFile  name "+aarFile+"##########");
+            LOGGER.fine("aarFile  name "+aarFile+"");
             setWorkSpace(new File(aarFile).getParentFile().getAbsolutePath());
             setAarFile(aarFile);
         } catch (Exception e) {
