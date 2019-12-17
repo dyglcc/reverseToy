@@ -6,8 +6,8 @@ import brut.androlib.ApkOptions;
 import brut.common.BrutException;
 import com.appadhoc.reversetoy.exception.AarFileNotExistException;
 import com.appadhoc.reversetoy.exception.ApkFileNotExistException;
-import com.appadhoc.reversetoy.inject.ISmaliOper;
-import com.appadhoc.reversetoy.inject.InjectManager;
+import com.appadhoc.reversetoy.inject.AbstractSmaliOper;
+import com.appadhoc.reversetoy.inject.InjectManagerFactory;
 import com.appadhoc.reversetoy.sign.SignTool;
 import com.appadhoc.reversetoy.utils.Utils;
 
@@ -20,7 +20,7 @@ public class Main {
 
     public static void main(String[] args) throws BrutException, IOException {
         try {
-            test_reverse("jaaar", "app-keyaasdf");
+            test_reverse("jar", "app-keyaasdf");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -32,7 +32,7 @@ public class Main {
         decoder.setForceDelete(true);
         ApkOptions options = new ApkOptions();
         options.verbose = true;
-        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
+        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/app-debug-remove-statusbutton/signed1576562862856.apk");
         File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
         decoder.setApkFile(file);
         decoder.setOutDir(apkOutFile);
@@ -42,7 +42,7 @@ public class Main {
         } else {
             manager = ManagerFactory.getIToyManager("/Users/jiaozhengxiang/Desktop/aar-1/abtest-release.aar");
         }
-        manager.setSdkType("yaohe");
+        manager.setSdkType("eguan");
         decoder.decode(manager);
         manager.setHostDir(apkOutFile);
         logger.info("##########解压apk文件[完成]##########");
@@ -50,8 +50,8 @@ public class Main {
         logger.info("##########添加IDS到IDS.xml[完成]##########");
         File smaliFile = manager.smaliClassFilesAndModifyids(apkOutFile);
         logger.info("##########重新编排ID并拷贝文件到宿主文件夹[完成]##########");
-        ISmaliOper oper = InjectManager.createOper(manager.getSdkType());
-        oper.setAppkey(appkey);
+        AbstractSmaliOper oper = InjectManagerFactory.createOper(manager.getSdkType());
+//        oper.setAppkey(appkey);
         oper.addOrModifyApplicationSmali(apkOutFile, smaliFile);
         logger.info("##########添加或者修改Application smali代码[完成]##########");
         File unsignfile = buildApk(apkOutFile);
@@ -90,7 +90,7 @@ public class Main {
         logger.info("添加IDS到IDS.xml[完成]");
         File smaliFile = manager.smaliClassFilesAndModifyids(apkOutFile);
         logger.info("重新编排ID并拷贝文件到宿主文件夹[完成]");
-        ISmaliOper oper = InjectManager.createOper(manager.getSdkType());
+        AbstractSmaliOper oper = InjectManagerFactory.createOper(manager.getSdkType());
         oper.setAppkey(appkey);
         oper.addOrModifyApplicationSmali(apkOutFile, smaliFile);
         logger.info("添加或者修改Application smali代码[完成]");

@@ -2,7 +2,6 @@ package com.appadhoc.reversetoy;
 
 import brut.androlib.res.data.ResTable;
 import brut.common.BrutException;
-import com.appadhoc.reversetoy.inject.YaoheSmaliOper;
 
 import java.io.File;
 

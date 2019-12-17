@@ -2,31 +2,19 @@ package com.appadhoc.reversetoy.inject;
 
 import brut.common.BrutException;
 import com.appadhoc.reversetoy.utils.Resource;
-import com.appadhoc.reversetoy.utils.Utils;
 
-import java.io.File;
 import java.io.InputStream;
 
-public class EguanSmaliOper extends ISmaliOper {
+public class EguanSmaliOper extends AbstractSmaliOper {
     private static final String appNameStub_Eguan = "com.reverse.stub.EguanApp";
-//    private static final String APPKEY = "2709692586aa3e42";
-    private String smaliAppName = "EguanApp.smali";
+    private String SDK_DIR = "com.analysys";
 
     EguanSmaliOper(String sdktype) {
         super(sdktype);
     }
 
     @Override
-    public void addOrModifyApplicationSmali(File hostDir, File aarSmaliFolder) throws Exception {
-        String appName = Utils.XmlUtils.setApplicationName(hostDir, appNameStub_Eguan);
-        if (appName.equals(appNameStub_Eguan)) {
-            super.copyStubSmali2HostDir(stubDir, aarSmaliFolder);
-        } else {
-            super.modifyExistAppSmali(hostDir, appName);
-        }
-    }
-    @Override
-    public InputStream getAppStubSmaliFile() {
+    public InputStream getAssetsAppStubSmaliFile() {
         InputStream inputStream = null;
         try {
             inputStream = Resource.getResourceAsStream("/brut/androlib/EguanApp.smali", getClass());
@@ -37,7 +25,7 @@ public class EguanSmaliOper extends ISmaliOper {
     }
 
     @Override
-    public InputStream getCodeMethodInit() {
+    public InputStream getAssetsCodeMethodInit() {
         InputStream inputStream = null;
         try {
             inputStream = Resource.getResourceAsStream("/brut/androlib/Eguan-code_method_init.txt", getClass());
@@ -48,8 +36,13 @@ public class EguanSmaliOper extends ISmaliOper {
     }
 
     @Override
-    public String getSmaliApplicationName() {
-        return smaliAppName;
+    public String getSDKdir() {
+        return SDK_DIR;
+    }
+
+    @Override
+    protected String getStubApplicationName() {
+        return appNameStub_Eguan;
     }
 
     @Override

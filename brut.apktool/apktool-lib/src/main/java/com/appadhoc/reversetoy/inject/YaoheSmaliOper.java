@@ -2,33 +2,17 @@ package com.appadhoc.reversetoy.inject;
 
 import brut.common.BrutException;
 import com.appadhoc.reversetoy.utils.Resource;
-import com.appadhoc.reversetoy.utils.Utils;
-
-import java.io.File;
 import java.io.InputStream;
 
-public class YaoheSmaliOper extends ISmaliOper {
+public class YaoheSmaliOper extends AbstractSmaliOper {
     private static final String appNameStub_yaohe = "com.reverse.stub.YaoheApp";
-    private String smaliAppName = "YaoheApp.smali";
+    private String SDK_DIR = "com.adhoc";
 
     YaoheSmaliOper(String sdktype) {
         super(sdktype);
     }
-
     @Override
-    public void addOrModifyApplicationSmali(File hostDir, File aarSmaliFolder) throws Exception {
-        String appName = Utils.XmlUtils.setApplicationName(hostDir, appNameStub_yaohe);
-
-        if (appName.equals(appNameStub_yaohe)) {
-
-            super.copyStubSmali2HostDir(stubDir, aarSmaliFolder);
-        } else {
-            super.modifyExistAppSmali(hostDir, appName);
-        }
-    }
-
-    @Override
-    public InputStream getAppStubSmaliFile() {
+    public InputStream getAssetsAppStubSmaliFile() {
         InputStream inputstream = null;
         try {
             inputstream = Resource.getResourceAsStream("/brut/androlib/YaoheApp.smali", this.getClass());
@@ -39,7 +23,7 @@ public class YaoheSmaliOper extends ISmaliOper {
     }
 
     @Override
-    public InputStream getCodeMethodInit() {
+    public InputStream getAssetsCodeMethodInit() {
         InputStream inputstream = null;
         try {
             inputstream = Resource.getResourceAsStream("/brut/androlib/Yaohe-code_method_init.txt", getClass());
@@ -48,10 +32,14 @@ public class YaoheSmaliOper extends ISmaliOper {
         }
         return inputstream;
     }
+    @Override
+    public String getSDKdir() {
+        return SDK_DIR;
+    }
 
     @Override
-    public String getSmaliApplicationName() {
-        return smaliAppName;
+    protected String getStubApplicationName() {
+        return appNameStub_yaohe;
     }
 
     @Override

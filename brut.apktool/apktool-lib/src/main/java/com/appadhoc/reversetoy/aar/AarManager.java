@@ -303,6 +303,7 @@ public class AarManager extends AbstractManager {
     }
 
     public File smaliClassFilesAndModifyids(File hostdir) throws Exception {
+        // before gen all smali file ,delete old sdk smali files
         File aarSmaliFile = smaliClass(hostdir);
         reArrangeRsmalifileIDs(aarSmaliFile);
         copyFiles(hostdir);
