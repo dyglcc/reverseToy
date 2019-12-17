@@ -19,8 +19,10 @@ public abstract class ISmaliOper {
     public void setAppkey(String appkey) throws Exception {
         this.appkey = appkey;
         LOGGER.info("appkey is " + appkey);
-        if(appkey == null || appkey.trim().equals("")){
-            throw new Exception("appkey is empty");
+        if(appkey != null){
+            if(appkey.trim().equals("")){
+                throw new Exception("appkey is empty");
+            }
         }
     }
 
