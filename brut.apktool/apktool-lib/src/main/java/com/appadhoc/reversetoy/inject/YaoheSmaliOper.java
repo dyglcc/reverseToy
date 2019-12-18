@@ -43,12 +43,88 @@ public class YaoheSmaliOper extends AbstractSmaliOper {
     }
 
     @Override
+    protected String replaceDebugMode(int debugMode, String code) throws Exception {
+        return null;
+    }
+
+    @Override
     public String replaceAppkey(String appkey, String code) throws Exception {
         if (code == null || code.equals("")) {
             throw new Exception("请检查是否存在Yaohe SDK的代码片段或者是否存在YaoheApp.smali文件");
         }
         return code.replaceAll("ADHOC_[0-9a-z-]+"
                 , appkey);
+    }
+
+    @Override
+    protected String replaceChannel(String channel, String code) throws Exception {
+        return null;
+    }
+
+    @Override
+    protected String replaceAutoProfilel(boolean autoProfilel, String code) throws Exception {
+        return null;
+    }
+
+    @Override
+    protected String replaceEncryptType(int type, String code) throws Exception {
+        return null;
+    }
+
+    @Override
+    protected String replaceAllowTimeCheck(boolean allowTimeCheck, String code) throws Exception {
+        return null;
+    }
+
+    @Override
+    protected String replaceMaxDiffTimeInterval(long maxDiffTimeInterval, String code) throws Exception {
+        return null;
+    }
+
+
+    @Override
+    protected String replaceAutoInstallation(boolean autoInstallation, String code) throws Exception {
+        return null;
+    }
+
+    @Override
+    protected String replaceAutoHeatMap(boolean autoHeatMap, String code) throws Exception {
+        return null;
+    }
+
+    @Override
+    protected String replaceAutoTrackPageView(boolean autoTrackPageView, String code) throws Exception {
+        return null;
+    }
+
+    @Override
+    protected String replaceAutoTrackFragmentPageView(boolean autoTrackFragmentPageView, String code) throws Exception {
+        return null;
+    }
+
+    @Override
+    protected String replaceAutoTrackClick(boolean autoTrackClick, String code) throws Exception {
+        return null;
+    }
+
+    @Override
+    protected String replaceEnableException(boolean enableException, String code) throws Exception {
+        return null;
+    }
+
+    @Override
+    protected String replaceUploadUrl(String uploadUrl, String code) throws Exception {
+        return null;
+    }
+
+    @Override
+    protected String replaceVisitorDebugUrl(String debugUrl, String code) throws Exception {
+        return null;
+    }
+
+    @Override
+    protected String replaceVisitorConfigUrl(String configUrl, String code) throws Exception {
+        return null;
     }
 
 }

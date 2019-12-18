@@ -498,6 +498,100 @@ public class Main {
                 .desc("更换appkey")
                 .argName("tag")
                 .build();
+        Option channelOption = Option.builder("a")
+                .longOpt("appkey")
+                .desc("更换appkey")
+                .argName("tag")
+                .build();
+
+        int debugMode = 2;
+        Option debugModeOption = Option.builder("a")
+                .longOpt("appkey")
+                .desc("更换appkey")
+                .argName("tag")
+                .build();
+        boolean autoProfilel = true;
+        Option autoProfilelOption = Option.builder("a")
+                .longOpt("appkey")
+                .desc("更换appkey")
+                .argName("tag")
+                .build();
+//    EMPTY(0),
+//    AES(1),
+//    AES_CBC(2);
+        int encryptType = 1;
+        Option encryptTypeOption = Option.builder("a")
+                .longOpt("appkey")
+                .desc("更换appkey")
+                .argName("tag")
+                .build();
+        boolean allowTimeCheck = true;
+        Option allowTimeCheckOption = Option.builder("a")
+                .longOpt("appkey")
+                .desc("更换appkey")
+                .argName("tag")
+                .build();
+        long maxDiffTimeInterval = 5*60;
+        Option maxDiffTimeIntervalOption = Option.builder("a")
+                .longOpt("appkey")
+                .desc("更换appkey")
+                .argName("tag")
+                .build();
+        boolean autoInstallation = true;
+        Option autoInstallationOption = Option.builder("a")
+                .longOpt("appkey")
+                .desc("更换appkey")
+                .argName("tag")
+                .build();
+        boolean autoHeatMap = false;
+        Option autoHeatMapOption = Option.builder("a")
+                .longOpt("appkey")
+                .desc("更换appkey")
+                .argName("tag")
+                .build();
+        boolean autoTrackPageView = true;
+        Option autoTrackPageViewOption = Option.builder("a")
+                .longOpt("appkey")
+                .desc("更换appkey")
+                .argName("tag")
+                .build();
+        boolean autoTrackFragmentPageView = false;
+        Option autoTrackFragmentPageViewOption = Option.builder("a")
+                .longOpt("appkey")
+                .desc("更换appkey")
+                .argName("tag")
+                .build();
+        boolean autoTrackClick = false;
+        Option autoTrackClickOption = Option.builder("a")
+                .longOpt("appkey")
+                .desc("更换appkey")
+                .argName("tag")
+                .build();
+        boolean enableException = true;
+        Option enableExceptionOption = Option.builder("a")
+                .longOpt("appkey")
+                .desc("更换appkey")
+                .argName("tag")
+                .build();
+
+        String uploadUrl = "https://arkpaastest.analysys.cn:4089";
+        Option uploadUrlOption = Option.builder("a")
+                .longOpt("appkey")
+                .desc("更换appkey")
+                .argName("tag")
+                .build();
+        String debugUrl ="wss://arkpaastest.analysys.cn:4091";
+        Option debugUrlOption = Option.builder("a")
+                .longOpt("appkey")
+                .desc("更换appkey")
+                .argName("tag")
+                .build();
+        String configUrl ="https://arkpaastest.analysys.cn:4089";
+        Option configUrlOption = Option.builder("a")
+                .longOpt("appkey")
+                .desc("更换appkey")
+                .argName("tag")
+                .build();
 
         // check for advance mode
         if (isAdvanceMode()) {
@@ -591,7 +685,7 @@ public class Main {
 
         // print out license info prior to formatter.
         System.out.println(
-                        "**********增强版的apktool 将apk文件和aar文件合并的并且已签名的apk文件**********\n " +
+                        "**********增强版的apktool将apk文件和aar文件或者jar合并并签名**********\n " +
                         "Apktool v" + Androlib.getVersion() + " - a tool for reengineering Android apk files\n" +
                         "with smali v" + ApktoolProperties.get("smaliVersion") +
                         " and baksmali v" + ApktoolProperties.get("baksmaliVersion") + "\n" +
@@ -608,8 +702,8 @@ public class Main {
         formatter.printHelp("apktool " + verbosityHelp() + "if|install-framework [options] <framework.apk>", frameOptions);
         formatter.printHelp("apktool " + verbosityHelp() + "d[ecode] [options] <file_apk>", DecodeOptions);
         formatter.printHelp("apktool " + verbosityHelp() + "b[uild] [options] <app_path>", BuildOptions);
-        formatter.printHelp("apktool " + verbosityHelp() + "m[erge] [options] <file_apk> <[AAR]_file>", mergeOptions);
-        formatter.printHelp("apktool " + verbosityHelp() + "m[erge] [options] <file_apk> <[LIB]_dir>", mergeOptions);
+        formatter.printHelp("apktool " + verbosityHelp() + "m[erge] [options] <file_apk> <[AAR]_file>|<[LIB]_dir>", mergeOptions);
+//        formatter.printHelp("apktool " + verbosityHelp() + "m[erge] [options] <file_apk> <[LIB]_dir>", mergeOptions);
         if (isAdvanceMode()) {
             formatter.printHelp("apktool " + verbosityHelp() + "publicize-resources <file_path>", emptyOptions);
             formatter.printHelp("apktool " + verbosityHelp() + "empty-framework-dir [options]", emptyFrameworkOptions);

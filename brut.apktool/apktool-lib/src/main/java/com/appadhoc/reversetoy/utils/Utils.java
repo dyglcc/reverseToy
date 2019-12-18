@@ -659,6 +659,13 @@ public class Utils {
 
     }
 
+    public static class SmaliUtils{
+        public static void checkExistSmaliCode(String code) throws Exception {
+            if (code == null || code.equals("")) {
+                throw new Exception("请检查是否有存在Eguan SDK的代码片段或者存在EguanApp.smali文件");
+            }
+        }
+    }
     public static class IDUtils {
         private static int range = 2000;
 

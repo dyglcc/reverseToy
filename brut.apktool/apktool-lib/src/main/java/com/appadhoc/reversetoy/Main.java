@@ -32,7 +32,7 @@ public class Main {
         decoder.setForceDelete(true);
         ApkOptions options = new ApkOptions();
         options.verbose = true;
-        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/app-debug-remove-statusbutton/signed1576562862856.apk");
+        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/app-debug.apk");
         File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
         decoder.setApkFile(file);
         decoder.setOutDir(apkOutFile);

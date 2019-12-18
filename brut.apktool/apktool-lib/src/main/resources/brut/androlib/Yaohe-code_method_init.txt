@@ -1,4 +1,4 @@
-.method private initSDK()V
+.method private initReverseSDK()V
     .locals 2
 
     .line 16

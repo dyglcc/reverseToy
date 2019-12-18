@@ -13,7 +13,7 @@
     return-void
 .end method
 
-.method private initSDK()V
+.method private initReverseSDK()V
     .locals 2
 
     .line 16
@@ -67,7 +67,7 @@
     invoke-super {p0}, Landroid/app/Application;->onCreate()V
 
     .line 12
-    invoke-direct {p0}, Lcom/reverse/stub/App;->initSDK()V
+    invoke-direct {p0}, Lcom/reverse/stub/App;->initReverseSDK()V
 
     .line 13
     return-void
