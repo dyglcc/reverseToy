@@ -5,26 +5,29 @@ import com.appadhoc.reversetoy.utils.Utils;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 
 public abstract class AbstractSmaliOper {
     private final static Logger LOGGER = Logger.getLogger(AbstractSmaliOper.class.getName());
+    private HashMap<String, Object> options;
     String stubDir = "com.reverse.stub";
     String sdktype;
-//    设置 debug 模式，值：0、1、2
+    //    设置 debug 模式，值：0、1、2
     int debugMode = 2;
-    String appkey= "2709692586aa3e42";
-    String channel="AnalsysyDemo";
+    String appkey = "2709692586aa3e42";
+    String channel = "AnalsysyDemo";
 
     boolean autoProfilel = true;
-//    EMPTY(0),
+    //    EMPTY(0),
 //    AES(1),
 //    AES_CBC(2);
     int encryptType = 1;
     boolean allowTimeCheck = true;
-    long maxDiffTimeInterval = 5*60;
+    long maxDiffTimeInterval = 5 * 60;
     boolean autoInstallation = true;
     boolean autoHeatMap = false;
     boolean autoTrackPageView = true;
@@ -33,12 +36,14 @@ public abstract class AbstractSmaliOper {
     boolean enableException = true;
 
     String uploadUrl = "https://arkpaastest.analysys.cn:4089";
-    String debugUrl ="wss://arkpaastest.analysys.cn:4091";
-    String configUrl ="https://arkpaastest.analysys.cn:4089";
+    String debugUrl = "wss://arkpaastest.analysys.cn:4091";
+    String configUrl = "https://arkpaastest.analysys.cn:4089";
+
     public void setDebugMode(int debugMode) throws Exception {
         this.debugMode = debugMode;
         LOGGER.info("debugMode is " + debugMode);
     }
+
     public void setAppkey(String appkey) throws Exception {
         this.appkey = appkey;
         LOGGER.info("appkey is " + appkey);
@@ -74,9 +79,9 @@ public abstract class AbstractSmaliOper {
         LOGGER.info("allowTimeCheck is " + allowTimeCheck);
     }
 
-    public void setMaxDiffTimeInterval(int maxDiffTimeInterval) throws Exception {
+    public void setMaxDiffTimeInterval(long maxDiffTimeInterval) throws Exception {
         this.maxDiffTimeInterval = maxDiffTimeInterval;
-        LOGGER.info("allowTimeCheck is " + maxDiffTimeInterval);
+        LOGGER.info("maxDiffTimeInterval is " + maxDiffTimeInterval);
     }
 
     public void setAutoInstallation(boolean autoInstallation) throws Exception {
@@ -101,7 +106,7 @@ public abstract class AbstractSmaliOper {
 
     public void setAutoTrackClick(boolean autoTrackClick) throws Exception {
         this.autoTrackClick = autoTrackClick;
-        LOGGER.info("autoTrackFragmentPageView is " + autoTrackClick);
+        LOGGER.info("autoTrackClick is " + autoTrackClick);
     }
 
     public void setEnableException(boolean enableException) throws Exception {
@@ -159,6 +164,7 @@ public abstract class AbstractSmaliOper {
     protected abstract String getStubApplicationName();
 
     protected abstract String replaceDebugMode(int debugMode, String code) throws Exception;
+
     protected abstract String replaceAppkey(String appkey, String code) throws Exception;
 
     protected abstract String replaceChannel(String channel, String code) throws Exception;
@@ -293,23 +299,85 @@ public abstract class AbstractSmaliOper {
 
     private String replacePara(String code) throws Exception {
         Utils.SmaliUtils.checkExistSmaliCode(code);
-        code = replaceDebugMode(debugMode,code);
-        code = replaceAppkey(appkey,code);
-        code = replaceChannel(channel,code);
-        code = replaceAutoProfilel(autoProfilel,code);
-        code = replaceEncryptType(encryptType,code);
-        code = replaceAllowTimeCheck(allowTimeCheck,code);
-        code = replaceMaxDiffTimeInterval(maxDiffTimeInterval,code);
-        code = replaceAutoInstallation(autoInstallation,code);
-        code = replaceAutoHeatMap(autoHeatMap,code);
-        code = replaceAutoTrackPageView(autoTrackPageView,code);
-        code = replaceAutoTrackFragmentPageView(autoTrackFragmentPageView,code);
-        code = replaceAutoTrackClick(autoTrackClick,code);
-        code =  replaceEnableException(enableException,code);
 
-        code = replaceUploadUrl(uploadUrl,code);
-        code = replaceVisitorDebugUrl(debugUrl,code);
-        code  = replaceVisitorConfigUrl(configUrl,code);
+        if (options == null) {
+            return code;
+        }
+        if (options.containsKey("dm")) {
+            this.setDebugMode((Integer) options.get("dm"));
+            code = replaceDebugMode(debugMode, code);
+        }
+        if (options.containsKey("ak")) {
+            this.setAppkey((String) options.get("ak"));
+            code = replaceAppkey(appkey, code);
+        }
+        if (options.containsKey("chl")) {
+            this.setChannel((String) options.get("chl"));
+            code = replaceChannel(channel, code);
+        }
+        if (options.containsKey("ap")) {
+            this.setAutoProfilel((Boolean) options.get("ap"));
+            code = replaceAutoProfilel(autoProfilel, code);
+        }
+        if (options.containsKey("enc")) {
+            this.setEncryptType((Integer) options.get("enc"));
+            code = replaceEncryptType(encryptType, code);
+        }
+        if (options.containsKey("atck")) {
+            this.setAllowTimeCheck((Boolean) options.get("atck"));
+            code = replaceAllowTimeCheck(allowTimeCheck, code);
+        }
+        if (options.containsKey("mdti")) {
+            this.setMaxDiffTimeInterval((Long) options.get("mdti"));
+            code = replaceMaxDiffTimeInterval(maxDiffTimeInterval, code);
+        }
+        if (options.containsKey("ai")) {
+            this.setAutoInstallation((Boolean) options.get("ai"));
+            code = replaceAutoInstallation(autoInstallation, code);
+        }
+        if (options.containsKey("ah")) {
+            this.setAutoHeatMap((Boolean) options.get("ah"));
+            code = replaceAutoHeatMap(autoHeatMap, code);
+        }
+        if (options.containsKey("atp")) {
+            this.setAutoTrackPageView((Boolean) options.get("atp"));
+            code = replaceAutoTrackPageView(autoTrackPageView, code);
+        }
+
+        if (options.containsKey("atfp")) {
+            this.setAutoTrackFragmentPageView((Boolean) options.get("atfp"));
+            code = replaceAutoTrackFragmentPageView(autoTrackFragmentPageView, code);
+        }
+        if (options.containsKey("atc")) {
+            this.setAutoTrackClick((Boolean) options.get("atc"));
+            code = replaceAutoTrackClick(autoTrackClick, code);
+        }
+        if (options.containsKey("ene")) {
+            this.setEnableException((Boolean) options.get("ene"));
+            code = replaceEnableException(enableException, code);
+        }
+
+        if (options.containsKey("upu")) {
+            this.setUploadUrl((String) options.get("upu"));
+            code = replaceUploadUrl(uploadUrl, code);
+        }
+        if (options.containsKey("deu")) {
+            this.setVisitorDebugUrl((String) options.get("deu"));
+            code = replaceVisitorDebugUrl(debugUrl, code);
+        }
+        if (options.containsKey("cfu")) {
+            this.setVisitorConfigUrl((String) options.get("cfu"));
+            code = replaceVisitorConfigUrl(configUrl, code);
+        }
+        // testcode
+
+//        for(Map.Entry entry:options.entrySet()){
+//            LOGGER.info("key "+ entry.getKey() + " value " + entry.getValue());
+//        }
         return code;
+    }
+
+    public void setOptions(HashMap opt) {
+        options = opt;
     }
 }

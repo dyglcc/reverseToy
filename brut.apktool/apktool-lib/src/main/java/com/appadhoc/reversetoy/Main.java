@@ -13,6 +13,7 @@ import com.appadhoc.reversetoy.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.logging.Logger;
 
 public class Main {
@@ -20,13 +21,15 @@ public class Main {
 
     public static void main(String[] args) throws BrutException, IOException {
         try {
-            test_reverse("jar", "app-keyaasdf");
+            HashMap map = new HashMap();
+            map.put("cfu","asdfahttp://asdf");
+            test_reverse("jar", "app-keyaasdf",map);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static void test_reverse(String jar, String appkey) throws Exception {
+    public static void test_reverse(String jar, String appkey,HashMap map) throws Exception {
 
         ApkDecoder decoder = new ApkDecoder();
         decoder.setForceDelete(true);
@@ -51,6 +54,7 @@ public class Main {
         File smaliFile = manager.smaliClassFilesAndModifyids(apkOutFile);
         logger.info("##########重新编排ID并拷贝文件到宿主文件夹[完成]##########");
         AbstractSmaliOper oper = InjectManagerFactory.createOper(manager.getSdkType());
+        oper.setOptions(map);
 //        oper.setAppkey(appkey);
         oper.addOrModifyApplicationSmali(apkOutFile, smaliFile);
         logger.info("##########添加或者修改Application smali代码[完成]##########");
@@ -63,7 +67,7 @@ public class Main {
         logger.info("########################################################");
     }
 
-    public static void reverse(File apkfile, File aar, String sdktype, String appkey) throws Exception {
+    public static void reverse(File apkfile, File aar, String sdktype, String appkey, HashMap operOptions) throws Exception {
         if (!apkfile.exists()) {
             throw new ApkFileNotExistException("apk file not exist or can not read");
         }
@@ -92,6 +96,7 @@ public class Main {
         logger.info("重新编排ID并拷贝文件到宿主文件夹[完成]");
         AbstractSmaliOper oper = InjectManagerFactory.createOper(manager.getSdkType());
         oper.setAppkey(appkey);
+        oper.setOptions(operOptions);
         oper.addOrModifyApplicationSmali(apkOutFile, smaliFile);
         logger.info("添加或者修改Application smali代码[完成]");
         File unsignfile = buildApk(apkOutFile);

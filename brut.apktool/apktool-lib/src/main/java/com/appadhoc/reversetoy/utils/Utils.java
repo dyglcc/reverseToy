@@ -658,6 +658,13 @@ public class Utils {
         }
 
     }
+    public static class ParaUtils{
+        public static void checkCmdliPara(String key,String value) throws Exception {
+            if(value == null || value.trim().equals("")){
+                throw new Exception("获取参数" + key+"的值无效。");
+            }
+        }
+    }
 
     public static class SmaliUtils{
         public static void checkExistSmaliCode(String code) throws Exception {

@@ -25,6 +25,7 @@ import brut.directory.DirectoryException;
 import brut.util.AaptManager;
 import com.appadhoc.reversetoy.exception.AarFileNotExistException;
 import com.appadhoc.reversetoy.exception.ApkFileNotExistException;
+import com.appadhoc.reversetoy.utils.Utils;
 import org.apache.commons.cli.*;
 import org.xml.sax.SAXException;
 
@@ -32,7 +33,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import java.io.File;
 import java.io.IOException;
-import java.util.Optional;
+import java.util.HashMap;
 import java.util.logging.*;
 
 /**
@@ -40,7 +41,7 @@ import java.util.logging.*;
  * @author Connor Tumbleson <connor.tumbleson@gmail.com>
  */
 public class Main {
-    public static void main(String[] args) throws IOException, InterruptedException, BrutException, ParserConfigurationException, TransformerException, SAXException {
+    public static void main(String[] args) throws Exception {
 
         // headless
         System.setProperty("java.awt.headless", "true");
@@ -111,21 +112,107 @@ public class Main {
     }
 
     private static Logger logger = Logger.getLogger("cliMain");
-    private static void cmdMerge(CommandLine cli) {
+    private static void cmdMerge(CommandLine cli) throws Exception {
         int paraCount = cli.getArgList().size();
         String aarFileName = cli.getArgList().get(paraCount - 1);
         String apkFile = cli.getArgList().get(paraCount-2);
         String sdk_type = null;
         String appkey = null;
         // check for merge options
-        if (cli.hasOption("t") || cli.hasOption("sdk-type")) {
-            sdk_type = cli.getOptionValue("t");
+        if (cli.hasOption("st") || cli.hasOption("sdk-type")) {
+            sdk_type = cli.getOptionValue("st");
         }
-        if (cli.hasOption("a") || cli.hasOption("appkey")) {
-            appkey = cli.getOptionValue("a");
+        HashMap<String,Object> operOptions = new HashMap<>();
+
+        if (cli.hasOption("ak") || cli.hasOption("appkey")) {
+            appkey = cli.getOptionValue("ak");
+            Utils.ParaUtils.checkCmdliPara("appkey",appkey);
+            operOptions.put("ak",appkey);
+        }
+        if (cli.hasOption("chl") || cli.hasOption("channel")) {
+            String channel = cli.getOptionValue("chl");
+            Utils.ParaUtils.checkCmdliPara("channel",channel);
+            operOptions.put("chl",channel);
+        }
+//        int debugMode = 2;
+        if (cli.hasOption("dm") || cli.hasOption("debug_mode")) {
+            String dmV = cli.getOptionValue("dm");
+            Utils.ParaUtils.checkCmdliPara("debug_mode",dmV);
+            if(!(dmV.equals("1") || dmV.equals("0") || dmV.equals("2"))){
+                throw new Exception("debug_mode 参数必须是[0,1,2]其中一个数字");
+            }
+            operOptions.put("dm",Integer.parseInt(dmV));
+        }
+//        boolean autoProfile = true;
+        if (cli.hasOption("ap") || cli.hasOption("auto_profile")) {
+            operOptions.put("ap",false);
+        }
+//    EMPTY(0),
+//    AES(1),
+//    AES_CBC(2);
+//        int encryptType = 1;
+        if (cli.hasOption("enc") || cli.hasOption("encrypt_type")) {
+            String encV = cli.getOptionValue("enc");
+            Utils.ParaUtils.checkCmdliPara("encrypt_type",encV);
+            if(!(encV.equals("0") || encV.equals("1") || encV.equals("2"))){
+                throw new Exception("encrypt_type 必须是[0,1,2]中一个值");
+            }
+            operOptions.put("enc",Integer.parseInt(encV));
+        }
+//        boolean allowTimeCheck = true;
+        if (cli.hasOption("atck") || cli.hasOption("allowTimeCheck")) {
+            operOptions.put("atck",false);
+        }
+//        long maxDiffTimeInterval = 5*60;
+        if (cli.hasOption("mdti") || cli.hasOption("maxDiffTimeInterval")) {
+            String mdtiV = cli.getOptionValue("mdti");
+            Utils.ParaUtils.checkCmdliPara("maxDiffTimeInterval",mdtiV);
+            operOptions.put("mdti",Long.parseLong(mdtiV));
+        }
+//        boolean autoInstallation = true;
+        if (cli.hasOption("ai") || cli.hasOption("autoInstallation")) {
+            operOptions.put("ai",false);
+        }
+//        boolean autoHeatMap = false;
+        if (cli.hasOption("ah") || cli.hasOption("autoHeatMap")) {
+            operOptions.put("ah",true);
+        }
+//        boolean autoTrackPageView = true;
+        if (cli.hasOption("atp") || cli.hasOption("autoTrackPageView")) {
+            operOptions.put("atp",false);
+        }
+//        boolean autoTrackFragmentPageView = false;
+        if (cli.hasOption("atfp") || cli.hasOption("autoTrackFragmentPageView")) {
+            operOptions.put("atfp",true);
+        }
+//        boolean autoTrackClick = false;
+        if (cli.hasOption("atc") || cli.hasOption("autoTrackClick")) {
+            operOptions.put("atc",true);
+        }
+//        boolean enableException = true;
+        if (cli.hasOption("ene") || cli.hasOption("enableException")) {
+            operOptions.put("ene",false);
+        }
+//        String uploadUrl = "https://arkpaastest.analysys.cn:4089";
+        if (cli.hasOption("upu") || cli.hasOption("uploadUrl")) {
+            String upuV = cli.getOptionValue("upu");
+            Utils.ParaUtils.checkCmdliPara("uploadUrl",upuV);
+            operOptions.put("upu",upuV);
+        }
+//        String debugUrl ="wss://arkpaastest.analysys.cn:4091";
+        if (cli.hasOption("deu") || cli.hasOption("debugUrl")) {
+            String deuV = cli.getOptionValue("deu");
+            Utils.ParaUtils.checkCmdliPara("debugUrl",deuV);
+            operOptions.put("deu",deuV);
+        }
+//        String configUrl ="https://arkpaastest.analysys.cn:4089";
+        if (cli.hasOption("cfu") || cli.hasOption("configUrl")) {
+            String cfuV = cli.getOptionValue("cfu");
+            Utils.ParaUtils.checkCmdliPara("configUrl",cfuV);
+            operOptions.put("cfu",cfuV);
         }
         try {
-            com.appadhoc.reversetoy.Main.reverse(new File(apkFile),new File(aarFileName),sdk_type,appkey);
+            com.appadhoc.reversetoy.Main.reverse(new File(apkFile),new File(aarFileName),sdk_type,appkey,operOptions);
         } catch (ApkFileNotExistException e){
             System.out.println("APK file not found or can not read");
             System.exit(1);
@@ -488,109 +575,110 @@ public class Main {
                 .build();
         // aar合并
 
-        Option mergetOption = Option.builder("t")
+        Option mergetOption = Option.builder("st")
                 .longOpt("sdk-type")
-                .desc("集成SDK类型，eguan or yaohe 默认添加 eguan")
+                .hasArg(true)
+                .desc("集成SDK类型，eguan or yaohe 默认:eguan")
                 .argName("tag")
                 .build();
-        Option mergeAppkeyOption = Option.builder("a")
+        Option mergeAppkeyOption = Option.builder("ak")
                 .longOpt("appkey")
-                .desc("更换appkey")
+                .desc("更换appkey 默认:2709692586aa3e42")
                 .argName("tag")
+                .hasArg(true)
                 .build();
-        Option channelOption = Option.builder("a")
-                .longOpt("appkey")
-                .desc("更换appkey")
+        Option channelOption = Option.builder("chl")
+                .longOpt("channel")
+                .desc("更换channel 默认:AnalsysyReverse")
                 .argName("tag")
+                .hasArg(true)
                 .build();
 
-        int debugMode = 2;
-        Option debugModeOption = Option.builder("a")
-                .longOpt("appkey")
-                .desc("更换appkey")
+//        int debugMode = 2;
+        Option debugModeOption = Option.builder("dm")
+                .longOpt("debug_mode")
+                .desc("更换debugMode 可选项0，1，2 默认:2")
                 .argName("tag")
+                .hasArg(true)
                 .build();
-        boolean autoProfilel = true;
-        Option autoProfilelOption = Option.builder("a")
-                .longOpt("appkey")
-                .desc("更换appkey")
-                .argName("tag")
+//        boolean autoProfile = true;
+        Option autoProfileOption = Option.builder("ap")
+                .longOpt("auto_profile")
+                .desc("设置auto_profile false 默认:true")
                 .build();
 //    EMPTY(0),
 //    AES(1),
 //    AES_CBC(2);
-        int encryptType = 1;
-        Option encryptTypeOption = Option.builder("a")
-                .longOpt("appkey")
-                .desc("更换appkey")
+//        int encryptType = 1;
+        Option encryptTypeOption = Option.builder("enc")
+                .longOpt("encrypt_type")
+                .desc("更换encrypt_type 可选项0(empty)，1(aes)，2(aes_cbc) 默认:1")
                 .argName("tag")
+                .hasArg(true)
                 .build();
-        boolean allowTimeCheck = true;
-        Option allowTimeCheckOption = Option.builder("a")
-                .longOpt("appkey")
-                .desc("更换appkey")
-                .argName("tag")
+//        boolean allowTimeCheck = true;
+        Option allowTimeCheckOption = Option.builder("atck")
+                .longOpt("allowTimeCheck")
+                .desc("设置allowTimeCheck false 默认:true")
                 .build();
-        long maxDiffTimeInterval = 5*60;
-        Option maxDiffTimeIntervalOption = Option.builder("a")
-                .longOpt("appkey")
-                .desc("更换appkey")
+//        long maxDiffTimeInterval = 5*60;
+        Option maxDiffTimeIntervalOption = Option.builder("mdti")
+                .longOpt("maxDiffTimeInterval")
+                .desc("设置maxDiffTimeInterval int类型 默认:300秒")
                 .argName("tag")
+                .hasArg(true)
                 .build();
-        boolean autoInstallation = true;
-        Option autoInstallationOption = Option.builder("a")
-                .longOpt("appkey")
-                .desc("更换appkey")
-                .argName("tag")
+//        boolean autoInstallation = true;
+        Option autoInstallationOption = Option.builder("ai")
+                .longOpt("autoInstallation")
+                .desc("设置autoInstallation false 默认:true")
                 .build();
-        boolean autoHeatMap = false;
-        Option autoHeatMapOption = Option.builder("a")
-                .longOpt("appkey")
-                .desc("更换appkey")
-                .argName("tag")
+//        boolean autoHeatMap = false;
+        Option autoHeatMapOption = Option.builder("ah")
+                .longOpt("autoHeatMap")
+                .desc("设置autoHeatMap true 默认:false")
                 .build();
-        boolean autoTrackPageView = true;
-        Option autoTrackPageViewOption = Option.builder("a")
-                .longOpt("appkey")
-                .desc("更换appkey")
-                .argName("tag")
+//        boolean autoTrackPageView = true;
+        Option autoTrackPageViewOption = Option.builder("atp")
+                .longOpt("autoTrackPageView")
+                .desc("设置autoTrackPageView false 默认:true")
                 .build();
-        boolean autoTrackFragmentPageView = false;
-        Option autoTrackFragmentPageViewOption = Option.builder("a")
-                .longOpt("appkey")
-                .desc("更换appkey")
-                .argName("tag")
+//        boolean autoTrackFragmentPageView = false;
+        Option autoTrackFragmentPageViewOption = Option.builder("atfp")
+                .longOpt("autoTrackFragmentPageView")
+                .desc("设置autoTrackFragmentPageView true 默认:false")
                 .build();
-        boolean autoTrackClick = false;
-        Option autoTrackClickOption = Option.builder("a")
-                .longOpt("appkey")
-                .desc("更换appkey")
-                .argName("tag")
+//        boolean autoTrackClick = false;
+        Option autoTrackClickOption = Option.builder("atc")
+                .longOpt("autoTrackClick")
+                .desc("设置autoTrackClick true 默认:false")
                 .build();
-        boolean enableException = true;
-        Option enableExceptionOption = Option.builder("a")
-                .longOpt("appkey")
-                .desc("更换appkey")
-                .argName("tag")
+//        boolean enableException = true;
+        Option enableExceptionOption = Option.builder("ene")
+                .longOpt("enableException")
+                .desc("设置enableException false 默认:true")
                 .build();
 
-        String uploadUrl = "https://arkpaastest.analysys.cn:4089";
-        Option uploadUrlOption = Option.builder("a")
-                .longOpt("appkey")
-                .desc("更换appkey")
+//        String uploadUrl = "https://arkpaastest.analysys.cn:4089";
+        Option uploadUrlOption = Option.builder("upu")
+                .longOpt("uploadUrl")
+                .desc("更换uploadUrl 默认:https://arkpaastest.analysys.cn:4089")
                 .argName("tag")
+                .hasArg(true)
                 .build();
-        String debugUrl ="wss://arkpaastest.analysys.cn:4091";
-        Option debugUrlOption = Option.builder("a")
-                .longOpt("appkey")
-                .desc("更换appkey")
+//        String debugUrl ="wss://arkpaastest.analysys.cn:4091";
+        Option debugUrlOption = Option.builder("deu")
+                .longOpt("debugUrl")
+                .desc("更换debugUrl 默认:wss://arkpaastest.analysys.cn:4091")
                 .argName("tag")
+                .hasArg(true)
                 .build();
-        String configUrl ="https://arkpaastest.analysys.cn:4089";
-        Option configUrlOption = Option.builder("a")
-                .longOpt("appkey")
-                .desc("更换appkey")
+//        String configUrl ="https://arkpaastest.analysys.cn:4089";
+        Option configUrlOption = Option.builder("cfu")
+                .longOpt("configUrl")
+                .desc("更换configUrl 默认:https://arkpaastest.analysys.cn:4089")
                 .argName("tag")
+                .hasArg(true)
                 .build();
 
         // check for advance mode
@@ -666,8 +754,29 @@ public class Main {
         allOptions.addOption(onlyMainClassesOption);
 
         // 合并
-        mergeOptions.addOption(mergeAppkeyOption);
         mergeOptions.addOption(mergetOption);
+        mergeOptions.addOption(channelOption);
+        mergeOptions.addOption(debugModeOption);
+        mergeOptions.addOption(autoProfileOption);
+        mergeOptions.addOption(encryptTypeOption);
+        mergeOptions.addOption(allowTimeCheckOption);
+        mergeOptions.addOption(maxDiffTimeIntervalOption);
+        mergeOptions.addOption(autoInstallationOption);
+
+        mergeOptions.addOption(autoHeatMapOption);
+        mergeOptions.addOption(autoTrackPageViewOption);
+        mergeOptions.addOption(autoTrackFragmentPageViewOption);
+        mergeOptions.addOption(autoTrackClickOption);
+        mergeOptions.addOption(enableExceptionOption);
+        mergeOptions.addOption(uploadUrlOption);
+        mergeOptions.addOption(debugUrlOption);
+        mergeOptions.addOption(configUrlOption);
+
+        mergeOptions.addOption(mergeAppkeyOption);
+
+        for(Option option :mergeOptions.getOptions()){
+            allOptions.addOption(option);
+        }
     }
 
     private static String verbosityHelp() {

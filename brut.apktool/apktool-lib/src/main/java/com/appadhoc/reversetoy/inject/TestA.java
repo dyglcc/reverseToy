@@ -14,7 +14,7 @@ public class TestA {
             String code = Utils.FileUtils.readStringFromStream(file).toString();
 
             EguanSmaliOper oper = new EguanSmaliOper("eguan");
-            code = oper.replaceEncryptType(0,code);
+            code = oper.replaceAllowTimeCheck(true,code);
 
             System.out.println(code);
 //            System.out.println(code.contains("abcchanngel"));
