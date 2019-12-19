@@ -146,7 +146,7 @@ public abstract class AbstractSmaliOper {
 
     public void addOrModifyApplicationSmali(File hostDir, File newSmaliFolder) throws Exception {
 
-        deleteOldSdkSmaliFile(this.getSDKdir(), hostDir, newSmaliFolder);
+        deleteOldSdkSmaliFile(getSDKdir(), hostDir, newSmaliFolder,getExcludeSDKdir());
         String appName = Utils.XmlUtils.setApplicationName(hostDir, getStubApplicationName());
         if (appName.equals(getStubApplicationName())) {
             copyStubSmali2HostDir(stubDir, newSmaliFolder);
@@ -160,6 +160,7 @@ public abstract class AbstractSmaliOper {
     protected abstract InputStream getAssetsCodeMethodInit();
 
     protected abstract String getSDKdir();
+    protected abstract String getExcludeSDKdir();
 
     protected abstract String getStubApplicationName();
 
@@ -272,7 +273,7 @@ public abstract class AbstractSmaliOper {
     }
 
     // 删除旧sdk 的smali文件 // upgrade sdk may be useful
-    protected void deleteOldSdkSmaliFile(String path, File hostdir, File exclude) throws Exception {
+    protected void deleteOldSdkSmaliFile(String path, File hostdir, File exclude, String excludeSDKdir) throws Exception {
 
 //        System.out.println("old sdk path " + path);
         if (path == null || path.equals("")) {
@@ -290,8 +291,13 @@ public abstract class AbstractSmaliOper {
             if (fileName.startsWith("smali") && !fileName.equals(exclude.getName())) { // 新生成的sdk smali不删除
                 File existOldSdkdir = new File(file, path);
                 if (existOldSdkdir.exists()) {
-                    LOGGER.info("删除旧的SDK目录" + existOldSdkdir.getAbsolutePath());
-                    OS.rmdir(existOldSdkdir);
+                    for(File fileYiguan : Objects.requireNonNull(existOldSdkdir.listFiles())){
+                        if(!fileYiguan.getName().equals(excludeSDKdir)){
+                            LOGGER.info("删除旧的SDK目录" + existOldSdkdir.getAbsolutePath());
+                            OS.rmdir(fileYiguan);
+                        }
+                    }
+
                 }
             }
         }

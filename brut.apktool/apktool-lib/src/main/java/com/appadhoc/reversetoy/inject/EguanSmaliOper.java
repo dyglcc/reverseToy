@@ -8,6 +8,7 @@ import java.io.InputStream;
 public class EguanSmaliOper extends AbstractSmaliOper {
     private static final String appNameStub_Eguan = "com.reverse.stub.EguanApp";
     private String SDK_DIR = "com.analysys";
+    private String exclue = "track";
 //    String appkey = "2709692586aa3e42";
 
     EguanSmaliOper(String sdktype) {
@@ -39,6 +40,11 @@ public class EguanSmaliOper extends AbstractSmaliOper {
     @Override
     public String getSDKdir() {
         return SDK_DIR;
+    }
+
+    @Override
+    protected String getExcludeSDKdir() {
+        return exclue;
     }
 
     @Override

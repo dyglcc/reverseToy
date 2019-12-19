@@ -2,7 +2,7 @@
 # 简单使用<br/>
 >###### Apktool 使用说明请参考[这里](APKTOOL.md)<br/>
 
-<pre>java -jar apktool-reverseToy.jar abc.apk libs</pre>
+<pre>java -jar apktool-reverseToy.jar m abc.apk libs</pre>
 
 >libs是文件夹路径，路径下面是易观的jar<br/>
 注意：包缺少包可能引起app崩溃启动 <br/>

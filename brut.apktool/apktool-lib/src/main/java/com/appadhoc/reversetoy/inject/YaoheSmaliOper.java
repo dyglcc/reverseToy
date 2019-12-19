@@ -38,6 +38,11 @@ public class YaoheSmaliOper extends AbstractSmaliOper {
     }
 
     @Override
+    protected String getExcludeSDKdir() {
+        return null;
+    }
+
+    @Override
     protected String getStubApplicationName() {
         return appNameStub_yaohe;
     }

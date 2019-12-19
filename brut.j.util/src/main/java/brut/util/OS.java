@@ -50,6 +50,24 @@ public class OS {
         dir.delete();
     }
 
+    public static void rmdir(File dir, String exculueDir) throws BrutException {
+        if (!dir.exists()) {
+            return;
+        }
+        File[] files = dir.listFiles();
+        for (int i = 0; i < files.length; i++) {
+            File file = files[i];
+            if (file.isDirectory()) {
+                if (exculueDir != null && !exculueDir.equals("") && !exculueDir.equals(file.getName())) {
+                    rmdir(file);
+                }
+            } else {
+                file.delete();
+            }
+        }
+        dir.delete();
+    }
+
     public static void rmfile(String file) throws BrutException {
         File del = new File(file);
         del.delete();
