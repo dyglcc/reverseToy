@@ -16,7 +16,7 @@ analysys_visual_*.jar
 <pre> java -jar apktool-reverseToy.jar m -ak (appkey)  -ai -ah -ap -atc -atck -atfp -atp -cfu http://config_url:8080 -upu http://upload_url:9090 -deu wss://debug_wss:3000 -chl channel  -dm 2 -enc 0 -ene -mdti 223 -st eguan   host.apk abc.jar|libs/|sdk.aar</pre>
 
 # 合并aar文件
-<pre>reverse -a appkey abc.apk abtest-v1.2.2.aar</br></pre>
+<pre>reverse m abc.apk abtest-v1.2.2.aar</br></pre>
 
 # 参数查看<br/>
 
