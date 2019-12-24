@@ -35,13 +35,14 @@ public class Main {
         decoder.setForceDelete(true);
         ApkOptions options = new ApkOptions();
         options.verbose = true;
-        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/reader.apk");
+        File file = new File("/Users/dongyuangui/Desktop/toy/apks/meishe.apk");
         File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
         decoder.setApkFile(file);
         decoder.setOutDir(apkOutFile);
+        decoder.setDecodeSources(ApkDecoder.DECODE_SOURCES_SMALI_ONLY_MAIN_CLASSES);
         AbstractManager manager = null;
         if (jar.equals("jar")) {
-            manager = ManagerFactory.getIToyManager("/Users/jiaozhengxiang/Desktop/aar-1/libs");
+            manager = ManagerFactory.getIToyManager("/Users/dongyuangui/Desktop/toy/apks/libs");
         } else {
             manager = ManagerFactory.getIToyManager("/Users/jiaozhengxiang/Desktop/aar-1/abtest-release.aar");
         }
@@ -79,6 +80,7 @@ public class Main {
         decoder.setForceDelete(true);
         ApkOptions options = new ApkOptions();
         options.verbose = true;
+        decoder.setDecodeSources(ApkDecoder.DECODE_SOURCES_SMALI_ONLY_MAIN_CLASSES);
         logger.info("apk file name " + apkfile.getAbsolutePath());
         File apkOutFile = new File(apkfile.getParentFile(), Utils.getNameRemovedSuffix(apkfile.getName()));
         decoder.setApkFile(apkfile);
