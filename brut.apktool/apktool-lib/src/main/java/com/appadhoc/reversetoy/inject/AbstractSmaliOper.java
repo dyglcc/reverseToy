@@ -294,7 +294,11 @@ public abstract class AbstractSmaliOper {
                     for(File fileYiguan : Objects.requireNonNull(existOldSdkdir.listFiles())){
                         if(!fileYiguan.getName().equals(excludeSDKdir)){
                             LOGGER.info("删除旧的SDK目录" + existOldSdkdir.getAbsolutePath());
-                            OS.rmdir(fileYiguan);
+                            if(fileYiguan.isFile()){
+                                OS.rmfile(fileYiguan.getAbsolutePath());
+                            }else {
+                                OS.rmdir(fileYiguan);
+                            }
                         }
                     }
 
