@@ -37,8 +37,9 @@ public class Utils {
 
     }
 
-    public static class OSCMD{
+    public static class OSCMD {
         private final static Logger LOGGER = Logger.getLogger(AarManager.class.getName());
+
         public static void runCMD(List<String> cmd) throws AndrolibException {
             try {
                 OS.exec(cmd.toArray(new String[0]));
@@ -53,33 +54,33 @@ public class Utils {
     public static class FileUtils {
 
 
-        public static void unzip(String assets,File outDir,File jarFile) throws IOException {
+        public static void unzip(String assets, File outDir, File jarFile) throws IOException {
 
             ZipFile zipFile = new ZipFile(jarFile);
-            for(Enumeration entries = zipFile.entries(); entries.hasMoreElements();){
-                ZipEntry entry = (ZipEntry)entries.nextElement();
+            for (Enumeration entries = zipFile.entries(); entries.hasMoreElements(); ) {
+                ZipEntry entry = (ZipEntry) entries.nextElement();
                 String zipEntryName = entry.getName();
-                if(!zipEntryName.startsWith(assets)){
+                if (!zipEntryName.startsWith(assets)) {
                     continue;
                 }
                 InputStream in = zipFile.getInputStream(entry);
                 //指定解压后的文件夹+当前zip文件的名称
-                String outPath = (outDir.getAbsolutePath()+"/"+zipEntryName).replace("/", File.separator);
+                String outPath = (outDir.getAbsolutePath() + "/" + zipEntryName).replace("/", File.separator);
                 //判断路径是否存在,不存在则创建文件路径
                 File file = new File(outPath.substring(0, outPath.lastIndexOf(File.separator)));
-                if(!file.exists()){
+                if (!file.exists()) {
                     file.mkdirs();
                 }
                 //判断文件全路径是否为文件夹,如果是上面已经上传,不需要解压
-                if(new File(outPath).isDirectory()){
+                if (new File(outPath).isDirectory()) {
                     continue;
                 }
                 //保存文件路径信息（可利用md5.zip名称的唯一性，来判断是否已经解压）
                 OutputStream out = new FileOutputStream(outPath);
                 byte[] buf1 = new byte[2048];
                 int len;
-                while((len=in.read(buf1))>0){
-                    out.write(buf1,0,len);
+                while ((len = in.read(buf1)) > 0) {
+                    out.write(buf1, 0, len);
                 }
                 in.close();
                 out.close();
@@ -134,12 +135,13 @@ public class Utils {
             }
             return builder;
         }
+
         public static StringBuilder readStringFromStream(InputStream inputStream) throws IOException {
 
             StringBuilder stringBuilder = new StringBuilder();
             BufferedReader reader1 = new BufferedReader(new InputStreamReader(inputStream));
             String line = null;
-            while((line = reader1.readLine())!=null){
+            while ((line = reader1.readLine()) != null) {
                 stringBuilder.append(line).append("\n");
             }
             reader1.close();
@@ -297,6 +299,11 @@ public class Utils {
 
         public static void addIDs2HostIds(Map<String, LinkedHashMap> ids, File aarres) throws Exception {
 
+            if (ids == null) {
+                LOGGER.fine("ids is empty return");
+                return;
+            }
+
             File fileIds = new File(aarres, "res/values/ids.xml");
             if (!fileIds.exists()) {
                 throw new Exception("host dir values/ids.xml not exist");
@@ -304,6 +311,10 @@ public class Utils {
             Document documentValues = loadDocument(fileIds);
             Node nodeFirst = documentValues.getFirstChild();
             LinkedHashMap<String, AarID> idMaps = ids.get("id");
+            if (idMaps == null) {
+                LOGGER.fine("idMas is empty");
+                return;
+            }
             for (String key : idMaps.keySet()) {
                 Element element = documentValues.createElement("item");
                 element.setAttribute("type", "id");
@@ -658,21 +669,23 @@ public class Utils {
         }
 
     }
-    public static class ParaUtils{
-        public static void checkCmdliPara(String key,String value) throws Exception {
-            if(value == null || value.trim().equals("")){
-                throw new Exception("获取参数" + key+"的值无效。");
+
+    public static class ParaUtils {
+        public static void checkCmdliPara(String key, String value) throws Exception {
+            if (value == null || value.trim().equals("")) {
+                throw new Exception("获取参数" + key + "的值无效。");
             }
         }
     }
 
-    public static class SmaliUtils{
+    public static class SmaliUtils {
         public static void checkExistSmaliCode(String code) throws Exception {
             if (code == null || code.equals("")) {
                 throw new Exception("请检查是否有存在Eguan SDK的代码片段或者存在EguanApp.smali文件");
             }
         }
     }
+
     public static class IDUtils {
         private static int range = 2000;
 

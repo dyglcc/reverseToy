@@ -1,11 +1,13 @@
 package com.appadhoc.reversetoy.inject;
 
 import brut.util.OS;
+import com.appadhoc.reversetoy.AbstractManager;
 import com.appadhoc.reversetoy.utils.Utils;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -144,12 +146,14 @@ public abstract class AbstractSmaliOper {
         }
     }
 
-    public void addOrModifyApplicationSmali(File hostDir, File newSmaliFolder) throws Exception {
-
-        deleteOldSdkSmaliFile(getSDKdir(), hostDir, newSmaliFolder,getExcludeSDKdir());
+    public void addOrModifyApplicationSmali(File hostDir, List<File> newSmaliFolder) throws Exception {
+        if (newSmaliFolder == null || newSmaliFolder.size() == 0) {
+            throw new Exception("SDK smali 文件夹不存在");
+        }
+        deleteOldSdkSmaliFile(getSDKdir(), hostDir, newSmaliFolder, getExcludeSDKdir());
         String appName = Utils.XmlUtils.setApplicationName(hostDir, getStubApplicationName());
         if (appName.equals(getStubApplicationName())) {
-            copyStubSmali2HostDir(stubDir, newSmaliFolder);
+            copyStubSmali2HostDir(stubDir, newSmaliFolder.get(newSmaliFolder.size() - 1));
         } else {
             modifyExistAppSmali(hostDir, appName);
         }
@@ -160,6 +164,7 @@ public abstract class AbstractSmaliOper {
     protected abstract InputStream getAssetsCodeMethodInit();
 
     protected abstract String getSDKdir();
+
     protected abstract String getExcludeSDKdir();
 
     protected abstract String getStubApplicationName();
@@ -273,7 +278,7 @@ public abstract class AbstractSmaliOper {
     }
 
     // 删除旧sdk 的smali文件 // upgrade sdk may be useful
-    protected void deleteOldSdkSmaliFile(String path, File hostdir, File exclude, String excludeSDKdir) throws Exception {
+    protected void deleteOldSdkSmaliFile(String path, File hostdir, List<File> exclude, String excludeSDKdir) throws Exception {
 
 //        System.out.println("old sdk path " + path);
         if (path == null || path.equals("")) {
@@ -282,21 +287,18 @@ public abstract class AbstractSmaliOper {
         if (!hostdir.exists()) {
             throw new Exception("host dir 不存在");
         }
-        if (!exclude.exists()) {
-            throw new Exception("SDK smali 文件夹不存在");
-        }
         path = path.replaceAll("\\.", File.separator);
         for (File file : Objects.requireNonNull(hostdir.listFiles())) {
             String fileName = file.getName();
-            if (fileName.startsWith("smali") && !fileName.equals(exclude.getName())) { // 新生成的sdk smali不删除
+            if (fileName.startsWith("smali") && !fileNameInList(fileName, exclude)) { // 新生成的sdk smali不删除
                 File existOldSdkdir = new File(file, path);
                 if (existOldSdkdir.exists()) {
-                    for(File fileYiguan : Objects.requireNonNull(existOldSdkdir.listFiles())){
-                        if(!fileYiguan.getName().equals(excludeSDKdir)){
+                    for (File fileYiguan : Objects.requireNonNull(existOldSdkdir.listFiles())) {
+                        if (!fileYiguan.getName().equals(excludeSDKdir)) {
                             LOGGER.info("删除旧的SDK目录" + existOldSdkdir.getAbsolutePath());
-                            if(fileYiguan.isFile()){
+                            if (fileYiguan.isFile()) {
                                 OS.rmfile(fileYiguan.getAbsolutePath());
-                            }else {
+                            } else {
                                 OS.rmdir(fileYiguan);
                             }
                         }
@@ -305,6 +307,17 @@ public abstract class AbstractSmaliOper {
                 }
             }
         }
+    }
+
+    private boolean fileNameInList(String fileName, List<File> files) {
+        boolean inFiles = false;
+        for (File file : files) {
+            if (file.getName().equals(fileName)) {
+                inFiles = true;
+                break;
+            }
+        }
+        return inFiles;
     }
 
     private String replacePara(String code) throws Exception {

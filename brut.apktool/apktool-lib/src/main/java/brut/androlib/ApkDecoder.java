@@ -1,18 +1,18 @@
 /**
- *  Copyright (C) 2019 Ryszard Wiśniewski <brut.alll@gmail.com>
- *  Copyright (C) 2019 Connor Tumbleson <connor.tumbleson@gmail.com>
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Copyright (C) 2019 Ryszard Wiśniewski <brut.alll@gmail.com>
+ * Copyright (C) 2019 Connor Tumbleson <connor.tumbleson@gmail.com>
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package brut.androlib;
 
@@ -64,7 +64,8 @@ public class ApkDecoder {
         if (mApkFile != null) {
             try {
                 mApkFile.close();
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+            }
         }
 
         mApkFile = new ExtFile(apkFile);
@@ -79,7 +80,7 @@ public class ApkDecoder {
         mApi = api;
     }
 
-    public void decode(AbstractManager aarManager) throws Exception {
+    public void decode(List<AbstractManager> aarManagers) throws Exception {
         try {
             File outDir = getOutDir();
             AndrolibResources.sKeepBroken = mKeepBrokenResources;
@@ -123,10 +124,12 @@ public class ApkDecoder {
                             mAndrolib.decodeManifestWithResources(mApkFile, outDir, getResTable());
                         }
                         // ------------------------add by dongyg
-                        if(aarManager!=null){
-                            aarManager.setHostPackageName(getResTable().getPackageRenamed());
-                            aarManager.preCombin(outDir);
-                            aarManager.addAarids2ResTable(getResTable());
+                        if (aarManagers != null) { // 对付路径下面多个aar文件
+                            for (AbstractManager aarManager : aarManagers) {
+                                aarManager.setHostPackageName(getResTable().getPackageRenamed());
+                                aarManager.preCombin(outDir);
+                                aarManager.addAarids2ResTable(getResTable());
+                            }
                         }
                         //------------------------add by dongyg
                         mAndrolib.decodeResourcesFull(mApkFile, outDir, getResTable());
@@ -139,8 +142,7 @@ public class ApkDecoder {
                     if (mDecodeResources == DECODE_RESOURCES_FULL
                             || mForceDecodeManifest == FORCE_DECODE_MANIFEST_FULL) {
                         mAndrolib.decodeManifestFull(mApkFile, outDir, getResTable());
-                    }
-                    else {
+                    } else {
                         mAndrolib.decodeManifestRaw(mApkFile, outDir);
                     }
                 }
@@ -163,8 +165,8 @@ public class ApkDecoder {
                 Set<String> files = mApkFile.getDirectory().getFiles(true);
                 for (String file : files) {
                     if (file.endsWith(".dex")) {
-                        if (! file.equalsIgnoreCase("classes.dex")) {
-                            switch(mDecodeSources) {
+                        if (!file.equalsIgnoreCase("classes.dex")) {
+                            switch (mDecodeSources) {
                                 case DECODE_SOURCES_NONE:
                                     mAndrolib.decodeSourcesRaw(mApkFile, outDir, file);
                                     break;
@@ -195,7 +197,8 @@ public class ApkDecoder {
         } finally {
             try {
                 mApkFile.close();
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+            }
         }
     }
 
@@ -227,7 +230,7 @@ public class ApkDecoder {
         mDecodeAssets = mode;
     }
 
-    public void setAnalysisMode(boolean mode, boolean pass) throws AndrolibException{
+    public void setAnalysisMode(boolean mode, boolean pass) throws AndrolibException {
         mAnalysisMode = mode;
 
         // only set mResTable, once it exists
@@ -274,7 +277,7 @@ public class ApkDecoder {
         if (mResTable == null) {
             boolean hasResources = hasResources();
             boolean hasManifest = hasManifest();
-            if (! (hasManifest || hasResources)) {
+            if (!(hasManifest || hasResources)) {
                 throw new AndrolibException(
                         "Apk doesn't contain either AndroidManifest.xml file or resources.arsc file");
             }
@@ -296,7 +299,7 @@ public class ApkDecoder {
             Set<String> files = mApkFile.getDirectory().getFiles(false);
             for (String file : files) {
                 if (file.endsWith(".dex")) {
-                    if (! file.equalsIgnoreCase("classes.dex")) {
+                    if (!file.equalsIgnoreCase("classes.dex")) {
                         return true;
                     }
                 }
@@ -424,7 +427,8 @@ public class ApkDecoder {
         int id = getResTable().getPackageId();
         try {
             id = getResTable().getPackage(renamed).getId();
-        } catch (UndefinedResObject ignored) {}
+        } catch (UndefinedResObject ignored) {
+        }
 
         if (Strings.isNullOrEmpty(original)) {
             return;

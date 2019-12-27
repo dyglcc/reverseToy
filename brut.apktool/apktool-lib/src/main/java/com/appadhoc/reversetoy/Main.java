@@ -35,29 +35,26 @@ public class Main {
         decoder.setForceDelete(true);
         ApkOptions options = new ApkOptions();
         options.verbose = true;
-        File file = new File("/Users/dongyuangui/Desktop/toy/apks/meishe.apk");
+//        File file = new File("/Users/dongyuangui/Desktop/toy/apks/meishe.apk");
+        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
         File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
         decoder.setApkFile(file);
         decoder.setOutDir(apkOutFile);
         decoder.setDecodeSources(ApkDecoder.DECODE_SOURCES_SMALI_ONLY_MAIN_CLASSES);
-        AbstractManager manager = null;
-        if (jar.equals("jar")) {
-            manager = ManagerFactory.getIToyManager("/Users/dongyuangui/Desktop/toy/apks/libs");
-        } else {
-            manager = ManagerFactory.getIToyManager("/Users/jiaozhengxiang/Desktop/aar-1/abtest-release.aar");
-        }
-        manager.setSdkType("eguan");
-        decoder.decode(manager);
-        manager.setHostDir(apkOutFile);
-        logger.info("##########解压apk文件[完成]##########");
-        manager.addIDs2HostFile(apkOutFile);
-        logger.info("##########添加IDS到IDS.xml[完成]##########");
-        File smaliFile = manager.smaliClassFilesAndModifyids(apkOutFile);
-        logger.info("##########重新编排ID并拷贝文件到宿主文件夹[完成]##########");
-        AbstractSmaliOper oper = InjectManagerFactory.createOper(manager.getSdkType());
+        // init decoder -----------oper
+
+        String filePath = "/Users/jiaozhengxiang/Desktop/aar_test";
+
+        // aar oper
+        MultiSDKs multi = new MultiSDKs();
+        multi.dealWithSDKpackages("eguan",new File(filePath),apkOutFile,decoder);
+
+
+        // smali oper --------------------
+        AbstractSmaliOper oper = InjectManagerFactory.createOper("eguan");
         oper.setOptions(map);
 //        oper.setAppkey(appkey);
-        oper.addOrModifyApplicationSmali(apkOutFile, smaliFile);
+        oper.addOrModifyApplicationSmali(apkOutFile, multi.getSmaliFolder());
         logger.info("##########添加或者修改Application smali代码[完成]##########");
         File unsignfile = buildApk(apkOutFile);
         logger.info("##########打包合并后的文件生成未签名文件[完成]##########");
@@ -87,19 +84,25 @@ public class Main {
         decoder.setOutDir(apkOutFile);
 
         // pre decode file, unzip aar or jar file
-        AbstractManager manager = ManagerFactory.getIToyManager(aar.getAbsolutePath());
-        manager.setSdkType(sdktype);
-        decoder.decode(manager);
-        manager.setHostDir(apkOutFile);
-        logger.info("解压apk文件[完成]");
-        manager.addIDs2HostFile(apkOutFile);
-        logger.info("添加IDS到IDS.xml[完成]");
-        File smaliFile = manager.smaliClassFilesAndModifyids(apkOutFile);
-        logger.info("重新编排ID并拷贝文件到宿主文件夹[完成]");
-        AbstractSmaliOper oper = InjectManagerFactory.createOper(manager.getSdkType());
+//        AbstractManager manager = ManagerFactory.getIToyManager(aar.getAbsolutePath());
+//        manager.setSdkType(sdktype);
+//        decoder.decode(manager);
+//        manager.setHostDir(apkOutFile);
+//        logger.info("解压apk文件[完成]");
+//        manager.addIDs2HostFile(apkOutFile);
+//        logger.info("添加IDS到IDS.xml[完成]");
+//        File smaliFile = manager.smaliClassFilesAndModifyids(apkOutFile);
+//        logger.info("重新编排ID并拷贝文件到宿主文件夹[完成]");
+
+        // aar oper
+        MultiSDKs multi = new MultiSDKs();
+        multi.dealWithSDKpackages("eguan",aar,apkOutFile,decoder);
+
+
+        AbstractSmaliOper oper = InjectManagerFactory.createOper(sdktype);
         oper.setAppkey(appkey);
         oper.setOptions(operOptions);
-        oper.addOrModifyApplicationSmali(apkOutFile, smaliFile);
+        oper.addOrModifyApplicationSmali(apkOutFile, multi.getSmaliFolder());
         logger.info("添加或者修改Application smali代码[完成]");
         File unsignfile = buildApk(apkOutFile);
         logger.info("打包合并后的文件生成未签名文件[完成]");

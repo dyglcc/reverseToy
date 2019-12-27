@@ -42,7 +42,7 @@ public class AarManager extends AbstractManager {
 
     public AarManager(String aarFile) {
         try {
-            LOGGER.fine("aarFile  name "+aarFile+"");
+            LOGGER.fine("aarFile  name " + aarFile + "");
             setWorkSpace(new File(aarFile).getParentFile().getAbsolutePath());
             setAarFile(aarFile);
         } catch (Exception e) {
@@ -57,7 +57,7 @@ public class AarManager extends AbstractManager {
         }
     }
 
-    public void setWorkSpace(String workSpaceDir) throws Exception {
+    private void setWorkSpace(String workSpaceDir) throws Exception {
         if (toyWorkspace == null || !toyWorkspace.exists()) {
             try {
                 toyWorkspace = new File(workSpaceDir);
@@ -67,7 +67,7 @@ public class AarManager extends AbstractManager {
             }
         }
         // 添加初始化tmp文件夹
-        File file = new File(toyWorkspace, "aar/tmp");
+        File file = new File(toyWorkspace, "aar/tmp" + UUID.randomUUID().toString().substring(0, 5));
         if (!file.exists()) {
             file.mkdirs();
         } else {
@@ -120,6 +120,10 @@ public class AarManager extends AbstractManager {
 
 
     public void addAarids2ResTable(ResTable resTable) throws Exception {
+        if (!getAarres().exists()) {
+            LOGGER.fine("aar file have no res file");
+            return;
+        }
 
         ResPackage mainPackage = resTable.getPackage(127);
         // 将restyp里面的都替换一下
@@ -148,7 +152,10 @@ public class AarManager extends AbstractManager {
             aaptPackage();
             compileRfile2class();
             // read aar ids
-            ids = Utils.RFileUtils.readAarIds(getRjavaFile());
+            File rRile = getRjavaFile();
+            if (rRile.exists()) {
+                ids = Utils.RFileUtils.readAarIds(rRile);
+            }
             // 合并AndroidManifest文件
             combinHostManifestWithAar(hostUnzipDir);
 
@@ -186,16 +193,18 @@ public class AarManager extends AbstractManager {
     private File getRjavaFile() throws Exception {
 //        String rFilename = getRfileName();
         File Rfile = new File(getRFileDir(), aarPackageName.replaceAll("\\.", File.separator) + File.separator + "R.java");
-        if (!Rfile.exists()) {
-            throw new Exception("R file not exist");
-        }
+//        if (!Rfile.exists()) {
+//            throw new Exception("R file not exist");
+//        }
         return Rfile;
     }
 
     private void compileRfile2class() throws Exception {
 
         File Rfile = getRjavaFile();
-        compileFile(Rfile);
+        if (Rfile.exists()) {
+            compileFile(Rfile);
+        }
 
     }
 
@@ -261,9 +270,9 @@ public class AarManager extends AbstractManager {
             }
             for (File file : Objects.requireNonNull(unzipFile.listFiles())) {
                 if (file.getName().endsWith(".jar")) {
-                    File newName = new File(unzipFile, System.currentTimeMillis()+".jar");
+                    File newName = new File(unzipFile, System.currentTimeMillis() + ".jar");
                     Utils.FileUtils.reNameFile(file.getAbsolutePath(), newName.getAbsolutePath());
-                    OS.cpfile2src(newName,aarlibs);
+                    OS.cpfile2src(newName, aarlibs);
                 }
             }
 
@@ -279,6 +288,10 @@ public class AarManager extends AbstractManager {
     private void aaptPackage()
             throws BrutException, IOException {
         List<String> cmd = new ArrayList<String>();
+        if (!getAarres().exists()) {
+            LOGGER.fine("aar file have no res file");
+            return;
+        }
         try {
             String aaptCommand = AaptManager.getAppt1().getAbsolutePath();
             cmd.add(aaptCommand);
@@ -373,6 +386,11 @@ public class AarManager extends AbstractManager {
             throw new Exception("aar file pacagename is null");
         }
 
+        if (ids == null) {
+            LOGGER.fine("ids is empty");
+            return;
+        }
+
         String rSmaliDirs_str = aarPackageName.replaceAll("\\.", String.valueOf(File.separatorChar));
 
         File rSmalidir = new File(aarSmaliFilerDirs, rSmaliDirs_str);
@@ -392,8 +410,8 @@ public class AarManager extends AbstractManager {
     private File smaliClass(File hostdir) throws Exception {
         rClass2jar();
         File libs = getAarLibDir();
-        File dexFile = Utils.BuildPackage.dx2dexfiles(libs,AarManager.class);
-        return Utils.BuildPackage.all2Smali(hostdir,dexFile,AarManager.class);
+        File dexFile = Utils.BuildPackage.dx2dexfiles(libs, AarManager.class);
+        return Utils.BuildPackage.all2Smali(hostdir, dexFile, AarManager.class);
         // change R.smali ids
     }
 
@@ -437,7 +455,7 @@ public class AarManager extends AbstractManager {
 
     public void addIDs2HostFile(File apkOutFile) throws Exception {
 
-        Utils.XmlUtils.addIDs2HostIds(ids,apkOutFile);
+        Utils.XmlUtils.addIDs2HostIds(ids, apkOutFile);
     }
 
     public static void main(String[] args) throws Exception {
