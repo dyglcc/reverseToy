@@ -21,22 +21,37 @@ public class JarManager extends AbstractManager {
     private File hostdir;
     private File jarFile = null;
     private File tmpDir = null;
+    private File workDir = null;
 
     public JarManager(String jarFile) {
         try {
             setJarFile(jarFile);
             setTmpdir();
+            initWorkDir();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    private void initWorkDir() {
+        workDir = new File(jarFile.getAbsolutePath().replaceFirst("\\.[^.]+$", ""));
+        if (workDir.exists()) {
+            try {
+                OS.rmdir(workDir);
+            } catch (BrutException e) {
+                e.printStackTrace();
+            }
+        }
+        workDir.mkdirs();
+    }
+
     private void setTmpdir() throws BrutException {
         if (jarFile.isFile()) {
-            tmpDir = new File(jarFile.getParentFile(), "tmp_jar");
-        } else {
-            tmpDir = new File(jarFile, "tmp_dir");
+            tmpDir = new File(jarFile.getParentFile(), "tmp_jar" + jarFile.getName());
         }
+//        else {
+//            tmpDir = new File(jarFile, "tmp_dir");
+//        }
         if (tmpDir.exists()) {
             OS.rmdir(tmpDir);
         }
@@ -44,7 +59,7 @@ public class JarManager extends AbstractManager {
     }
 
     public void unzipJarFile()
-            throws  IOException {
+            throws IOException {
         if (jarFile.isFile()) {
             Utils.FileUtils.unzip("assets", tmpDir, jarFile);
         } else if (jarFile.isDirectory()) {
@@ -66,10 +81,13 @@ public class JarManager extends AbstractManager {
         }
     }
 
-    private void setJarFile(String aarfile) throws Exception {
-        jarFile = new File(aarfile);
+    private void setJarFile(String jarfile) throws Exception {
+        jarFile = new File(jarfile);
         if (!jarFile.exists()) {
             throw new Exception("jar file not exist");
+        }
+        if (jarFile.getName().endsWith(".jar")) {
+            return;
         }
         boolean hasJarfile = false;
         if (jarFile.isDirectory()) {
@@ -86,17 +104,11 @@ public class JarManager extends AbstractManager {
 
     private File smaliClass() throws Exception {
         File workDir = getWorkDir();
-        File dexFile = Utils.BuildPackage.dx2dexfiles(workDir, JarManager.class);
+        File dexFile = Utils.BuildPackage.dx2dexfiles(workDir, JarManager.class,jarFile);
         return Utils.BuildPackage.all2Smali(hostdir, dexFile, JarManager.class);
     }
 
     private File getWorkDir() throws BrutException {
-        File workDir;
-        if (jarFile.isFile()) {
-            workDir = new File(jarFile.getAbsolutePath().replaceFirst("\\.[^.]+$", ""));
-        } else {
-            workDir = jarFile;
-        }
         return workDir;
     }
 
@@ -141,7 +153,7 @@ public class JarManager extends AbstractManager {
 
         try {
             unzipJarFile();
-        } catch ( IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

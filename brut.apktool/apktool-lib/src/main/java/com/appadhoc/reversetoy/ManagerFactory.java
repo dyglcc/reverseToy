@@ -26,10 +26,12 @@ public class ManagerFactory {
             }
         } else {
             for (File sub_file : Objects.requireNonNull(sdks.listFiles())) {
-                if (sub_file.getName().endsWith(".aar")) {
-                    managers.add(new AarManager(sub_file.getAbsolutePath()));
-                } else if (sub_file.getName().endsWith(".jar")) {
-                    managers.add(new JarManager(sub_file.getAbsolutePath()));
+                if(sub_file.isFile()){
+                    if (sub_file.getName().endsWith(".aar")) {
+                        managers.add(new AarManager(sub_file.getAbsolutePath()));
+                    } else if (sub_file.getName().endsWith(".jar")) {
+                        managers.add(new JarManager(sub_file.getAbsolutePath()));
+                    }
                 }
             }
         }

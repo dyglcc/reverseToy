@@ -230,7 +230,11 @@ public abstract class AbstractSmaliOper {
 //            methodCode = replaceAppkey(appkey, methodCode);
 //        }
         methodCode = replacePara(methodCode);
-        String methodCodeReplaceMent = Matcher.quoteReplacement(methodCode);
+
+        String methodCodeReplaceMent = null;
+        if (methodCode != null) {
+            methodCodeReplaceMent = Matcher.quoteReplacement(methodCode);
+        }
         LOGGER.info("change result is " + methodCodeReplaceMent);
         File needModiFile = null;
         for (File subSmaiFolder : hostdir.listFiles()) {

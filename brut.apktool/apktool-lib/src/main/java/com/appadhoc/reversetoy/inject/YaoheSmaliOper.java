@@ -49,7 +49,7 @@ public class YaoheSmaliOper extends AbstractSmaliOper {
 
     @Override
     protected String replaceDebugMode(int debugMode, String code) throws Exception {
-        return null;
+        return code;
     }
 
     @Override
@@ -63,53 +63,53 @@ public class YaoheSmaliOper extends AbstractSmaliOper {
 
     @Override
     protected String replaceChannel(String channel, String code) throws Exception {
-        return null;
+        return code;
     }
 
     @Override
     protected String replaceAutoProfilel(boolean autoProfilel, String code) throws Exception {
-        return null;
+        return code;
     }
 
     @Override
     protected String replaceEncryptType(int type, String code) throws Exception {
-        return null;
+        return code;
     }
 
     @Override
     protected String replaceAllowTimeCheck(boolean allowTimeCheck, String code) throws Exception {
-        return null;
+        return code;
     }
 
     @Override
     protected String replaceMaxDiffTimeInterval(long maxDiffTimeInterval, String code) throws Exception {
-        return null;
+        return code;
     }
 
 
     @Override
     protected String replaceAutoInstallation(boolean autoInstallation, String code) throws Exception {
-        return null;
+        return code;
     }
 
     @Override
     protected String replaceAutoHeatMap(boolean autoHeatMap, String code) throws Exception {
-        return null;
+        return code;
     }
 
     @Override
     protected String replaceAutoTrackPageView(boolean autoTrackPageView, String code) throws Exception {
-        return null;
+        return code;
     }
 
     @Override
     protected String replaceAutoTrackFragmentPageView(boolean autoTrackFragmentPageView, String code) throws Exception {
-        return null;
+        return code;
     }
 
     @Override
     protected String replaceAutoTrackClick(boolean autoTrackClick, String code) throws Exception {
-        return null;
+        return code;
     }
 
     @Override
@@ -119,17 +119,17 @@ public class YaoheSmaliOper extends AbstractSmaliOper {
 
     @Override
     protected String replaceUploadUrl(String uploadUrl, String code) throws Exception {
-        return null;
+        return code;
     }
 
     @Override
     protected String replaceVisitorDebugUrl(String debugUrl, String code) throws Exception {
-        return null;
+        return code;
     }
 
     @Override
     protected String replaceVisitorConfigUrl(String configUrl, String code) throws Exception {
-        return null;
+        return code;
     }
 
 }

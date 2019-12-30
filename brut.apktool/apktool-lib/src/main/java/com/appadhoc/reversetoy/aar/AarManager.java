@@ -398,7 +398,7 @@ public class AarManager extends AbstractManager {
             throw new Exception("aar R$  smali file not exist");
         }
         for (File file : Objects.requireNonNull(rSmalidir.listFiles())) {
-            if (file.getName().contains("$")) {
+            if (file.getName().contains("R$")) {
                 System.out.println(file.getName());
                 StringBuilder stringBuilder = Utils.RFileUtils.smaliFileIdReplace(file, ids);
                 Utils.FileUtils.writeString2File(new File(file.getAbsolutePath()), stringBuilder.toString());
@@ -423,6 +423,10 @@ public class AarManager extends AbstractManager {
 
     private void rClass2jar() throws Exception {
         File rfiledir = getRFileDir();
+        if (!rfiledir.exists() || (rfiledir.listFiles().length == 0)) {
+            LOGGER.fine("r class  not exist");
+            return;
+        }
         File[] files = rfiledir.listFiles();
         if (files.length == 0) {
             throw new Exception("R class file not exist");

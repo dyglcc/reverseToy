@@ -23,7 +23,7 @@ public class Main {
         try {
             HashMap map = new HashMap();
             map.put("cfu","asdfahttp://asdf");
-            test_reverse("jar", "app-keyaasdf",map);
+            test_reverse("jar", "app-keyaasdf",null);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -35,20 +35,20 @@ public class Main {
         decoder.setForceDelete(true);
         ApkOptions options = new ApkOptions();
         options.verbose = true;
+        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/reader.apk");
 //        File file = new File("/Users/dongyuangui/Desktop/toy/apks/meishe.apk");
-        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
+//        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
         File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
         decoder.setApkFile(file);
         decoder.setOutDir(apkOutFile);
         decoder.setDecodeSources(ApkDecoder.DECODE_SOURCES_SMALI_ONLY_MAIN_CLASSES);
         // init decoder -----------oper
 
-        String filePath = "/Users/jiaozhengxiang/Desktop/aar_test";
+        String filePath = "/Users/jiaozhengxiang/Desktop/aar";
 
         // aar oper
         MultiSDKs multi = new MultiSDKs();
         multi.dealWithSDKpackages("eguan",new File(filePath),apkOutFile,decoder);
-
 
         // smali oper --------------------
         AbstractSmaliOper oper = InjectManagerFactory.createOper("eguan");
@@ -96,7 +96,7 @@ public class Main {
 
         // aar oper
         MultiSDKs multi = new MultiSDKs();
-        multi.dealWithSDKpackages("eguan",aar,apkOutFile,decoder);
+        multi.dealWithSDKpackages(sdktype,aar,apkOutFile,decoder);
 
 
         AbstractSmaliOper oper = InjectManagerFactory.createOper(sdktype);

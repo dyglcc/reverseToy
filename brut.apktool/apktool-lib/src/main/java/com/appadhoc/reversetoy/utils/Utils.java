@@ -167,6 +167,7 @@ public class Utils {
 
             LinkedHashMap<String, AarID> values = ids.get(key);
 
+
             BufferedReader br = new BufferedReader(new FileReader(file));
             StringBuilder sb = new StringBuilder();
             String line;
@@ -578,6 +579,24 @@ public class Utils {
             cmd.add("--dex");
             cmd.add("--output=" + dexFile.getAbsolutePath());
             cmd.add(parentDir.getAbsolutePath());
+            Utils.OSCMD.runCMD(cmd);
+            return dexFile;
+        }
+        public static File dx2dexfiles(File parentDir, Class clazz,File classJarFile) throws Exception {
+
+            // change 2 getFilename
+            File dexFile = new File(parentDir, "classe000.dex");
+            if (!parentDir.exists()) {
+                throw new Exception("libs not exist");
+            }
+            List<String> cmd = new ArrayList<>();
+            File fileJarCmd = Utils.BuildPackage.getDxJar(clazz);
+            cmd.add("java");
+            cmd.add("-jar");
+            cmd.add(fileJarCmd.getAbsolutePath());
+            cmd.add("--dex");
+            cmd.add("--output=" + dexFile.getAbsolutePath());
+            cmd.add(classJarFile.getAbsolutePath());
             Utils.OSCMD.runCMD(cmd);
             return dexFile;
         }
