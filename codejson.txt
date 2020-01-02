@@ -1,0 +1,65 @@
+{
+	"classname": "com.analysys.AnalysysAgent",
+	"staticMethod": [{
+		"methodName": "setDebugMode",
+		"para": [{
+			"paratype": "java.lang.Application",
+			"paravalue": "this"
+		}, {
+			"paratype": "com.analysis.integer",
+			"paravalue": 2
+		}]
+	}, {
+		"methodName": "init",
+		"para": [{
+			"paratype": "java.lang.Application",
+			"paravalue": "this"
+		}, {
+			"paratype": "com.analysis.config",
+			"paravalue": {
+				"classname": "com.analysis.config",
+				"instance": [{
+					"methodName": "debugMode",
+					"para": [{
+						"paratype": "com.analysis.EncryptEnum",
+						"paravalue": "AES"
+					}]
+				}, {
+					"methodName": "setAppKey",
+					"para": [{
+						"paratype": "java.lang.String",
+						"paravalue": "appkeyasdfa"
+					}]
+				}]
+
+			}
+		}]
+	}, {
+		"methodName": "setUploadURL",
+		"para": [{
+			"paratype": "java.lang.String",
+			"paravalue": "uploadurl"
+		}, {
+			"paratype": "java.lang.String",
+			"paravalue": "appkeyasdfa"
+		}]
+	}, {
+		"methodName": "setVisitorDebugURL",
+		"para": [{
+			"paratype": "java.lang.String",
+			"paravalue": "uploadurl"
+		}, {
+			"paratype": "java.lang.String",
+			"paravalue": "debugurl"
+		}]
+	}, {
+		"methodName": "setVisitorConfigURL",
+		"para": [{
+			"paratype": "java.lang.String",
+			"paravalue": "uploadurl"
+		}, {
+			"paratype": "java.lang.String",
+			"paravalue": "debugurl"
+		}]
+	}]
+}
