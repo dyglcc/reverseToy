@@ -1,0 +1,20 @@
+{
+			"paratype": "object",
+			"paravalue": {
+				"classname": "com.analysis.config",
+				"instance": [{
+					"methodName": "debugMode",
+					"para": [{
+						"paratype": "object",
+						"paravalue": {"classname":"com.analysis.EncryptEnum","staticfield":"AES"}
+					}]
+				}, {
+					"methodName": "setAppKey",
+					"para": [{
+						"paratype": "java.lang.String",
+						"paravalue": "appkeyasdfa"
+					}]
+				}]
+
+			}
+		}
