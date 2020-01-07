@@ -7,132 +7,117 @@
 .method public constructor <init>()V
     .locals 0
 
-    .line 18
+    .line 11
     invoke-direct {p0}, Landroid/app/Application;-><init>()V
 
     return-void
 .end method
 
 .method private initReverseSDK()V
-    .locals 4
+    .locals 6
 
-    const/4 v0, 0x2
+    .line 21
+    const/4 v0, 0x0
 
-    invoke-static {p0, v0}, Lcom/analysys/AnalysysAgent;->setDebugMode(Landroid/content/Context;I)V
+    .line 23
+    .local v0, "codeBean":Lcom/reverse/stub/Utils$CodeBean;
+    :try_start_0
+    invoke-super {p0}, Landroid/app/Application;->getAssets()Landroid/content/res/AssetManager;
 
-    new-instance v0, Lcom/analysys/AnalysysConfig;
+    move-result-object v1
 
-    invoke-direct {v0}, Lcom/analysys/AnalysysConfig;-><init>()V
+    const-string v2, "reverse_code_json_default.txt"
 
-    .local v0, "config":Lcom/analysys/AnalysysConfig;
-    const-string v1, "2709692586aa3e42"
+    invoke-virtual {v1, v2}, Landroid/content/res/AssetManager;->open(Ljava/lang/String;)Ljava/io/InputStream;
 
-    invoke-virtual {v0, v1}, Lcom/analysys/AnalysysConfig;->setAppKey(Ljava/lang/String;)V
+    move-result-object v1
 
-    const-string v1, "AnalsysyReverse"
+    .line 24
+    .local v1, "inputStream":Ljava/io/InputStream;
+    invoke-static {v1}, Lcom/reverse/stub/Utils;->readStringFromStream(Ljava/io/InputStream;)Ljava/lang/StringBuilder;
 
-    invoke-virtual {v0, v1}, Lcom/analysys/AnalysysConfig;->setChannel(Ljava/lang/String;)V
+    move-result-object v2
 
-    const/4 v1, 0x1
+    .line 25
+    .local v2, "str":Ljava/lang/StringBuilder;
+    invoke-virtual {v2}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
 
-    invoke-virtual {v0, v1}, Lcom/analysys/AnalysysConfig;->setAutoProfile(Z)V
+    move-result-object v3
 
-    sget-object v2, Lcom/analysys/EncryptEnum;->AES:Lcom/analysys/EncryptEnum;
+    invoke-static {v3}, Lcom/reverse/stub/Utils$JSONparse;->getCodeBeanByJSonString(Ljava/lang/String;)Lcom/reverse/stub/Utils$CodeBean;
 
-    invoke-virtual {v0, v2}, Lcom/analysys/AnalysysConfig;->setEncryptType(Lcom/analysys/EncryptEnum;)V
-    const/4 v1, 0x1
-    invoke-virtual {v0, v1}, Lcom/analysys/AnalysysConfig;->setAllowTimeCheck(Z)V
+    move-result-object v3
 
-    const-wide/16 v2, 0x12c
+    move-object v0, v3
 
-    invoke-virtual {v0, v2, v3}, Lcom/analysys/AnalysysConfig;->setMaxDiffTimeInterval(J)V
-    const/4 v1, 0x1
-    invoke-virtual {v0, v1}, Lcom/analysys/AnalysysConfig;->setAutoInstallation(Z)V
+    .line 26
+    const-string v3, "Reflection"
 
-    const/4 v2, 0x0
+    new-instance v4, Ljava/lang/StringBuilder;
 
-    invoke-virtual {v0, v2}, Lcom/analysys/AnalysysConfig;->setAutoHeatMap(Z)V
-    const/4 v1, 0x1
-    invoke-virtual {v0, v1}, Lcom/analysys/AnalysysConfig;->setAutoTrackPageView(Z)V
-    const/4 v2, 0x0
-    invoke-virtual {v0, v2}, Lcom/analysys/AnalysysConfig;->setAutoTrackFragmentPageView(Z)V
-    const/4 v2, 0x0
-    invoke-virtual {v0, v2}, Lcom/analysys/AnalysysConfig;->setAutoTrackClick(Z)V
-    const/4 v1, 0x1
-    invoke-virtual {v0, v1}, Lcom/analysys/AnalysysConfig;->setEnableException(Z)V
+    invoke-direct {v4}, Ljava/lang/StringBuilder;-><init>()V
 
-    .line 62
-    invoke-static {p0, v0}, Lcom/analysys/AnalysysAgent;->init(Landroid/content/Context;Lcom/analysys/AnalysysConfig;)V
+    const-string v5, "onCreate: "
 
-    .line 64
-    const-string v1, "https://arkpaastest.analysys.cn:4089"
+    invoke-virtual {v4, v5}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    invoke-static {p0, v1}, Lcom/analysys/AnalysysAgent;->setUploadURL(Landroid/content/Context;Ljava/lang/String;)V
+    invoke-virtual {v0}, Lcom/reverse/stub/Utils$CodeBean;->getClassName()Ljava/lang/String;
 
-    .line 66
-    const-string v2, "wss://arkpaastest.analysys.cn:4091"
+    move-result-object v5
 
-    invoke-static {p0, v2}, Lcom/analysys/AnalysysAgent;->setVisitorDebugURL(Landroid/content/Context;Ljava/lang/String;)V
+    invoke-virtual {v4, v5}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    .line 64
-    const-string v1, "https://arkpaastest.analysys.cn:4089"
+    invoke-virtual {v4}, Ljava/lang/StringBuilder;->toString()Ljava/lang/String;
 
-    invoke-static {p0, v1}, Lcom/analysys/AnalysysAgent;->setVisitorConfigURL(Landroid/content/Context;Ljava/lang/String;)V
+    move-result-object v4
 
-    .line 69
-    return-void
-.end method
+    invoke-static {v3, v4}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
+    :try_end_0
+    .catch Ljava/io/IOException; {:try_start_0 .. :try_end_0} :catch_1
+    .catch Lorg/json/JSONException; {:try_start_0 .. :try_end_0} :catch_0
 
-.method private strictMode()V
-    .locals 1
+    .line 31
+    nop
 
-    .line 75
-    new-instance v0, Landroid/os/StrictMode$ThreadPolicy$Builder;
+    .end local v1    # "inputStream":Ljava/io/InputStream;
+    .end local v2    # "str":Ljava/lang/StringBuilder;
+    goto :goto_0
 
-    invoke-direct {v0}, Landroid/os/StrictMode$ThreadPolicy$Builder;-><init>()V
+    .line 29
+    :catch_0
+    move-exception v1
 
-    .line 76
-    invoke-virtual {v0}, Landroid/os/StrictMode$ThreadPolicy$Builder;->detectAll()Landroid/os/StrictMode$ThreadPolicy$Builder;
+    .line 30
+    .local v1, "e":Lorg/json/JSONException;
+    invoke-virtual {v1}, Lorg/json/JSONException;->printStackTrace()V
 
-    move-result-object v0
+    goto :goto_0
 
-    .line 77
-    invoke-virtual {v0}, Landroid/os/StrictMode$ThreadPolicy$Builder;->penaltyLog()Landroid/os/StrictMode$ThreadPolicy$Builder;
+    .line 27
+    .end local v1    # "e":Lorg/json/JSONException;
+    :catch_1
+    move-exception v1
 
-    move-result-object v0
+    .line 28
+    .local v1, "e":Ljava/io/IOException;
+    invoke-virtual {v1}, Ljava/io/IOException;->printStackTrace()V
 
-    .line 78
-    invoke-virtual {v0}, Landroid/os/StrictMode$ThreadPolicy$Builder;->build()Landroid/os/StrictMode$ThreadPolicy;
+    .line 31
+    .end local v1    # "e":Ljava/io/IOException;
+    nop
 
-    move-result-object v0
+    .line 32
+    :goto_0
+    invoke-static {v0, p0}, Lcom/reverse/stub/Utils$Reflection;->callMethod(Lcom/reverse/stub/Utils$CodeBean;Landroid/content/Context;)Ljava/lang/Object;
 
-    .line 75
-    invoke-static {v0}, Landroid/os/StrictMode;->setThreadPolicy(Landroid/os/StrictMode$ThreadPolicy;)V
+    .line 33
+    const-string v1, "reverseToy"
 
-    .line 79
-    new-instance v0, Landroid/os/StrictMode$VmPolicy$Builder;
+    const-string v2, "onCreate:  init sucess"
 
-    invoke-direct {v0}, Landroid/os/StrictMode$VmPolicy$Builder;-><init>()V
+    invoke-static {v1, v2}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
 
-    .line 80
-    invoke-virtual {v0}, Landroid/os/StrictMode$VmPolicy$Builder;->detectAll()Landroid/os/StrictMode$VmPolicy$Builder;
-
-    move-result-object v0
-
-    .line 81
-    invoke-virtual {v0}, Landroid/os/StrictMode$VmPolicy$Builder;->penaltyLog()Landroid/os/StrictMode$VmPolicy$Builder;
-
-    move-result-object v0
-
-    .line 82
-    invoke-virtual {v0}, Landroid/os/StrictMode$VmPolicy$Builder;->build()Landroid/os/StrictMode$VmPolicy;
-
-    move-result-object v0
-
-    .line 79
-    invoke-static {v0}, Landroid/os/StrictMode;->setVmPolicy(Landroid/os/StrictMode$VmPolicy;)V
-
-    .line 83
+    .line 34
     return-void
 .end method
 
@@ -141,15 +126,12 @@
 .method public onCreate()V
     .locals 0
 
-    .line 23
+    .line 16
     invoke-super {p0}, Landroid/app/Application;->onCreate()V
 
-    .line 25
-    invoke-direct {p0}, Lcom/reverse/stub/EguanApp;->strictMode()V
-
-    .line 27
+    .line 17
     invoke-direct {p0}, Lcom/reverse/stub/EguanApp;->initReverseSDK()V
 
-    .line 28
+    .line 18
     return-void
 .end method

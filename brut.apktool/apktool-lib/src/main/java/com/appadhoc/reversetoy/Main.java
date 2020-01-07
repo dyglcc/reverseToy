@@ -7,6 +7,7 @@ import brut.common.BrutException;
 import com.appadhoc.reversetoy.exception.AarFileNotExistException;
 import com.appadhoc.reversetoy.exception.ApkFileNotExistException;
 import com.appadhoc.reversetoy.inject.AbstractSmaliOper;
+import com.appadhoc.reversetoy.inject.EguanReflectionOper;
 import com.appadhoc.reversetoy.inject.InjectManagerFactory;
 import com.appadhoc.reversetoy.sign.SignTool;
 import com.appadhoc.reversetoy.utils.Utils;
@@ -51,7 +52,7 @@ public class Main {
         multi.dealWithSDKpackages("eguan",new File(filePath),apkOutFile,decoder);
 
         // smali oper --------------------
-        AbstractSmaliOper oper = InjectManagerFactory.createOper("eguan");
+        EguanReflectionOper oper = new EguanReflectionOper();
         oper.setOptions(map);
 //        oper.setAppkey(appkey);
         oper.addOrModifyApplicationSmali(apkOutFile, multi.getSmaliFolder());
@@ -65,13 +66,16 @@ public class Main {
         logger.info("########################################################");
     }
 
-    public static void reverse(File apkfile, File aar, String sdktype, String appkey, HashMap operOptions) throws Exception {
+    public static void reverse(File apkfile, File aar, String sdktype, HashMap operOptions) throws Exception {
         if (!apkfile.exists()) {
             throw new ApkFileNotExistException("apk file not exist or can not read");
         }
         if (!aar.exists()) {
             throw new AarFileNotExistException("aar/jar file not exist or can not read");
         }
+//        if (!json.exists()) {
+//            throw new AarFileNotExistException("aar/jar file not exist or can not read");
+//        }
         //-----------decoder setting--------------
         ApkDecoder decoder = new ApkDecoder();
         decoder.setForceDelete(true);
@@ -83,25 +87,14 @@ public class Main {
         decoder.setApkFile(apkfile);
         decoder.setOutDir(apkOutFile);
 
-        // pre decode file, unzip aar or jar file
-//        AbstractManager manager = ManagerFactory.getIToyManager(aar.getAbsolutePath());
-//        manager.setSdkType(sdktype);
-//        decoder.decode(manager);
-//        manager.setHostDir(apkOutFile);
-//        logger.info("解压apk文件[完成]");
-//        manager.addIDs2HostFile(apkOutFile);
-//        logger.info("添加IDS到IDS.xml[完成]");
-//        File smaliFile = manager.smaliClassFilesAndModifyids(apkOutFile);
-//        logger.info("重新编排ID并拷贝文件到宿主文件夹[完成]");
-
         // aar oper
         MultiSDKs multi = new MultiSDKs();
         multi.dealWithSDKpackages(sdktype,aar,apkOutFile,decoder);
 
 
-        AbstractSmaliOper oper = InjectManagerFactory.createOper(sdktype);
-        oper.setAppkey(appkey);
+        EguanReflectionOper oper = new EguanReflectionOper();
         oper.setOptions(operOptions);
+//        oper.setJson(json);
         oper.addOrModifyApplicationSmali(apkOutFile, multi.getSmaliFolder());
         logger.info("添加或者修改Application smali代码[完成]");
         File unsignfile = buildApk(apkOutFile);

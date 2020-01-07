@@ -1,18 +1,18 @@
 /**
- *  Copyright (C) 2019 Ryszard Wiśniewski <brut.alll@gmail.com>
- *  Copyright (C) 2019 Connor Tumbleson <connor.tumbleson@gmail.com>
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Copyright (C) 2019 Ryszard Wiśniewski <brut.alll@gmail.com>
+ * Copyright (C) 2019 Connor Tumbleson <connor.tumbleson@gmail.com>
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package brut.apktool;
 
@@ -85,10 +85,10 @@ public class Main {
             } else if (opt.equalsIgnoreCase("b") || opt.equalsIgnoreCase("build")) {
                 cmdBuild(commandLine);
                 cmdFound = true;
-            }  else if (opt.equalsIgnoreCase("m") || opt.equalsIgnoreCase("merge")) {
+            } else if (opt.equalsIgnoreCase("m") || opt.equalsIgnoreCase("merge")) {
                 cmdMerge(commandLine);
                 cmdFound = true;
-            }else if (opt.equalsIgnoreCase("if") || opt.equalsIgnoreCase("install-framework")) {
+            } else if (opt.equalsIgnoreCase("if") || opt.equalsIgnoreCase("install-framework")) {
                 cmdInstallFramework(commandLine);
                 cmdFound = true;
             } else if (opt.equalsIgnoreCase("empty-framework-dir")) {
@@ -112,114 +112,116 @@ public class Main {
     }
 
     private static Logger logger = Logger.getLogger("cliMain");
+
     private static void cmdMerge(CommandLine cli) throws Exception {
         int paraCount = cli.getArgList().size();
         String aarFileName = cli.getArgList().get(paraCount - 1);
-        String apkFile = cli.getArgList().get(paraCount-2);
+        String apkFile = cli.getArgList().get(paraCount - 2);
         String sdk_type = null;
-        String appkey = null;
-        // check for merge options
-        if (cli.hasOption("st") || cli.hasOption("sdk-type")) {
-            sdk_type = cli.getOptionValue("st");
-        }
-        HashMap<String,Object> operOptions = new HashMap<>();
-
-        if (cli.hasOption("ak") || cli.hasOption("appkey")) {
-            appkey = cli.getOptionValue("ak");
-            Utils.ParaUtils.checkCmdliPara("appkey",appkey);
-            operOptions.put("ak",appkey);
-        }
-        if (cli.hasOption("chl") || cli.hasOption("channel")) {
-            String channel = cli.getOptionValue("chl");
-            Utils.ParaUtils.checkCmdliPara("channel",channel);
-            operOptions.put("chl",channel);
-        }
-//        int debugMode = 2;
-        if (cli.hasOption("dm") || cli.hasOption("debug_mode")) {
-            String dmV = cli.getOptionValue("dm");
-            Utils.ParaUtils.checkCmdliPara("debug_mode",dmV);
-            if(!(dmV.equals("1") || dmV.equals("0") || dmV.equals("2"))){
-                throw new Exception("debug_mode 参数必须是[0,1,2]其中一个数字");
-            }
-            operOptions.put("dm",Integer.parseInt(dmV));
-        }
-//        boolean autoProfile = true;
-        if (cli.hasOption("ap") || cli.hasOption("auto_profile")) {
-            operOptions.put("ap",false);
-        }
-//    EMPTY(0),
-//    AES(1),
-//    AES_CBC(2);
-//        int encryptType = 1;
-        if (cli.hasOption("enc") || cli.hasOption("encrypt_type")) {
-            String encV = cli.getOptionValue("enc");
-            Utils.ParaUtils.checkCmdliPara("encrypt_type",encV);
-            if(!(encV.equals("0") || encV.equals("1") || encV.equals("2"))){
-                throw new Exception("encrypt_type 必须是[0,1,2]中一个值");
-            }
-            operOptions.put("enc",Integer.parseInt(encV));
-        }
-//        boolean allowTimeCheck = true;
-        if (cli.hasOption("atck") || cli.hasOption("allowTimeCheck")) {
-            operOptions.put("atck",false);
-        }
-//        long maxDiffTimeInterval = 5*60;
-        if (cli.hasOption("mdti") || cli.hasOption("maxDiffTimeInterval")) {
-            String mdtiV = cli.getOptionValue("mdti");
-            Utils.ParaUtils.checkCmdliPara("maxDiffTimeInterval",mdtiV);
-            operOptions.put("mdti",Long.parseLong(mdtiV));
-        }
-//        boolean autoInstallation = true;
-        if (cli.hasOption("ai") || cli.hasOption("autoInstallation")) {
-            operOptions.put("ai",false);
-        }
-//        boolean autoHeatMap = false;
-        if (cli.hasOption("ah") || cli.hasOption("autoHeatMap")) {
-            operOptions.put("ah",true);
-        }
-//        boolean autoTrackPageView = true;
-        if (cli.hasOption("atp") || cli.hasOption("autoTrackPageView")) {
-            operOptions.put("atp",false);
-        }
-//        boolean autoTrackFragmentPageView = false;
-        if (cli.hasOption("atfp") || cli.hasOption("autoTrackFragmentPageView")) {
-            operOptions.put("atfp",true);
-        }
-//        boolean autoTrackClick = false;
-        if (cli.hasOption("atc") || cli.hasOption("autoTrackClick")) {
-            operOptions.put("atc",true);
-        }
-//        boolean enableException = true;
-        if (cli.hasOption("ene") || cli.hasOption("enableException")) {
-            operOptions.put("ene",false);
-        }
-//        String uploadUrl = "https://arkpaastest.analysys.cn:4089";
-        if (cli.hasOption("upu") || cli.hasOption("uploadUrl")) {
-            String upuV = cli.getOptionValue("upu");
-            Utils.ParaUtils.checkCmdliPara("uploadUrl",upuV);
-            operOptions.put("upu",upuV);
-        }
-//        String debugUrl ="wss://arkpaastest.analysys.cn:4091";
-        if (cli.hasOption("deu") || cli.hasOption("debugUrl")) {
-            String deuV = cli.getOptionValue("deu");
-            Utils.ParaUtils.checkCmdliPara("debugUrl",deuV);
-            operOptions.put("deu",deuV);
-        }
+//        String appkey = null;
+//        // check for merge options
+//        if (cli.hasOption("st") || cli.hasOption("sdk-type")) {
+//            sdk_type = cli.getOptionValue("st");
+//        }
+        HashMap<String, Object> operOptions = new HashMap<>();
+//
+//        if (cli.hasOption("ak") || cli.hasOption("appkey")) {
+//            appkey = cli.getOptionValue("ak");
+//            Utils.ParaUtils.checkCmdliPara("appkey",appkey);
+//            operOptions.put("ak",appkey);
+//        }
+//        if (cli.hasOption("chl") || cli.hasOption("channel")) {
+//            String channel = cli.getOptionValue("chl");
+//            Utils.ParaUtils.checkCmdliPara("channel",channel);
+//            operOptions.put("chl",channel);
+//        }
+////        int debugMode = 2;
+//        if (cli.hasOption("dm") || cli.hasOption("debug_mode")) {
+//            String dmV = cli.getOptionValue("dm");
+//            Utils.ParaUtils.checkCmdliPara("debug_mode",dmV);
+//            if(!(dmV.equals("1") || dmV.equals("0") || dmV.equals("2"))){
+//                throw new Exception("debug_mode 参数必须是[0,1,2]其中一个数字");
+//            }
+//            operOptions.put("dm",Integer.parseInt(dmV));
+//        }
+////        boolean autoProfile = true;
+//        if (cli.hasOption("ap") || cli.hasOption("auto_profile")) {
+//            operOptions.put("ap",false);
+//        }
+////    EMPTY(0),
+////    AES(1),
+////    AES_CBC(2);
+////        int encryptType = 1;
+//        if (cli.hasOption("enc") || cli.hasOption("encrypt_type")) {
+//            String encV = cli.getOptionValue("enc");
+//            Utils.ParaUtils.checkCmdliPara("encrypt_type",encV);
+//            if(!(encV.equals("0") || encV.equals("1") || encV.equals("2"))){
+//                throw new Exception("encrypt_type 必须是[0,1,2]中一个值");
+//            }
+//            operOptions.put("enc",Integer.parseInt(encV));
+//        }
+////        boolean allowTimeCheck = true;
+//        if (cli.hasOption("atck") || cli.hasOption("allowTimeCheck")) {
+//            operOptions.put("atck",false);
+//        }
+////        long maxDiffTimeInterval = 5*60;
+//        if (cli.hasOption("mdti") || cli.hasOption("maxDiffTimeInterval")) {
+//            String mdtiV = cli.getOptionValue("mdti");
+//            Utils.ParaUtils.checkCmdliPara("maxDiffTimeInterval",mdtiV);
+//            operOptions.put("mdti",Long.parseLong(mdtiV));
+//        }
+////        boolean autoInstallation = true;
+//        if (cli.hasOption("ai") || cli.hasOption("autoInstallation")) {
+//            operOptions.put("ai",false);
+//        }
+////        boolean autoHeatMap = false;
+//        if (cli.hasOption("ah") || cli.hasOption("autoHeatMap")) {
+//            operOptions.put("ah",true);
+//        }
+////        boolean autoTrackPageView = true;
+//        if (cli.hasOption("atp") || cli.hasOption("autoTrackPageView")) {
+//            operOptions.put("atp",false);
+//        }
+////        boolean autoTrackFragmentPageView = false;
+//        if (cli.hasOption("atfp") || cli.hasOption("autoTrackFragmentPageView")) {
+//            operOptions.put("atfp",true);
+//        }
+////        boolean autoTrackClick = false;
+//        if (cli.hasOption("atc") || cli.hasOption("autoTrackClick")) {
+//            operOptions.put("atc",true);
+//        }
+////        boolean enableException = true;
+//        if (cli.hasOption("ene") || cli.hasOption("enableException")) {
+//            operOptions.put("ene",false);
+//        }
+////        String uploadUrl = "https://arkpaastest.analysys.cn:4089";
+//        if (cli.hasOption("upu") || cli.hasOption("uploadUrl")) {
+//            String upuV = cli.getOptionValue("upu");
+//            Utils.ParaUtils.checkCmdliPara("uploadUrl",upuV);
+//            operOptions.put("upu",upuV);
+//        }
+////        String debugUrl ="wss://arkpaastest.analysys.cn:4091";
+//        if (cli.hasOption("deu") || cli.hasOption("debugUrl")) {
+//            String deuV = cli.getOptionValue("deu");
+//            Utils.ParaUtils.checkCmdliPara("debugUrl",deuV);
+//            operOptions.put("deu",deuV);
+//        }
 //        String configUrl ="https://arkpaastest.analysys.cn:4089";
-        if (cli.hasOption("cfu") || cli.hasOption("configUrl")) {
-            String cfuV = cli.getOptionValue("cfu");
-            Utils.ParaUtils.checkCmdliPara("configUrl",cfuV);
-            operOptions.put("cfu",cfuV);
+        if (cli.hasOption("-json") || cli.hasOption("json")) {
+            String cfuV = cli.getOptionValue("json");
+            Utils.ParaUtils.checkCmdliPara("json", cfuV);
+            operOptions.put("json", cfuV);
         }
+        logger.fine("code json config file " + operOptions.get("json"));
         try {
-            com.appadhoc.reversetoy.Main.reverse(new File(apkFile),new File(aarFileName),sdk_type,appkey,operOptions);
-        } catch (ApkFileNotExistException e){
+            com.appadhoc.reversetoy.Main.reverse(new File(apkFile), new File(aarFileName), sdk_type, operOptions);
+        } catch (ApkFileNotExistException e) {
             System.out.println("APK file not found or can not read");
             System.exit(1);
-        }catch (AarFileNotExistException e){
+        } catch (AarFileNotExistException e) {
             System.out.println("AAR file not found or can not read");
             System.exit(1);
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -319,7 +321,8 @@ public class Main {
         } finally {
             try {
                 decoder.close();
-            } catch (IOException ignored) {}
+            } catch (IOException ignored) {
+            }
         }
     }
 
@@ -575,108 +578,108 @@ public class Main {
                 .build();
         // aar合并
 
-        Option mergetOption = Option.builder("st")
-                .longOpt("sdk-type")
-                .hasArg(true)
-                .desc("集成SDK类型，eguan or yaohe 默认:eguan")
-                .argName("tag")
-                .build();
-        Option mergeAppkeyOption = Option.builder("ak")
-                .longOpt("appkey")
-                .desc("更换appkey 默认:2709692586aa3e42")
-                .argName("tag")
-                .hasArg(true)
-                .build();
-        Option channelOption = Option.builder("chl")
-                .longOpt("channel")
-                .desc("更换channel 默认:AnalsysyReverse")
-                .argName("tag")
-                .hasArg(true)
-                .build();
-
-//        int debugMode = 2;
-        Option debugModeOption = Option.builder("dm")
-                .longOpt("debug_mode")
-                .desc("更换debugMode 可选项0，1，2 默认:2")
-                .argName("tag")
-                .hasArg(true)
-                .build();
-//        boolean autoProfile = true;
-        Option autoProfileOption = Option.builder("ap")
-                .longOpt("auto_profile")
-                .desc("设置auto_profile false 默认:true")
-                .build();
-//    EMPTY(0),
-//    AES(1),
-//    AES_CBC(2);
-//        int encryptType = 1;
-        Option encryptTypeOption = Option.builder("enc")
-                .longOpt("encrypt_type")
-                .desc("更换encrypt_type 可选项0(empty)，1(aes)，2(aes_cbc) 默认:1")
-                .argName("tag")
-                .hasArg(true)
-                .build();
-//        boolean allowTimeCheck = true;
-        Option allowTimeCheckOption = Option.builder("atck")
-                .longOpt("allowTimeCheck")
-                .desc("设置allowTimeCheck false 默认:true")
-                .build();
-//        long maxDiffTimeInterval = 5*60;
-        Option maxDiffTimeIntervalOption = Option.builder("mdti")
-                .longOpt("maxDiffTimeInterval")
-                .desc("设置maxDiffTimeInterval int类型 默认:300秒")
-                .argName("tag")
-                .hasArg(true)
-                .build();
-//        boolean autoInstallation = true;
-        Option autoInstallationOption = Option.builder("ai")
-                .longOpt("autoInstallation")
-                .desc("设置autoInstallation false 默认:true")
-                .build();
-//        boolean autoHeatMap = false;
-        Option autoHeatMapOption = Option.builder("ah")
-                .longOpt("autoHeatMap")
-                .desc("设置autoHeatMap true 默认:false")
-                .build();
-//        boolean autoTrackPageView = true;
-        Option autoTrackPageViewOption = Option.builder("atp")
-                .longOpt("autoTrackPageView")
-                .desc("设置autoTrackPageView false 默认:true")
-                .build();
-//        boolean autoTrackFragmentPageView = false;
-        Option autoTrackFragmentPageViewOption = Option.builder("atfp")
-                .longOpt("autoTrackFragmentPageView")
-                .desc("设置autoTrackFragmentPageView true 默认:false")
-                .build();
-//        boolean autoTrackClick = false;
-        Option autoTrackClickOption = Option.builder("atc")
-                .longOpt("autoTrackClick")
-                .desc("设置autoTrackClick true 默认:false")
-                .build();
-//        boolean enableException = true;
-        Option enableExceptionOption = Option.builder("ene")
-                .longOpt("enableException")
-                .desc("设置enableException false 默认:true")
-                .build();
-
-//        String uploadUrl = "https://arkpaastest.analysys.cn:4089";
-        Option uploadUrlOption = Option.builder("upu")
-                .longOpt("uploadUrl")
-                .desc("更换uploadUrl 默认:https://arkpaastest.analysys.cn:4089")
-                .argName("tag")
-                .hasArg(true)
-                .build();
-//        String debugUrl ="wss://arkpaastest.analysys.cn:4091";
-        Option debugUrlOption = Option.builder("deu")
-                .longOpt("debugUrl")
-                .desc("更换debugUrl 默认:wss://arkpaastest.analysys.cn:4091")
-                .argName("tag")
-                .hasArg(true)
-                .build();
+//        Option mergetOption = Option.builder("st")
+//                .longOpt("sdk-type")
+//                .hasArg(true)
+//                .desc("集成SDK类型，eguan or yaohe 默认:eguan")
+//                .argName("tag")
+//                .build();
+//        Option mergeAppkeyOption = Option.builder("ak")
+//                .longOpt("appkey")
+//                .desc("更换appkey 默认:2709692586aa3e42")
+//                .argName("tag")
+//                .hasArg(true)
+//                .build();
+//        Option channelOption = Option.builder("chl")
+//                .longOpt("channel")
+//                .desc("更换channel 默认:AnalsysyReverse")
+//                .argName("tag")
+//                .hasArg(true)
+//                .build();
+//
+////        int debugMode = 2;
+//        Option debugModeOption = Option.builder("dm")
+//                .longOpt("debug_mode")
+//                .desc("更换debugMode 可选项0，1，2 默认:2")
+//                .argName("tag")
+//                .hasArg(true)
+//                .build();
+////        boolean autoProfile = true;
+//        Option autoProfileOption = Option.builder("ap")
+//                .longOpt("auto_profile")
+//                .desc("设置auto_profile false 默认:true")
+//                .build();
+////    EMPTY(0),
+////    AES(1),
+////    AES_CBC(2);
+////        int encryptType = 1;
+//        Option encryptTypeOption = Option.builder("enc")
+//                .longOpt("encrypt_type")
+//                .desc("更换encrypt_type 可选项0(empty)，1(aes)，2(aes_cbc) 默认:1")
+//                .argName("tag")
+//                .hasArg(true)
+//                .build();
+////        boolean allowTimeCheck = true;
+//        Option allowTimeCheckOption = Option.builder("atck")
+//                .longOpt("allowTimeCheck")
+//                .desc("设置allowTimeCheck false 默认:true")
+//                .build();
+////        long maxDiffTimeInterval = 5*60;
+//        Option maxDiffTimeIntervalOption = Option.builder("mdti")
+//                .longOpt("maxDiffTimeInterval")
+//                .desc("设置maxDiffTimeInterval int类型 默认:300秒")
+//                .argName("tag")
+//                .hasArg(true)
+//                .build();
+////        boolean autoInstallation = true;
+//        Option autoInstallationOption = Option.builder("ai")
+//                .longOpt("autoInstallation")
+//                .desc("设置autoInstallation false 默认:true")
+//                .build();
+////        boolean autoHeatMap = false;
+//        Option autoHeatMapOption = Option.builder("ah")
+//                .longOpt("autoHeatMap")
+//                .desc("设置autoHeatMap true 默认:false")
+//                .build();
+////        boolean autoTrackPageView = true;
+//        Option autoTrackPageViewOption = Option.builder("atp")
+//                .longOpt("autoTrackPageView")
+//                .desc("设置autoTrackPageView false 默认:true")
+//                .build();
+////        boolean autoTrackFragmentPageView = false;
+//        Option autoTrackFragmentPageViewOption = Option.builder("atfp")
+//                .longOpt("autoTrackFragmentPageView")
+//                .desc("设置autoTrackFragmentPageView true 默认:false")
+//                .build();
+////        boolean autoTrackClick = false;
+//        Option autoTrackClickOption = Option.builder("atc")
+//                .longOpt("autoTrackClick")
+//                .desc("设置autoTrackClick true 默认:false")
+//                .build();
+////        boolean enableException = true;
+//        Option enableExceptionOption = Option.builder("ene")
+//                .longOpt("enableException")
+//                .desc("设置enableException false 默认:true")
+//                .build();
+//
+////        String uploadUrl = "https://arkpaastest.analysys.cn:4089";
+//        Option uploadUrlOption = Option.builder("upu")
+//                .longOpt("uploadUrl")
+//                .desc("更换uploadUrl 默认:https://arkpaastest.analysys.cn:4089")
+//                .argName("tag")
+//                .hasArg(true)
+//                .build();
+////        String debugUrl ="wss://arkpaastest.analysys.cn:4091";
+//        Option debugUrlOption = Option.builder("deu")
+//                .longOpt("debugUrl")
+//                .desc("更换debugUrl 默认:wss://arkpaastest.analysys.cn:4091")
+//                .argName("tag")
+//                .hasArg(true)
+//                .build();
 //        String configUrl ="https://arkpaastest.analysys.cn:4089";
-        Option configUrlOption = Option.builder("cfu")
-                .longOpt("configUrl")
-                .desc("更换configUrl 默认:https://arkpaastest.analysys.cn:4089")
+        Option configUrlOption = Option.builder("json")
+                .longOpt("json_code_config")
+                .desc("指定初始化代码配置文件,文件名字全路径")
                 .argName("tag")
                 .hasArg(true)
                 .build();
@@ -726,16 +729,16 @@ public class Main {
 
         // add all, loop existing cats then manually add advance
         for (Object op : normalOptions.getOptions()) {
-            allOptions.addOption((Option)op);
+            allOptions.addOption((Option) op);
         }
         for (Object op : DecodeOptions.getOptions()) {
-            allOptions.addOption((Option)op);
+            allOptions.addOption((Option) op);
         }
         for (Object op : BuildOptions.getOptions()) {
-            allOptions.addOption((Option)op);
+            allOptions.addOption((Option) op);
         }
         for (Object op : frameOptions.getOptions()) {
-            allOptions.addOption((Option)op);
+            allOptions.addOption((Option) op);
         }
         allOptions.addOption(apiLevelOption);
         allOptions.addOption(analysisOption);
@@ -754,27 +757,27 @@ public class Main {
         allOptions.addOption(onlyMainClassesOption);
 
         // 合并
-        mergeOptions.addOption(mergetOption);
-        mergeOptions.addOption(channelOption);
-        mergeOptions.addOption(debugModeOption);
-        mergeOptions.addOption(autoProfileOption);
-        mergeOptions.addOption(encryptTypeOption);
-        mergeOptions.addOption(allowTimeCheckOption);
-        mergeOptions.addOption(maxDiffTimeIntervalOption);
-        mergeOptions.addOption(autoInstallationOption);
-
-        mergeOptions.addOption(autoHeatMapOption);
-        mergeOptions.addOption(autoTrackPageViewOption);
-        mergeOptions.addOption(autoTrackFragmentPageViewOption);
-        mergeOptions.addOption(autoTrackClickOption);
-        mergeOptions.addOption(enableExceptionOption);
-        mergeOptions.addOption(uploadUrlOption);
-        mergeOptions.addOption(debugUrlOption);
+//        mergeOptions.addOption(mergetOption);
+//        mergeOptions.addOption(channelOption);
+//        mergeOptions.addOption(debugModeOption);
+//        mergeOptions.addOption(autoProfileOption);
+//        mergeOptions.addOption(encryptTypeOption);
+//        mergeOptions.addOption(allowTimeCheckOption);
+//        mergeOptions.addOption(maxDiffTimeIntervalOption);
+//        mergeOptions.addOption(autoInstallationOption);
+//
+//        mergeOptions.addOption(autoHeatMapOption);
+//        mergeOptions.addOption(autoTrackPageViewOption);
+//        mergeOptions.addOption(autoTrackFragmentPageViewOption);
+//        mergeOptions.addOption(autoTrackClickOption);
+//        mergeOptions.addOption(enableExceptionOption);
+//        mergeOptions.addOption(uploadUrlOption);
+//        mergeOptions.addOption(debugUrlOption);
         mergeOptions.addOption(configUrlOption);
 
-        mergeOptions.addOption(mergeAppkeyOption);
+//        mergeOptions.addOption(mergeAppkeyOption);
 
-        for(Option option :mergeOptions.getOptions()){
+        for (Option option : mergeOptions.getOptions()) {
             allOptions.addOption(option);
         }
     }
@@ -794,15 +797,15 @@ public class Main {
 
         // print out license info prior to formatter.
         System.out.println(
-                        "**********增强版的apktool将apk文件和aar文件或者jar合并并签名**********\n " +
+                "**********增强版的apktool将apk文件和aar文件或者jar合并并签名**********\n " +
                         "Apktool v" + Androlib.getVersion() + " - a tool for reengineering Android apk files\n" +
                         "with smali v" + ApktoolProperties.get("smaliVersion") +
                         " and baksmali v" + ApktoolProperties.get("baksmaliVersion") + "\n" +
                         "Copyright 2014 Ryszard Wiśniewski <brut.alll@gmail.com>\n" +
-                        "Updated by Connor Tumbleson <connor.tumbleson@gmail.com>" );
+                        "Updated by Connor Tumbleson <connor.tumbleson@gmail.com>");
         if (isAdvanceMode()) {
             System.out.println("Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)\n");
-        }else {
+        } else {
             System.out.println("");
         }
 
@@ -838,7 +841,7 @@ public class Main {
             return;
         }
 
-        Handler handler = new Handler(){
+        Handler handler = new Handler() {
             @Override
             public void publish(LogRecord record) {
                 if (getFormatter() == null) {
@@ -862,10 +865,14 @@ public class Main {
                     reportError(null, exception, ErrorManager.FORMAT_FAILURE);
                 }
             }
+
             @Override
-            public void close() throws SecurityException {}
+            public void close() throws SecurityException {
+            }
+
             @Override
-            public void flush(){}
+            public void flush() {
+            }
         };
 
         logger.addHandler(handler);

@@ -1,6 +1,6 @@
 {
 	"classname": "com.analysys.AnalysysAgent",
-	"staticfield":[],
+	"staticfield":"",
 	"staticMethods": [{
 		"methodName": "setDebugMode",
 		"para": [{
@@ -22,8 +22,8 @@
 				"instanceMethods": [{
 					"methodName": "debugMode",
 					"para": [{
-						"paratype": "com.analysis.EncryptEnum",
-						"paravalue": "AES"
+						"paratype": "object",
+						"paravalue": {"classname":"com.analysis.EncryptEnum","staticfield":"AES"}
 					}]
 				}, {
 					"methodName": "setAutoProfile",
@@ -55,8 +55,8 @@
 		"para": [{
 			"paratype": "string",
 			"paravalue": "uploadurl"
-		}, {
-			"paratype": "java.lang.String",
+		},{
+			"paratype": "string",
 			"paravalue": "debugurl"
 		}]
 	}, {
