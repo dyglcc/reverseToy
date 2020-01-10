@@ -1,6 +1,7 @@
 package com.appadhoc.reversetoy;
 
 import brut.androlib.Androlib;
+import brut.androlib.AndrolibException;
 import brut.androlib.ApkDecoder;
 import brut.androlib.ApkOptions;
 import brut.common.BrutException;
@@ -21,13 +22,23 @@ public class Main {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) throws BrutException, IOException {
+//        try {
+//            HashMap map = new HashMap();
+//            map.put("cfu","asdfahttp://asdf");
+//            test_reverse("jar", "app-keyaasdf",null);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/aweme_aweGW_v9.2.0_cb8ae11.apk");
+        File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
+        File unsignfile = buildApk(apkOutFile);
+        logger.info("##########打包合并后的文件生成未签名文件[完成]##########");
         try {
-            HashMap map = new HashMap();
-            map.put("cfu","asdfahttp://asdf");
-            test_reverse("jar", "app-keyaasdf",null);
+            File signFile = SignTool.sign(unsignfile, apkOutFile);
         } catch (Exception e) {
             e.printStackTrace();
         }
+//        testDecode();
     }
 
     public static void test_reverse(String jar, String appkey,HashMap map) throws Exception {
@@ -36,7 +47,7 @@ public class Main {
         decoder.setForceDelete(true);
         ApkOptions options = new ApkOptions();
         options.verbose = true;
-        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/reader.apk");
+        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/aweme_aweGW_v9.2.0_cb8ae11.apk");
 //        File file = new File("/Users/dongyuangui/Desktop/toy/apks/meishe.apk");
 //        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
         File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
@@ -108,8 +119,9 @@ public class Main {
 
     public static File buildApk(File hostdir) {
         ApkOptions options = new ApkOptions();
-        options.verbose = true;
-        options.debugMode = true;
+        options.verbose = false;
+        options.debugMode = false;
+        options.useAapt2 = true;
 
         File unsignFile = new File(hostdir, "unsign-merged.apk");
         try {
@@ -118,5 +130,20 @@ public class Main {
             e.printStackTrace();
         }
         return unsignFile;
+    }
+
+    public static void testDecode() throws AndrolibException {
+        ApkDecoder decoder = new ApkDecoder();
+        decoder.setForceDelete(true);
+        decoder.setDecodeSources(ApkDecoder.DECODE_SOURCES_NONE);
+        ApkOptions options = new ApkOptions();
+        options.useAapt2 = true;
+        options.verbose = true;
+        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/aweme_aweGW_v9.2.0_cb8ae11.apk");
+
+        logger.info("apk file name " + file.getAbsolutePath());
+        File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
+        decoder.setApkFile(file);
+        decoder.setOutDir(apkOutFile);
     }
 }

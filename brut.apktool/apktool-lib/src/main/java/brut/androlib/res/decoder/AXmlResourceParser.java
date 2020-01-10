@@ -330,24 +330,29 @@ public class AXmlResourceParser implements XmlResourceParser {
     @Override
     public String getAttributeName(int index) {
         int offset = getAttributeOffset(index);
-        int name = m_attributes[offset + ATTRIBUTE_IX_NAME];
-        if (name == -1) {
-            return "";
-        }
+        int nameIndex = m_attributes[offset + ATTRIBUTE_IX_NAME];
+        if (nameIndex == -1) return "";
+        String name = m_strings.getString(nameIndex);
+        String namespace = getAttributeNamespace(index);
 
-        String value = m_strings.getString(name);
-
-        // some attributes will return "", we must rely on the resource_id and refer to the frameworks
-        // to match the resource id to the name. ex: 0x101021C = versionName
-        if (value.length() != 0 && !android_ns.equals(getAttributeNamespace(index))) {
-            return value;
-        } else {
+        // If attribute name is lacking or a private namespace emerges,
+        // retrieve the exact attribute name by its id.
+        if (name == null || name.length() == 0) {
             try {
-                value = mAttrDecoder.decodeManifestAttr(getAttributeNameResource(index));
-            } catch (AndrolibException e) {
-            }
-            return value;
+                name = mAttrDecoder
+                        .decodeManifestAttr(getAttributeNameResource(index));
+                if (name == null) name = "";
+            } catch (AndrolibException e) {name = "";}
+        } else if (! namespace.equals(android_ns)) {
+            try {
+                String obfuscatedName = mAttrDecoder
+                        .decodeManifestAttr(getAttributeNameResource(index));
+                if (! (obfuscatedName == null || obfuscatedName.equals(name))) {
+                    name = obfuscatedName;
+                }
+            } catch (AndrolibException e) {}
         }
+        return name;
     }
 
     @Override
@@ -376,15 +381,31 @@ public class AXmlResourceParser implements XmlResourceParser {
     public String getAttributeValue(int index) {
         int offset = getAttributeOffset(index);
         int valueType = m_attributes[offset + ATTRIBUTE_IX_VALUE_TYPE];
-        int valueData = m_attributes[offset + ATTRIBUTE_IX_VALUE_DATA];
+        int valueId = m_attributes[offset + ATTRIBUTE_IX_VALUE_DATA];
         int valueRaw = m_attributes[offset + ATTRIBUTE_IX_VALUE_STRING];
 
         if (mAttrDecoder != null) {
             try {
+                String value = valueRaw == -1 ? null : ResXmlEncoders
+                        .escapeXmlChars(m_strings.getString(valueRaw));
+                String obfuscatedValue = mAttrDecoder
+                        .decodeManifestAttr(valueId);
+                if (! (value == null || obfuscatedValue == null)) {
+                    int slashPos = value.lastIndexOf("/");
+
+                    if (slashPos != -1) {
+                        // Handle a value with a format of "@yyy/xxx"
+                        String dir = value.substring(0, slashPos);
+                        value = dir + "/"+ obfuscatedValue;
+                    } else if (! value.equals(obfuscatedValue)) {
+                        value = obfuscatedValue;
+                    }
+                }
+
                 return mAttrDecoder.decode(
                         valueType,
-                        valueData,
-                        valueRaw == -1 ? null : ResXmlEncoders.escapeXmlChars(m_strings.getString(valueRaw)),
+                        valueId,
+                        value,
                         getAttributeNameResource(index));
             } catch (AndrolibException ex) {
                 setFirstError(ex);
@@ -392,10 +413,10 @@ public class AXmlResourceParser implements XmlResourceParser {
                                 + "instead: ns=%s, name=%s, value=0x%08x",
                         getAttributePrefix(index),
                         getAttributeName(index),
-                        valueData), ex);
+                        valueId), ex);
             }
         }
-        return TypedValue.coerceToString(valueType, valueData);
+        return TypedValue.coerceToString(valueType, valueId);
     }
 
     @Override

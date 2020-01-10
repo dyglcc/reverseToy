@@ -383,6 +383,7 @@ final public class AndrolibResources {
                 LOGGER.fine("aapt2 compile command ran: ");
                 LOGGER.fine(cmd.toString());
             } catch (BrutException ex) {
+                ex.printStackTrace();
                 throw new AndrolibException(ex);
             }
         }
