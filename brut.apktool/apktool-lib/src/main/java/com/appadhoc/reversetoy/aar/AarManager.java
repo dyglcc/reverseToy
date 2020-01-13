@@ -337,7 +337,7 @@ public class AarManager extends AbstractManager {
                 if (xmlFile.getName().endsWith(".xml")) {
                     String fileName = xmlFile.getName();
                     fileName = fileName.substring(0, fileName.lastIndexOf(".xml"));
-                    String newName = fileName + "_sdk.xml";
+                    String newName = fileName + System.currentTimeMillis() + "_sdk.xml";
                     File rename = new File(valuesFile, newName);
                     boolean success = Utils.FileUtils.reNameFile(xmlFile.getAbsolutePath(), rename.getAbsolutePath());
                     LOGGER.info("change file " + fileName + " 2 " + newName + " success " + success);
