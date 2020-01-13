@@ -182,7 +182,7 @@ public class ARSCDecoder {
 
             type = nextChunk().type;
 
-            addMissingResSpecs();
+//            addMissingResSpecs();
         }
     }
 

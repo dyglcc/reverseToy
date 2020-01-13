@@ -434,6 +434,7 @@ public class Androlib {
     public boolean buildResourcesRaw(ExtFile appDir)
             throws AndrolibException {
         try {
+            
             if (!new File(appDir, "resources.arsc").exists()) {
                 return false;
             }

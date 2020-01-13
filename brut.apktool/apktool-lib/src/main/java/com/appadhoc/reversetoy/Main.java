@@ -22,32 +22,32 @@ public class Main {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) throws BrutException, IOException {
-//        try {
-//            HashMap map = new HashMap();
-//            map.put("cfu","asdfahttp://asdf");
-//            test_reverse("jar", "app-keyaasdf",null);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/aweme_aweGW_v9.2.0_cb8ae11.apk");
-        File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
-        File unsignfile = buildApk(apkOutFile);
-        logger.info("##########打包合并后的文件生成未签名文件[完成]##########");
         try {
-            File signFile = SignTool.sign(unsignfile, apkOutFile);
+            HashMap map = new HashMap();
+            map.put("cfu","asdfahttp://asdf");
+            test_reverse(null);
         } catch (Exception e) {
             e.printStackTrace();
         }
+//        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/aweme_aweGW_v9.2.0_cb8ae11.apk");
+//        File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
+//        File unsignfile = buildApk(apkOutFile);
+//        logger.info("##########打包合并后的文件生成未签名文件[完成]##########");
+//        try {
+//            File signFile = SignTool.sign(unsignfile, apkOutFile);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 //        testDecode();
     }
 
-    public static void test_reverse(String jar, String appkey,HashMap map) throws Exception {
+    public static void test_reverse(HashMap map) throws Exception {
 
         ApkDecoder decoder = new ApkDecoder();
         decoder.setForceDelete(true);
         ApkOptions options = new ApkOptions();
-        options.verbose = true;
-        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/aweme_aweGW_v9.2.0_cb8ae11.apk");
+        options.verbose = false;
+        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/test.apk");
 //        File file = new File("/Users/dongyuangui/Desktop/toy/apks/meishe.apk");
 //        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
         File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
@@ -121,7 +121,7 @@ public class Main {
         ApkOptions options = new ApkOptions();
         options.verbose = false;
         options.debugMode = false;
-        options.useAapt2 = true;
+//        options.useAapt2 = true;
 
         File unsignFile = new File(hostdir, "unsign-merged.apk");
         try {
