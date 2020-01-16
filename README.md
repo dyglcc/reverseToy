@@ -1,7 +1,7 @@
 # 安卓reverseToy使用说明<br/>
 # 简单使用<br/>
 >###### Apktool 使用说明请参考[这里](APKTOOL.md)<br/>
-
+addMissingResSpecs
 <pre>java -jar apktool-reverseToy.jar m abc.apk libs</pre>
 
 >libs是文件夹路径，路径下面是易观的jar<br/>

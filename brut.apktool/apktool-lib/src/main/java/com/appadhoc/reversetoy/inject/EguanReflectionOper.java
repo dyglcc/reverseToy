@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class EguanReflectionOper {
     private final static Logger LOGGER = Logger.getLogger(EguanReflectionOper.class.getName());
@@ -136,13 +137,41 @@ public class EguanReflectionOper {
         System.out.println(needModiFile.getAbsolutePath());
         String srcStr = Utils.FileUtils.readStringFromFile(needModiFile).toString();
         srcStr = srcStr.replaceFirst(".method\\s+public\\s+constructor\\s+<init>\\(\\)V(.*\\n)+?.end\\s+method", "$0\n\n" + methodCodeReplaceMent);
+
+        if (!haveOncreate(srcStr)) {
+            srcStr = insertOnCreateMethod(srcStr);
+        }
         srcStr = srcStr.replaceFirst(".method\\s+public\\s+(final\\s+)?onCreate\\(\\)V(.*\\n)+?\\s*.locals\\s+\\d+", "$0\n\n" + callMethodCode);
+
+//        srcStr = srcStr.replaceFirst(".method\\s+public\\s+constructor\\s+<init>\\(\\)V(.*\\n)+?\\s*.locals\\s+\\d+", "$0\n\n" + callMethodCode);
+        // 判断如果没有找到onCreate方法，放在onAttached方法。
         Utils.FileUtils.writeString2File(needModiFile, srcStr);
         boolean replaceSuccess = srcStr.contains("method private initReverseSDK");
         boolean replaceCallSuccess = srcStr.contains("->initReverseSDK()V");
         if (!replaceCallSuccess || !replaceSuccess) {
             throw new Exception("modify " + hostAppName + " smali modify failed");
         }
+    }
+
+    String onCreateMethod = ".method public onCreate()V\n" +
+            "    .locals 2\n" +
+            "\n" +
+            "    .line 17\n" +
+            "    invoke-super {p0}, Landroid/app/Application;->onCreate()V\n" +
+            "\n" +
+            "    .line 18\n" +
+            "    const-string v0, \"reverse\"\n" +
+            "\n" +
+            "    const-string v1, \"onCreate\"\n" +
+            "\n" +
+            "    invoke-static {v0, v1}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I\n" +
+            "\n" +
+            "    .line 19\n" +
+            "    return-void\n" +
+            ".end method\n";
+
+    private  String insertOnCreateMethod(String srcStr) {
+        return srcStr.replaceFirst(".method\\s+public\\s+constructor\\s+<init>\\(\\)V(.*\\n)+?.end\\s+method", "$0\n\n" + Matcher.quoteReplacement(onCreateMethod));
     }
 
     private String getSmaliApplicationName() {
@@ -235,7 +264,23 @@ public class EguanReflectionOper {
         options = opt;
     }
 
-//    public void setJson(File json) {
-//        this.jsonFile = json;
-//    }
+    public static boolean haveOncreate(String s) {
+        Matcher matcher = Pattern.compile(".method\\s+public\\s+(final\\s+)?onCreate\\(\\)V").matcher(s);
+        return matcher.find();
+    }
+
+    public static void main(String[] args) {
+        EguanReflectionOper oper = new EguanReflectionOper();
+        String srcStr = null;
+        try {
+            srcStr = Utils.FileUtils.readStringFromFile(new File("/Users/jiaozhengxiang/GITHUB/Apktool/VideoApplication.smali")).toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+//        srcStr = srcStr.replaceFirst(".method\\s+public\\s+(final\\s+)?onCreate\\(\\)V","absasdfasd");
+        System.out.println(srcStr);
+        if (!haveOncreate(srcStr)) {
+            System.out.println(oper.insertOnCreateMethod(srcStr));
+        }
+    }
 }

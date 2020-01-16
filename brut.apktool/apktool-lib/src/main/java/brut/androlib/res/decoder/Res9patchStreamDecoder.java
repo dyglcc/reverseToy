@@ -23,6 +23,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 import java.io.*;
+import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageTypeSpecifier;
 
@@ -32,6 +33,7 @@ import org.apache.commons.io.IOUtils;
  * @author Ryszard Wiśniewski <brut.alll@gmail.com>
  */
 public class Res9patchStreamDecoder implements ResStreamDecoder {
+    Logger LOOGER = Logger.getLogger(this.getClass().getName());
     @Override
     public void decode(InputStream in, OutputStream out)
             throws AndrolibException {
@@ -147,6 +149,8 @@ public class Res9patchStreamDecoder implements ResStreamDecoder {
             try {
                 size = di.readInt();
             } catch (IOException ex) {
+
+//                LOOGER.info("Cant find nine patch chunk");
                 throw new CantFind9PatchChunk("Cant find nine patch chunk", ex);
             }
             if (di.readInt() == magic) {

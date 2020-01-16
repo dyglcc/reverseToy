@@ -47,8 +47,10 @@ public class Main {
         decoder.setForceDelete(true);
         ApkOptions options = new ApkOptions();
         options.verbose = false;
-        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/test.apk");
-//        File file = new File("/Users/dongyuangui/Desktop/toy/apks/meishe.apk");
+//        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/app-debug.apk");
+        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/com.qiyi.video_81350.apk");
+//        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/fiexd9patch.apk");
+//        File file = new File("/Users/jiaozhengxiang/Desktop/toy/apks/meishe.apk");
 //        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
         File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
         decoder.setApkFile(file);
