@@ -35,7 +35,8 @@ public class EguanReflectionOper {
         if (appName.equals(appNameStub_Eguan)) {
             copyStubSmali2HostDir(stubDir, lastFolder);
         } else {
-            modifyExistAppSmali(hostDir, appName);
+            modifyExistAppSmali(hostDir, appName, lastFolder);
+
         }
         copyJSON2HostAssets(hostDir);
         copyUtilsSmaliFile(stubDir, lastFolder);
@@ -101,7 +102,7 @@ public class EguanReflectionOper {
         Utils.FileUtils.writeString2File(saveApplicationFile, code);
     }
 
-    private void modifyExistAppSmali(File hostdir, String hostAppName) throws Exception {
+    private void modifyExistAppSmali(File hostdir, String hostAppName, File lastFolder) throws Exception {
         if (!hostdir.exists()) {
             throw new Exception("host dir not exist");
         }
@@ -110,17 +111,50 @@ public class EguanReflectionOper {
         }
         String hostAppNameFileName = hostAppName.replaceAll("\\.", File.separator) + ".smali";
 //            invoke-direct {p0}, Lcom/reverse/stub/App;->initReverseSDK()V
-        String callMethodCode = "invoke-direct {p0}, L" + hostAppName.replaceAll("\\.", "/") + ";->initReverseSDK()V";
-        InputStream codePieceFileIputSream = getAssetsCodeMethodInit();
+//        String callMethodCode = "invoke-direct {p0}, L" + hostAppName.replaceAll("\\.", "/") + ";->initReverseSDK()V";
+        String callMethodCode = "invoke-static {p0}, Lcom/reverse/stub/Utils;->initReverseSDK(Landroid/content/Context;)V";
+//        InputStream codePieceFileIputSream = getAssetsCodeMethodInit();
 
-        String methodCode = Utils.FileUtils.readStringFromStream(codePieceFileIputSream).toString();
+//        String methodCode = Utils.FileUtils.readStringFromStream(codePieceFileIputSream).toString();
 
-
-        String methodCodeReplaceMent = null;
-        if (methodCode != null) {
-            methodCodeReplaceMent = Matcher.quoteReplacement(methodCode);
+//        String methodCodeReplaceMent = null;
+//        if (methodCode != null) {
+//            methodCodeReplaceMent = Matcher.quoteReplacement(methodCode);
+//        }
+//        LOGGER.info("change result is " + methodCodeReplaceMent);
+        File needModiFile = getApplicationFile(hostdir, hostAppNameFileName);
+        if (needModiFile == null) {
+            throw new Exception("can not find src Application smali file ,file name path " + hostAppName);
         }
-        LOGGER.info("change result is " + methodCodeReplaceMent);
+        System.out.println(needModiFile.getAbsolutePath());
+        String srcStr = Utils.FileUtils.readStringFromFile(needModiFile).toString();
+//        srcStr = srcStr.replaceFirst(".method\\s+public\\s+constructor\\s+<init>\\(\\)V(.*\\n)+?.end\\s+method", "$0\n\n" + methodCodeReplaceMent);
+
+        if (!haveOncreate(srcStr)) {
+            srcStr = insertOnCreateMethod(srcStr);
+        }
+        srcStr = srcStr.replaceFirst(".method\\s+public\\s+(final\\s+)?onCreate\\(\\)V(.*\\n)+?\\s*.locals\\s+\\d+", "$0\n\n" + callMethodCode);
+
+//        srcStr = srcStr.replaceFirst(".method\\s+public\\s+constructor\\s+<init>\\(\\)V(.*\\n)+?\\s*.locals\\s+\\d+", "$0\n\n" + callMethodCode);
+        // add copy lastFolder avoid 65536 error
+        File newLocationAppFile = createNewApplicationFileinLastFolder(hostAppName,lastFolder);
+
+        // 在新的file那里新建。
+        Utils.FileUtils.writeString2File(newLocationAppFile, srcStr);
+        // 删除旧的file
+        OS.rmfile(needModiFile.getAbsolutePath());
+        boolean replaceCallSuccess = srcStr.contains("->initReverseSDK(Landroid/content/Context;)V");
+        if (!replaceCallSuccess) {
+            throw new Exception("modify " + hostAppName + " smali modify failed");
+        }
+//        boolean replaceSuccess = srcStr.contains("method private initReverseSDK");
+//        boolean replaceCallSuccess = srcStr.contains("->initReverseSDK()V");
+//        if (!replaceCallSuccess || !replaceSuccess) {
+//            throw new Exception("modify " + hostAppName + " smali modify failed");
+//        }
+    }
+
+    private File getApplicationFile(File hostdir, String hostAppNameFileName) {
         File needModiFile = null;
         for (File subSmaiFolder : hostdir.listFiles()) {
             if (subSmaiFolder.isDirectory() && subSmaiFolder.getName().startsWith("smali")) {
@@ -131,26 +165,7 @@ public class EguanReflectionOper {
                 }
             }
         }
-        if (needModiFile == null) {
-            throw new Exception("can not find src Application smali file ,file name path " + hostAppName);
-        }
-        System.out.println(needModiFile.getAbsolutePath());
-        String srcStr = Utils.FileUtils.readStringFromFile(needModiFile).toString();
-        srcStr = srcStr.replaceFirst(".method\\s+public\\s+constructor\\s+<init>\\(\\)V(.*\\n)+?.end\\s+method", "$0\n\n" + methodCodeReplaceMent);
-
-        if (!haveOncreate(srcStr)) {
-            srcStr = insertOnCreateMethod(srcStr);
-        }
-        srcStr = srcStr.replaceFirst(".method\\s+public\\s+(final\\s+)?onCreate\\(\\)V(.*\\n)+?\\s*.locals\\s+\\d+", "$0\n\n" + callMethodCode);
-
-//        srcStr = srcStr.replaceFirst(".method\\s+public\\s+constructor\\s+<init>\\(\\)V(.*\\n)+?\\s*.locals\\s+\\d+", "$0\n\n" + callMethodCode);
-        // 判断如果没有找到onCreate方法，放在onAttached方法。
-        Utils.FileUtils.writeString2File(needModiFile, srcStr);
-        boolean replaceSuccess = srcStr.contains("method private initReverseSDK");
-        boolean replaceCallSuccess = srcStr.contains("->initReverseSDK()V");
-        if (!replaceCallSuccess || !replaceSuccess) {
-            throw new Exception("modify " + hostAppName + " smali modify failed");
-        }
+        return needModiFile;
     }
 
     String onCreateMethod = ".method public onCreate()V\n" +
@@ -170,7 +185,7 @@ public class EguanReflectionOper {
             "    return-void\n" +
             ".end method\n";
 
-    private  String insertOnCreateMethod(String srcStr) {
+    private String insertOnCreateMethod(String srcStr) {
         return srcStr.replaceFirst(".method\\s+public\\s+constructor\\s+<init>\\(\\)V(.*\\n)+?.end\\s+method", "$0\n\n" + Matcher.quoteReplacement(onCreateMethod));
     }
 
@@ -269,18 +284,28 @@ public class EguanReflectionOper {
         return matcher.find();
     }
 
-    public static void main(String[] args) {
-        EguanReflectionOper oper = new EguanReflectionOper();
-        String srcStr = null;
-        try {
-            srcStr = Utils.FileUtils.readStringFromFile(new File("/Users/jiaozhengxiang/GITHUB/Apktool/VideoApplication.smali")).toString();
-        } catch (IOException e) {
-            e.printStackTrace();
+    private File createNewApplicationFileinLastFolder(String appName, File lastFolder) {
+        String fileName = appName.substring(appName.lastIndexOf(".") + 1);
+        String tmpStr = appName.substring(0, appName.lastIndexOf("."));
+        tmpStr = tmpStr.replaceAll("\\.", File.separator);
+        File appdir = new File(lastFolder, tmpStr);
+        if (!appdir.exists()) {
+            appdir.mkdirs();
         }
-//        srcStr = srcStr.replaceFirst(".method\\s+public\\s+(final\\s+)?onCreate\\(\\)V","absasdfasd");
-        System.out.println(srcStr);
-        if (!haveOncreate(srcStr)) {
-            System.out.println(oper.insertOnCreateMethod(srcStr));
+        File file = new File(appdir, fileName + ".smali");
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+        return file;
+    }
+
+    public static void main(String[] args) throws IOException {
+
+        String str = "com.reverse.stub.EguanApp";
+
     }
 }

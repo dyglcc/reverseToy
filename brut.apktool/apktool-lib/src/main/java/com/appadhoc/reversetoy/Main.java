@@ -7,9 +7,7 @@ import brut.androlib.ApkOptions;
 import brut.common.BrutException;
 import com.appadhoc.reversetoy.exception.AarFileNotExistException;
 import com.appadhoc.reversetoy.exception.ApkFileNotExistException;
-import com.appadhoc.reversetoy.inject.AbstractSmaliOper;
 import com.appadhoc.reversetoy.inject.EguanReflectionOper;
-import com.appadhoc.reversetoy.inject.InjectManagerFactory;
 import com.appadhoc.reversetoy.sign.SignTool;
 import com.appadhoc.reversetoy.utils.Utils;
 
@@ -48,14 +46,17 @@ public class Main {
         ApkOptions options = new ApkOptions();
         options.verbose = false;
 //        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/app-debug.apk");
-        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/com.qiyi.video_81350.apk");
+        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/apks/2105666.apk");
 //        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/fiexd9patch.apk");
 //        File file = new File("/Users/jiaozhengxiang/Desktop/toy/apks/meishe.apk");
 //        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
         File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
         decoder.setApkFile(file);
         decoder.setOutDir(apkOutFile);
+//        decoder.setDecodeResources(ApkDecoder.DECODE_RESOURCES_NONE);
+        decoder.setDecodeAssets(ApkDecoder.DECODE_ASSETS_NONE);
         decoder.setDecodeSources(ApkDecoder.DECODE_SOURCES_SMALI_ONLY_MAIN_CLASSES);
+//        decoder.setForceDecodeManifest(ApkDecoder.FORCE_DECODE_MANIFEST_FULL);
         // init decoder -----------oper
 
         String filePath = "/Users/jiaozhengxiang/Desktop/aar";

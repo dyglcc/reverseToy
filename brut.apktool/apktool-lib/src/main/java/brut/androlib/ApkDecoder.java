@@ -114,6 +114,15 @@ public class ApkDecoder {
                             if (hasManifest()) {
                                 mAndrolib.decodeManifestWithResources(mApkFile, outDir, getResTable());
                             }
+                            // ------------------------add by dongyg
+//                            if (aarManagers != null) { // 对付路径下面多个aar文件
+//                                for (AbstractManager aarManager : aarManagers) {
+//                                    aarManager.setHostPackageName(getResTable().getPackageRenamed());
+//                                    aarManager.preCombin(outDir);
+//                                    aarManager.addAarids2ResTable(getResTable());
+//                                }
+//                            }
+                            //------------------------add by dongyg
                         }
                         break;
                     case DECODE_RESOURCES_FULL:
