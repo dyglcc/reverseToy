@@ -50,6 +50,20 @@ public class Utils {
 
     public static class FileUtils {
 
+        public static InputStream getZipFile(String fileName,File zipFile) throws IOException {
+            if(isEmpty(fileName)){
+                return null;
+            }
+            ZipFile zp = new ZipFile(zipFile);
+            for (Enumeration entries = zp.entries(); entries.hasMoreElements(); ) {
+                ZipEntry entry = (ZipEntry) entries.nextElement();
+                if(entry.getName().equals(fileName)){
+                    return zp.getInputStream(entry);
+                }
+            }
+            return null;
+        }
+
 
         public static void unzip(String assets, File outDir, File jarFile) throws IOException {
 
@@ -527,6 +541,10 @@ public class Utils {
             }
             return null;
         }
+    }
+
+    public static boolean isEmpty(String str){
+        return str == null || str.equals("");
     }
 
     public static class BuildPackage {

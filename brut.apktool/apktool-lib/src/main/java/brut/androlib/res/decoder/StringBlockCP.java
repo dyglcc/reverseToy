@@ -17,10 +17,13 @@
 package brut.androlib.res.decoder;
 
 import brut.androlib.res.xml.ResXmlEncoders;
-import com.tencent.mm.util.ExtDataInput;
+import brut.util.ExtDataInput;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.nio.charset.*;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
 import java.util.Arrays;
 import java.util.logging.Logger;
 
@@ -33,13 +36,13 @@ import java.util.logging.Logger;
  *         TODO: - implement get()
  *
  */
-public class StringBlock {
+public class StringBlockCP {
 
     /**
      * Reads whole (including chunk type) string block from stream. Stream must
      * be at the chunk type.
      */
-    public static StringBlock read_apktool(brut.util.ExtDataInput reader) throws IOException {
+    public static StringBlockCP read(ExtDataInput reader) throws IOException {
         reader.skipCheckChunkTypeInt(CHUNK_STRINGPOOL_TYPE, CHUNK_NULL_TYPE);
         int chunkSize = reader.readInt();
 
@@ -50,47 +53,7 @@ public class StringBlock {
         int stringsOffset = reader.readInt();
         int stylesOffset = reader.readInt();
 
-        StringBlock block = new StringBlock();
-        block.m_isUTF8 = (flags & UTF8_FLAG) != 0;
-        block.m_stringOffsets = reader.readIntArray(stringCount);
-        block.m_stringOwns = new int[stringCount];
-        Arrays.fill(block.m_stringOwns, -1);
-
-        if (styleCount != 0) {
-            block.m_styleOffsets = reader.readIntArray(styleCount);
-        }
-
-        int size = ((stylesOffset == 0) ? chunkSize : stylesOffset) - stringsOffset;
-        block.m_strings = new byte[size];
-        reader.readFully(block.m_strings);
-
-        if (stylesOffset != 0) {
-            size = (chunkSize - stylesOffset);
-            block.m_styles = reader.readIntArray(size / 4);
-
-            // read remaining bytes
-            int remaining = size % 4;
-            if (remaining >= 1) {
-                while (remaining-- > 0) {
-                    reader.readByte();
-                }
-            }
-        }
-
-        return block;
-    }
-    public static StringBlock read(ExtDataInput reader) throws IOException {
-        reader.skipCheckChunkTypeInt(CHUNK_STRINGPOOL_TYPE, CHUNK_NULL_TYPE);
-        int chunkSize = reader.readInt();
-
-        // ResStringPool_header
-        int stringCount = reader.readInt();
-        int styleCount = reader.readInt();
-        int flags = reader.readInt();
-        int stringsOffset = reader.readInt();
-        int stylesOffset = reader.readInt();
-
-        StringBlock block = new StringBlock();
+        StringBlockCP block = new StringBlockCP();
         block.m_isUTF8 = (flags & UTF8_FLAG) != 0;
         block.m_stringOffsets = reader.readIntArray(stringCount);
         block.m_stringOwns = new int[stringCount];
@@ -294,7 +257,7 @@ public class StringBlock {
         return -1;
     }
 
-    private StringBlock() {
+    private StringBlockCP() {
     }
 
     /**
@@ -387,57 +350,16 @@ public class StringBlock {
         return new int[] {2, val * 2};
     }
 
-    public int[] getM_stringOffsets() {
-        return m_stringOffsets;
-    }
-
     private int[] m_stringOffsets;
-
-
-    public byte[] getM_strings() {
-        return m_strings;
-    }
-
-    public void setM_strings(byte[] m_strings) {
-        this.m_strings = m_strings;
-    }
-
     private byte[] m_strings;
-
-
-    public int[] getM_styleOffsets() {
-        return m_styleOffsets;
-    }
-
-    public void setM_styleOffsets(int[] m_styleOffsets) {
-        this.m_styleOffsets = m_styleOffsets;
-    }
-
-    public int[] getM_styles() {
-        return m_styles;
-    }
-
-    public void setM_styles(int[] m_styles) {
-        this.m_styles = m_styles;
-    }
-
     private int[] m_styleOffsets;
     private int[] m_styles;
-
-    public boolean isM_isUTF8() {
-        return m_isUTF8;
-    }
-
-    public void setM_isUTF8(boolean m_isUTF8) {
-        this.m_isUTF8 = m_isUTF8;
-    }
-
     private boolean m_isUTF8;
     private int[] m_stringOwns;
 
     private final CharsetDecoder UTF16LE_DECODER = Charset.forName("UTF-16LE").newDecoder();
     private final CharsetDecoder UTF8_DECODER = Charset.forName("UTF-8").newDecoder();
-    private static final Logger LOGGER = Logger.getLogger(StringBlock.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(StringBlockCP.class.getName());
 
     // ResChunk_header = header.type (0x0001) + header.headerSize (0x001C)
     private static final int CHUNK_STRINGPOOL_TYPE = 0x001C0001;

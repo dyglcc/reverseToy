@@ -1,65 +1,73 @@
+package com.appadhoc.reversetoy.aar;
 /**
- *  Copyright (C) 2019 Ryszard Wiśniewski <brut.alll@gmail.com>
- *  Copyright (C) 2019 Connor Tumbleson <connor.tumbleson@gmail.com>
- *
- *  Licensed under the Apache License, Version 2.0 (the "License");
- *  you may not use this file except in compliance with the License.
- *  You may obtain a copy of the License at
- *
- *       http://www.apache.org/licenses/LICENSE-2.0
- *
- *  Unless required by applicable law or agreed to in writing, software
- *  distributed under the License is distributed on an "AS IS" BASIS,
- *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *  See the License for the specific language governing permissions and
- *  limitations under the License.
+ * Copyright (C) 2019 Ryszard Wiśniewski <brut.alll@gmail.com>
+ * Copyright (C) 2019 Connor Tumbleson <connor.tumbleson@gmail.com>
+ * <p>
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * <p>
+ * http://www.apache.org/licenses/LICENSE-2.0
+ * <p>
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
-package brut.androlib.res.decoder;
 
 import android.util.TypedValue;
 import brut.androlib.AndrolibException;
 import brut.androlib.res.data.*;
 import brut.androlib.res.data.value.*;
+import brut.androlib.res.decoder.StringBlock;
 import brut.util.Duo;
-import brut.androlib.res.data.ResTable;
-import brut.util.ExtDataInput;
+import com.appadhoc.reversetoy.utils.Utils;
 import com.google.common.io.LittleEndianDataInputStream;
+import com.mindprod.ledatastream.LEDataInputStream;
+import com.mindprod.ledatastream.LEDataOutputStream;
+import com.tencent.mm.util.ExtDataInput;
+import com.tencent.mm.util.ExtDataOutput;
+import org.apache.commons.io.input.CountingInputStream;
+
 import java.io.*;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.logging.Logger;
-import org.apache.commons.io.input.CountingInputStream;
+
+//import com.tencent.mm.androlib.res.decoder.ARSCDecoder;
 
 /**
  * @author Ryszard Wiśniewski <brut.alll@gmail.com>
  */
-public class ARSCDecoder {
-    public static ARSCData decode(InputStream arscStream, boolean findFlagsOffsets, boolean keepBroken)
-            throws AndrolibException {
-        return decode(arscStream, findFlagsOffsets, keepBroken, new ResTable());
+public class ArscWriterCP {
+//    public static ARSCData decode(InputStream arscStream, boolean findFlagsOffsets, boolean keepBroken, ResTable resTable)
+//            throws AndrolibException {
+//        return decode(arscStream, findFlagsOffsets, keepBroken, new ResTable());
+//    }
+
+
+//    public static ArscWriter INSTANCE = new ArscWriter();
+
+//    public static ArscWriter getInstance() {
+//        return INSTANCE;
+//    }
+
+    public ARSCData decode(ResPackage[] pkgs, ResTable resTable, ArscWriterCP writer) {
+
+        return new ARSCData(pkgs, writer.mFlagsOffsets == null
+                ? null
+                : writer.mFlagsOffsets.toArray(new FlagsOffset[0]), resTable);
+
     }
 
-    public static ARSCData decode(InputStream arscStream, boolean findFlagsOffsets, boolean keepBroken,
-                                  ResTable resTable)
-            throws AndrolibException {
-        try {
-            ARSCDecoder decoder = new ARSCDecoder(arscStream, resTable, findFlagsOffsets, keepBroken);
-            ResPackage[] pkgs = decoder.readTableHeader();
-            resTable.setGlobalStringBlock(decoder.getGlobalStringBlock());
-            return new ARSCData(pkgs, decoder.mFlagsOffsets == null
-                    ? null
-                    : decoder.mFlagsOffsets.toArray(new FlagsOffset[0]), resTable);
-        } catch (IOException ex) {
-            throw new AndrolibException("Could not decode arsc file", ex);
-        }
-    }
-
-    private StringBlock getGlobalStringBlock() {
-        return mTableStrings;
-    }
-
-    private ARSCDecoder(InputStream arscStream, ResTable resTable, boolean storeFlagsOffsets, boolean keepBroken) {
-        arscStream = mCountIn = new CountingInputStream(arscStream);
+    //    mIn = new ExtDataInput(new LEDataInputStream(arscStream));
+//    mOut = new ExtDataOutput(new LEDataOutputStream(new FileOutputStream(mApkDecoder.getOutTempARSCFile(), false)));
+//    mPkgs = pkgs;
+//    mPkgsLenghtChange = new int[pkgs.length];
+    public ArscWriterCP(InputStream arscStream_, ResTable resTable, boolean storeFlagsOffsets, boolean keepBroken, File arscOutFile) throws FileNotFoundException {
+        BufferedInputStream bfi = new BufferedInputStream(arscStream_);
+        mCountIn = new CountingInputStream(bfi);
         if (storeFlagsOffsets) {
             mFlagsOffsets = new ArrayList<FlagsOffset>();
         } else {
@@ -68,16 +76,24 @@ public class ARSCDecoder {
         // We need to explicitly cast to DataInput as otherwise the constructor is ambiguous.
         // We choose DataInput instead of InputStream as ExtDataInput wraps an InputStream in
         // a DataInputStream which is big-endian and ignores the little-endian behavior.
-        mIn = new ExtDataInput((DataInput) new LittleEndianDataInputStream(arscStream));
+        mIn = new ExtDataInput((DataInput) new LittleEndianDataInputStream(mCountIn));
         mResTable = resTable;
         mKeepBroken = keepBroken;
+        // add by dyg
+        mOut = new ExtDataOutput(new LEDataOutputStream(new FileOutputStream(arscOutFile, false)));
+        this.arscOutFile = arscOutFile;
     }
 
-    private ResPackage[] readTableHeader() throws IOException, AndrolibException {
+    public void setPackages(ResPackage[] mPkgs) {
+        this.mPkgs = mPkgs;
+        mPkgsLenghtChange = new int[mPkgs.length];
+    }
+
+    public ResPackage[] readTableHeader() throws IOException, AndrolibException {
         nextChunkCheckType(Header.TYPE_TABLE);
         int packageCount = mIn.readInt();
 
-        mTableStrings = StringBlock.read_apktool(mIn);
+        mTableStrings = StringBlock.read(mIn);
         ResPackage[] packages = new ResPackage[packageCount];
 
         nextChunk();
@@ -104,10 +120,14 @@ public class ARSCDecoder {
         }
 
         String name = mIn.readNullEndedString(128, true);
-        /* typeStrings */mIn.skipInt();
-        /* lastPublicType */mIn.skipInt();
-        /* keyStrings */mIn.skipInt();
-        /* lastPublicKey */mIn.skipInt();
+        /* typeStrings */
+        mIn.skipInt();
+        /* lastPublicType */
+        mIn.skipInt();
+        /* keyStrings */
+        mIn.skipInt();
+        /* lastPublicKey */
+        mIn.skipInt();
 
         // TypeIdOffset was added platform_frameworks_base/@f90f2f8dc36e7243b85e0b6a7fd5a590893c827e
         // which is only in split/new applications.
@@ -120,8 +140,8 @@ public class ARSCDecoder {
             LOGGER.warning("Please report this application to Apktool for a fix: https://github.com/iBotPeaches/Apktool/issues/1728");
         }
 
-        mTypeNames = StringBlock.read_apktool(mIn);
-        mSpecNames = StringBlock.read_apktool(mIn);
+        mTypeNames = StringBlock.read(mIn);
+        mSpecNames = StringBlock.read(mIn);
 
         mResId = id << 24;
         mPkg = new ResPackage(mResTable, id, name);
@@ -151,7 +171,7 @@ public class ARSCDecoder {
             LOGGER.info(String.format("Decoding Shared Library (%s), pkgId: %d", packageName, packageId));
         }
 
-        while(nextChunk().type == Header.TYPE_TYPE) {
+        while (nextChunk().type == Header.TYPE_TYPE) {
             readTableTypeSpec();
         }
     }
@@ -170,7 +190,7 @@ public class ARSCDecoder {
 
             // We've detected sparse resources, lets record this so we can rebuild in that same format (sparse/not)
             // with aapt2. aapt1 will ignore this.
-            if (! mResTable.getSparseResources()) {
+            if (!mResTable.getSparseResources()) {
                 mResTable.setSparseResources(true);
             }
         }
@@ -200,7 +220,8 @@ public class ARSCDecoder {
             mFlagsOffsets.add(new FlagsOffset(mCountIn.getCount(), entryCount));
         }
 
-		/* flags */mIn.skipBytes(entryCount * 4);
+        /* flags */
+        mIn.skipBytes(entryCount * 4);
         mTypeSpec = new ResTypeSpec(mTypeNames.getString(id - 1), mResTable, mPkg, id, entryCount);
         mPkg.addType(mTypeSpec);
         return mTypeSpec;
@@ -215,7 +236,8 @@ public class ARSCDecoder {
         }
 
         int typeFlags = mIn.readByte();
-        /* reserved */mIn.skipBytes(2);
+        /* reserved */
+        mIn.skipBytes(2);
         int entryCount = mIn.readInt();
         int entriesStart = mIn.readInt();
         mMissingResSpecs = new boolean[entryCount];
@@ -355,8 +377,10 @@ public class ARSCDecoder {
     }
 
     private ResIntBasedValue readValue() throws IOException, AndrolibException {
-		/* size */mIn.skipCheckShort((short) 8);
-        /* zero */mIn.skipCheckByte((byte) 0);
+        /* size */
+        mIn.skipCheckShort((short) 8);
+        /* zero */
+        mIn.skipCheckByte((byte) 0);
         byte type = mIn.readByte();
         int data = mIn.readInt();
 
@@ -389,13 +413,15 @@ public class ARSCDecoder {
         byte keyboard = mIn.readByte();
         byte navigation = mIn.readByte();
         byte inputFlags = mIn.readByte();
-		/* inputPad0 */mIn.skipBytes(1);
+        /* inputPad0 */
+        mIn.skipBytes(1);
 
         short screenWidth = mIn.readShort();
         short screenHeight = mIn.readShort();
 
         short sdkVersion = mIn.readShort();
-		/* minorVersion, now must always be 0 */mIn.skipBytes(2);
+        /* minorVersion, now must always be 0 */
+        mIn.skipBytes(2);
 
         byte screenLayout = 0;
         byte uiMode = 0;
@@ -477,15 +503,15 @@ public class ARSCDecoder {
 
             // since this function handles languages & regions, we add the value(s) to the base char
             // which is usually 'a' or '0' depending on language or region.
-            return new char[] { (char) (first + base), (char) (second + base), (char) (third + base) };
+            return new char[]{(char) (first + base), (char) (second + base), (char) (third + base)};
         }
-        return new char[] { (char) in0, (char) in1 };
+        return new char[]{(char) in0, (char) in1};
     }
 
     private String readScriptOrVariantChar(int length) throws AndrolibException, IOException {
         StringBuilder string = new StringBuilder(16);
 
-        while(length-- != 0) {
+        while (length-- != 0) {
             short ch = mIn.readByte();
             if (ch == 0) {
                 break;
@@ -512,7 +538,7 @@ public class ARSCDecoder {
             ResResSpec spec = new ResResSpec(new ResID(resId | i), "APKTOOL_DUMMY_" + Integer.toHexString(i), mPkg, mTypeSpec);
 
             // If we already have this resID dont add it again.
-            if (! mPkg.hasResSpec(new ResID(resId | i))) {
+            if (!mPkg.hasResSpec(new ResID(resId | i))) {
                 mPkg.addResSpec(spec);
                 mTypeSpec.addResSpec(spec);
 
@@ -553,11 +579,18 @@ public class ARSCDecoder {
         checkChunkType(expectedType);
     }
 
-    private final ExtDataInput mIn;
-    private final ResTable mResTable;
-    private final CountingInputStream mCountIn;
-    private final List<FlagsOffset> mFlagsOffsets;
-    private final boolean mKeepBroken;
+    private ExtDataInput mIn;
+    //    add by dyg
+    private ExtDataOutput mOut;
+
+    public ResTable getmResTable() {
+        return mResTable;
+    }
+
+    private ResTable mResTable;
+    private CountingInputStream mCountIn;
+    private List<FlagsOffset> mFlagsOffsets;
+    private boolean mKeepBroken;
 
     private Header mHeader;
     private StringBlock mTableStrings;
@@ -574,6 +607,27 @@ public class ARSCDecoder {
     private final static short ENTRY_FLAG_COMPLEX = 0x0001;
     private final static short ENTRY_FLAG_PUBLIC = 0x0002;
     private final static short ENTRY_FLAG_WEAK = 0x0004;
+    private ArscWriter.ARSCData aarData;
+
+    public void mergeArsc(InputStream zipFile, File outPutArscFile, File srcApkfile,ARSCData aarData) throws FileNotFoundException {
+        if (mCountIn != null) {
+            mCountIn.resetCount();
+        }
+        this.aarData = aarData;
+        BufferedInputStream bfi = new BufferedInputStream(zipFile);
+        mCountIn = new CountingInputStream(bfi);
+        mIn = new ExtDataInput((DataInput) new LittleEndianDataInputStream(mCountIn));
+        mOut = new ExtDataOutput(new LEDataOutputStream(new FileOutputStream(outPutArscFile, false)));
+        try {
+            writeTable(srcApkfile);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (AndrolibException e) {
+            e.printStackTrace();
+        } catch (com.tencent.mm.androlib.AndrolibException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static class Header {
         public final short type;
@@ -601,9 +655,81 @@ public class ARSCDecoder {
             return new Header(type, in.readShort(), in.readInt(), start);
         }
 
+        public static Header readAndWriteHeader(ExtDataInput in, ExtDataOutput out, int diffSize, CountingInputStream countIn)
+                throws IOException, AndrolibException {
+            int start = countIn.getCount();
+            short type;
+            int size;
+
+            short count;
+            try {
+                type = in.readShort();
+                out.writeShort(type);
+                count = in.readShort();
+                out.writeShort(count);
+                size = in.readInt();
+                size -= diffSize;
+                if (size <= 0) {
+                    throw new AndrolibException(String.format("readAndWriteHeader size < 0: size=%d", size));
+                }
+                out.writeInt(size);
+            } catch (EOFException ex) {
+                return new Header(TYPE_NONE, 0, 0, start);
+            }
+            return new Header(type, count, size, start);
+        }
+
         public final static short TYPE_NONE = -1, TYPE_TABLE = 0x0002,
                 TYPE_PACKAGE = 0x0200, TYPE_TYPE = 0x0201, TYPE_SPEC_TYPE = 0x0202, TYPE_LIBRARY = 0x0203;
     }
+
+
+//    public static class Header {
+//
+//        public final short type;
+//        public final int chunkSize;
+//
+//        public Header(short type, int size) {
+//            this.type = type;
+//            this.chunkSize = size;
+//        }
+//
+//        public static ARSCDecoder.Header read(com.tencent.mm.util.ExtDataInput in) throws IOException {
+//            short type;
+//            try {
+//                type = in.readShort();
+//                short count = in.readShort();
+//                int size = in.readInt();
+//                return new ARSCDecoder.Header(type, size);
+//            } catch (EOFException ex) {
+//                return new ARSCDecoder.Header(TYPE_NONE, 0);
+//            }
+//        }
+//        public final static short TYPE_NONE = -1, TYPE_TABLE = 0x0002, TYPE_PACKAGE = 0x0200, TYPE_TYPE = 0x0201,
+//                TYPE_SPEC_TYPE = 0x0202, TYPE_LIBRARY = 0x0203;
+//        public static ARSCDecoder.Header readAndWriteHeader(com.tencent.mm.util.ExtDataInput in, ExtDataOutput out, int diffSize)
+//                throws IOException, AndrolibException {
+//            short type;
+//            int size;
+//            try {
+//                type = in.readShort();
+//                out.writeShort(type);
+//                short count = in.readShort();
+//                out.writeShort(count);
+//                size = in.readInt();
+//                size -= diffSize;
+//                if (size <= 0) {
+//                    throw new AndrolibException(String.format("readAndWriteHeader size < 0: size=%d", size));
+//                }
+//                out.writeInt(size);
+//            } catch (EOFException ex) {
+//                return new ARSCDecoder.Header(TYPE_NONE, 0);
+//            }
+//            return new ARSCDecoder.Header(type, size);
+//        }
+//
+//    }
+
 
     public static class FlagsOffset {
         public final int offset;
@@ -621,7 +747,7 @@ public class ARSCDecoder {
         public ResValue mValue;
     }
 
-    private static final Logger LOGGER = Logger.getLogger(ARSCDecoder.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ArscWriterCP.class.getName());
     private static final int KNOWN_CONFIG_BYTES = 56;
 
     public static class ARSCData {
@@ -670,8 +796,269 @@ public class ARSCDecoder {
             return mResTable;
         }
 
+        public ResPackage[] getmPackages() {
+            return mPackages;
+        }
+
         private final ResPackage[] mPackages;
         private final FlagsOffset[] mFlagsOffsets;
         private final ResTable mResTable;
     }
+
+    /// -------------------------write restable----------------------------------------------
+    public static Map<Integer, String> mTableStringsResguard = new LinkedHashMap<>();
+    private int mCurEntryID = -1;
+    private int[] mPkgsLenghtChange;
+    private ResPackage[] mPkgs;
+    private int mTableLenghtChange = 0;
+    private int mCurPackageID = -1;
+
+    private File arscOutFile = null;
+
+    public void writeTable(File tmpApkFile) throws IOException, AndrolibException, com.tencent.mm.androlib.AndrolibException {
+        System.out.printf("writing new resources.arsc \n");
+        mTableLenghtChange = 0;
+        writeNextChunkCheck(Header.TYPE_TABLE, 0);
+        int packageCount = mIn.readInt();
+        mOut.writeInt(packageCount);
+
+        mTableLenghtChange += com.tencent.mm.androlib.res.decoder.StringBlock.writeTableNameStringBlock(mIn, mOut, mTableStringsResguard,aarData);
+        writeNextChunk(0);
+        if (packageCount != mPkgs.length) {
+            throw new AndrolibException(String.format("writeTable package count is different before %d, now %d",
+                    mPkgs.length,
+                    packageCount
+            ));
+        }
+        for (int i = 0; i < packageCount; i++) {
+            mCurPackageID = i;
+            writePackage();
+        }
+        // 最后需要把整个的size重写回去
+        reWriteTable(tmpApkFile);
+    }
+
+    private ArscWriterCP.Header writeNextChunkCheck(int expectedType, int diffSize) throws IOException, AndrolibException {
+        mHeader = ArscWriterCP.Header.readAndWriteHeader(mIn, mOut, diffSize, mCountIn);
+        if (mHeader.type != expectedType) {
+            throw new AndrolibException(String.format("Invalid chunk type: expected=%d, got=%d", expectedType, mHeader.type));
+        }
+        return mHeader;
+    }
+
+    private Header writeNextChunk(int diffSize) throws IOException, AndrolibException {
+        mHeader = Header.readAndWriteHeader(mIn, mOut, diffSize, mCountIn);
+        return mHeader;
+    }
+
+    private void reWriteTable(File srcApkFile) throws AndrolibException, IOException {
+
+        InputStream inputStream = Utils.FileUtils.getZipFile("resources.arsc", srcApkFile);
+        BufferedInputStream bfi = new BufferedInputStream(inputStream);
+        mCountIn = new CountingInputStream(bfi);
+        mIn = new ExtDataInput(new LEDataInputStream(mCountIn));
+        mOut = new ExtDataOutput(new LEDataOutputStream(new FileOutputStream(arscOutFile, false)));
+
+        writeNextChunkCheck(Header.TYPE_TABLE, mTableLenghtChange);
+        int packageCount = mIn.readInt();
+        mOut.writeInt(packageCount);
+        com.tencent.mm.androlib.res.decoder.StringBlock.writeAll(mIn, mOut);
+
+        for (int i = 0; i < packageCount; i++) {
+            mCurPackageID = i;
+            writeNextChunk(mPkgsLenghtChange[mCurPackageID]);
+            mOut.writeBytes(mIn, mHeader.chunkSize - 8);
+        }
+//        mApkDecoder.getOutTempARSCFile().delete();
+    }
+
+    private void writePackage() throws IOException, AndrolibException {
+        checkChunkType(Header.TYPE_PACKAGE);
+        int id = (byte) mIn.readInt();
+        mOut.writeInt(id);
+        mResId = id << 24;
+        //char_16的，一共256byte
+        mOut.writeBytes(mIn, 256);
+        /* typeNameStrings */
+        mOut.writeInt(mIn.readInt());
+        /* typeNameCount */
+        mOut.writeInt(mIn.readInt());
+        /* specNameStrings */
+        mOut.writeInt(mIn.readInt());
+        /* specNameCount */
+        mOut.writeInt(mIn.readInt());
+        com.tencent.mm.androlib.res.decoder.StringBlock.writeAll(mIn, mOut);
+
+//        if (mPkgs[mCurPackageID].isCanResguard()) {
+//            int specSizeChange = com.tencent.mm.androlib.res.decoder.StringBlock.writeSpecNameStringBlock(mIn,
+//                    mOut,
+//                    mPkgs[mCurPackageID].getSpecNamesBlock(),
+//                    mCurSpecNameToPos
+//            );
+//            mPkgsLenghtChange[mCurPackageID] += specSizeChange;
+//            mTableLenghtChange += specSizeChange;
+//        } else {
+        com.tencent.mm.androlib.res.decoder.StringBlock.writeAll(mIn, mOut);
+//        }
+        writeNextChunk(0);
+        while (mHeader.type == Header.TYPE_LIBRARY) {
+            writeLibraryType();
+        }
+        while (mHeader.type == Header.TYPE_SPEC_TYPE) {
+            writeTableTypeSpec();
+        }
+    }
+
+    private void writeLibraryType() throws AndrolibException, IOException {
+        checkChunkType(Header.TYPE_LIBRARY);
+        int libraryCount = mIn.readInt();
+        mOut.writeInt(libraryCount);
+        for (int i = 0; i < libraryCount; i++) {
+            mOut.writeInt(mIn.readInt());/*packageId*/
+            mOut.writeBytes(mIn, 256); /*packageName*/
+        }
+        writeNextChunk(0);
+        while (mHeader.type == Header.TYPE_TYPE) {
+            writeTableTypeSpec();
+        }
+    }
+
+    private void writeTableTypeSpec() throws AndrolibException, IOException {
+        checkChunkType(Header.TYPE_SPEC_TYPE);
+        byte id = mIn.readByte();
+        mOut.writeByte(id);
+        mResId = (0xff000000 & mResId) | id << 16;
+        mOut.writeBytes(mIn, 3);
+        int entryCount = mIn.readInt();
+        mOut.writeInt(entryCount);
+        // 对，这里是用来描述差异性的！！！
+        ///* flags */mIn.skipBytes(entryCount * 4);
+        int[] entryOffsets = mIn.readIntArray(entryCount);
+        mOut.writeIntArray(entryOffsets);
+
+        while (writeNextChunk(0).type == Header.TYPE_TYPE) {
+            writeConfig();
+        }
+    }
+
+//    private void readConfig() throws IOException, AndrolibException {
+//        checkChunkType(Header.TYPE_TYPE);
+//        /* typeId */
+//        mIn.skipInt();
+//        int entryCount = mIn.readInt();
+//        int entriesStart = mIn.readInt();
+//        readConfigFlags();
+//        int[] entryOffsets = mIn.readIntArray(entryCount);
+//        for (int i = 0; i < entryOffsets.length; i++) {
+//            mCurEntryID = i;
+//            if (entryOffsets[i] != -1) {
+//                mResId = (mResId & 0xffff0000) | i;
+//                readEntry();
+//            }
+//        }
+//    }
+
+    private void writeConfig() throws IOException, AndrolibException {
+        checkChunkType(Header.TYPE_TYPE);
+        /* typeId */
+        mOut.writeInt(mIn.readInt());
+        /* entryCount */
+        int entryCount = mIn.readInt();
+        mOut.writeInt(entryCount);
+        /* entriesStart */
+        mOut.writeInt(mIn.readInt());
+
+        writeConfigFlags();
+        int[] entryOffsets = mIn.readIntArray(entryCount);
+        mOut.writeIntArray(entryOffsets);
+
+        for (int i = 0; i < entryOffsets.length; i++) {
+            if (entryOffsets[i] != -1) {
+                mResId = (mResId & 0xffff0000) | i;
+                writeEntry();
+            }
+        }
+    }
+
+    private void writeConfigFlags() throws IOException, AndrolibException {
+        //总的有多大
+        int size = mIn.readInt();
+        if (size < 28) {
+            throw new AndrolibException("Config size < 28");
+        }
+        mOut.writeInt(size);
+
+        mOut.writeBytes(mIn, size - 4);
+    }
+
+    private void writeComplexEntry() throws IOException, AndrolibException {
+        mOut.writeInt(mIn.readInt());
+        int count = mIn.readInt();
+        mOut.writeInt(count);
+        for (int i = 0; i < count; i++) {
+            mOut.writeInt(mIn.readInt());
+            writeValue();
+        }
+    }
+
+
+    private void writeEntry() throws IOException, AndrolibException {
+        /* size */
+        mOut.writeBytes(mIn, 2);
+        short flags = mIn.readShort();
+        mOut.writeShort(flags);
+        int specNamesId = mIn.readInt();
+//        ResPackage pkg = mPkgs[mCurPackageID];
+//        if (pkg.isCanResguard()) {
+//            specNamesId = mCurSpecNameToPos.get(pkg.getSpecRepplace(mResId));
+//            if (specNamesId < 0) {
+//                throw new AndrolibException(String.format("writeEntry new specNamesId < 0 %d", specNamesId));
+//            }
+//        }
+        mOut.writeInt(specNamesId);
+
+        if ((flags & ENTRY_FLAG_COMPLEX) == 0) {
+            writeValue();
+        } else {
+            writeComplexEntry();
+        }
+    }
+
+    private void writeValue() throws IOException, AndrolibException {
+        /* size */
+        mOut.writeCheckShort(mIn.readShort(), (short) 8);
+        /* zero */
+        mOut.writeCheckByte(mIn.readByte(), (byte) 0);
+        byte type = mIn.readByte();
+        mOut.writeByte(type);
+        int data = mIn.readInt();
+        mOut.writeInt(data);
+    }
+
+//    private void readEntry() throws IOException, AndrolibException {
+//        mIn.skipBytes(2);
+//        short flags = mIn.readShort();
+//        int specNamesId = mIn.readInt();
+//
+//        if (mPkg.isCanResguard()) {
+//            // 混淆过或者已经添加到白名单的都不需要再处理了
+//            if (!mResguardBuilder.isReplaced(mCurEntryID) && !mResguardBuilder.isInWhiteList(mCurEntryID)) {
+//                Configuration config = mApkDecoder.getConfig();
+//                boolean isWhiteList = false;
+//                if (config.mUseWhiteList) {
+//                    isWhiteList = dealWithWhiteList(specNamesId, config);
+//                }
+//
+//                if (!isWhiteList) {
+//                    dealWithNonWhiteList(specNamesId, config);
+//                }
+//            }
+//        }
+//
+//        if ((flags & ENTRY_FLAG_COMPLEX) == 0) {
+//            readValue(true, specNamesId);
+//        } else {
+//            readComplexEntry(false, specNamesId);
+//        }
+//    }
 }

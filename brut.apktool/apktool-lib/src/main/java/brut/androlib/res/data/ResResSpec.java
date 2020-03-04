@@ -29,6 +29,11 @@ public class ResResSpec {
     private final String mName;
     private final ResPackage mPackage;
     private final ResTypeSpec mType;
+
+    public Map<ResConfigFlags, ResResource> getmResources() {
+        return mResources;
+    }
+
     private final Map<ResConfigFlags, ResResource> mResources = new LinkedHashMap<ResConfigFlags, ResResource>();
 
     public ResResSpec(ResID id, String name, ResPackage pkg, ResTypeSpec type) {

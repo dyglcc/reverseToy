@@ -100,6 +100,9 @@ public class AarManager extends AbstractManager {
     private File getAarres() {
         File unzipFile = new File(tmpDir, getAarFileName());
         File res = new File(unzipFile, "res");
+        if (!res.exists()) {
+            res.mkdirs();
+        }
         return res;
     }
 
@@ -149,7 +152,7 @@ public class AarManager extends AbstractManager {
             unzipAarFile();
             setAarPackageId();
             replaceAndroidManifestWithHostPackageId();
-            aaptPackage();
+            aaptAarPackageOld();
             compileRfile2class();
             // read aar ids
             File rRile = getRjavaFile();
@@ -285,7 +288,11 @@ public class AarManager extends AbstractManager {
         }
     }
 
-    private void aaptPackage()
+    public File getTmpApkFile() {
+        return new File(tmpDir, "aar_tmp.apk");
+    }
+
+    public void aaptAarPackageOld()
             throws BrutException, IOException {
         List<String> cmd = new ArrayList<String>();
         if (!getAarres().exists()) {
@@ -303,6 +310,39 @@ public class AarManager extends AbstractManager {
         cmd.add("-m");
         cmd.add("-J");
         cmd.add(getRFileDir().getAbsolutePath());
+//        cmd.add("-F");
+//        cmd.add(getTmpApkFile().getAbsolutePath());
+
+        cmd.add("-S");
+        cmd.add(getAarres().getAbsolutePath());
+        cmd.add("-I");
+
+        cmd.add(Utils.BuildPackage.getAndroidJar(AarManager.class).getAbsolutePath());
+        cmd.add("-M");
+
+        cmd.add(getAarManifest().getAbsolutePath());
+        Utils.OSCMD.runCMD(cmd);
+    }
+    public void aaptAarPackageNew()
+            throws BrutException, IOException {
+        List<String> cmd = new ArrayList<String>();
+        if (!getAarres().exists()) {
+            LOGGER.fine("aar file have no res file");
+            return;
+        }
+        try {
+            String aaptCommand = AaptManager.getAppt1().getAbsolutePath();
+            cmd.add(aaptCommand);
+        } catch (BrutException ex) {
+            LOGGER.warning("aapt: " + ex.getMessage() + " (defaulting to $PATH binary)");
+        }
+        cmd.add("package");
+        cmd.add("-f");
+        cmd.add("-m");
+        cmd.add("-J");
+        cmd.add(getRFileDir().getAbsolutePath());
+        cmd.add("-F");
+        cmd.add(getTmpApkFile().getAbsolutePath());
 
         cmd.add("-S");
         cmd.add(getAarres().getAbsolutePath());
@@ -418,6 +458,9 @@ public class AarManager extends AbstractManager {
     private File getAarLibDir() {
         File aardir = new File(tmpDir, getAarFileName());
         File libs = new File(aardir, "libs");
+        if(!libs.exists()){
+            libs.mkdirs();
+        }
         return libs;
     }
 
@@ -464,79 +507,52 @@ public class AarManager extends AbstractManager {
 
     public static void main(String[] args) throws Exception {
 
-//        AarManager aarManager = AarManager.getInstance();
-//        aarManager.init();
-//        try {
-//            aarManager.setHostPackageName("helloworld");
-//            aarManager.preCombin();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        AarManager manager = new AarManager("/Users/dongyuangui/Desktop/aar-1/abtest-release.aar");
+        File fileHostApk = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
+        File outArsc = new File("/Users/dongyuangui/Desktop/apk-blue/out--.arsc");
+//       第一步，让arsc decoder 读取文件 aar arsc文件，
+//
+//
+        ArscWriter writerHost = new ArscWriter(Utils.FileUtils.getZipFile("resources.arsc", fileHostApk)
+                , new ResTable(), false, true, outArsc);
+        ResPackage[] pkgsHost = writerHost.readTableHeader();
+        writerHost.setPackages(pkgsHost);
+        ArscWriter.ARSCData dataHost = writerHost.decode(pkgsHost, writerHost.getmResTable(), writerHost);
+        writerHost.mergeArsc(Utils.FileUtils.getZipFile("resources.arsc", fileHostApk), outArsc, fileHostApk,dataHost);
+        // 读取了hostApk了
+//        第三步，去重复aar arsc文件， // 先不去重，
+//        第四部，重新写arsc文件，
+//        写的时候，从aar arsc table里面拿出来数据，填进去
 
 
-//        File file = new File("/Users/dongyuangui/Desktop/work/toy_workspace/aar/tmp/rFiles/com/adhoc/abtest/R.java");
-//        Map map = Utils.RFileUtils.readAarIds(file);
-//        for(Object value:ids.keySet()){
-//            System.out.println(value);
-//        }
-//        for(Object value:ids.values()){
-//            Map map = (Map) value;
-//            for(Object value1 : map.values()){
-//                System.out.println("value1" + value1);
-//                System.out.println("value1" + Integer.toHexString((Integer) value1));
-//            }
-//        }
+//        第二步，读取host arsc文件
 
-//        File sourceFile = new File("/Users/dongyuangui/Desktop/work/aar-workspace", "AndroidManifest.xml");
-//        File desFile = new File("/Users/dongyuangui/Desktop/work/aar-workspace", "abc.xml");
-//        Utils.XmlUtils.combin(sourceFile, desFile);
+//        manager.unzipAarFile();
+//        manager.setHostPackageName("abc.abc.eea");
+//        manager.replaceAndroidManifestWithHostPackageId();
+//        manager.aaptAarPackageNew();
+//        ArscWriter writerAar = new ArscWriter(Utils.FileUtils.getZipFile("resources.arsc", manager.getTmpApkFile())
+//                , new ResTable(), false, true, manager.getOutPutArscFile());
+//        ResPackage[] pkgsAar = writerAar.readTableHeader();
+//        writerAar.setPackages(pkgsAar);
+//
+//        ArscWriter.ARSCData aarArscData = writerAar.decode(pkgsAar, writerAar.getmResTable(), writerAar);
+//        aarArscData.setmTableStrings(writerAar.getmTableStrings());
 
-//        String workdir = "/Users/jiaozhengxiang/Desktop/work/toy_workspace/aar/tmp1";
-//        AarManager manager = AarManager.getInstance().init("/Users/jiaozhengxiang/Desktop/work/toy_workspace","/Users/jiaozhengxiang/Desktop/work/aar-workspace/abtest-lite-v5.1.3-sp.aar");
-        String aarPackageName = "com.adhoc.abtest";
-        String rjavaFile = "/Users/jiaozhengxiang/Desktop/work/toy_workspace/aar/tmp1/R.java";
-
-        String workdir = "/Users/jiaozhengxiang/Desktop/work/toy_workspace/aar/tmp2";
-        File aarfile = new File(workdir, "abtest-lite-v5.1.3-sp");
-        File apkfiel = new File(workdir, "apk");
+//        System.out.println("abc" + aarArscData.getPackages().length);
 
 
-        File aarRes = new File(aarfile, "res");
-        File apkRes = new File(apkfiel, "res");
-
-//        try {
-//            OS.cpdir(aarRes, apkRes);
-//        } catch (BrutException e) {
-//            e.printStackTrace();
-//        }
-        Map<String, LinkedHashMap> ids = Utils.RFileUtils.readAarIds(new File(rjavaFile));
-        LinkedHashMap<String, AarID> map = ids.get("id");
-        for (AarID aarID : map.values()) {
-            aarID.setDuplicate(true);
-        }
-        String workdirRes = "/Users/jiaozhengxiang/Desktop/work/toy_workspace/aar/tmp2/values.xml";
-//        Utils.XmlUtils.removeDuplicateLineAndRemoveIdType(ids, new File(workdirRes));
-
-        try {
-
-            File file = new File("/Users/jiaozhengxiang/Desktop/apktool_workspace/AndroidManifest.xml");
-            String packageName = Utils.XmlUtils.getPackageName(file);
-            System.out.println(packageName);
-//            String rSmaliDirs_str = aarPackageName.replaceAll("\\.", String.valueOf(File.separatorChar));
-//            System.out.println(rSmaliDirs_str);
-//            String[] paths = aarPackageName.split("\\.");
-//            for(String path:paths){
-//            }
-//            smaliClass(workdir);
-//            dx2dexfiles(workdir);
-//            all2Smali(workdir);
-//            reArrangeRsmalifileIDs(workdir,aarPackageName,ids);
 
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        如何去重呢？两个arsc文件都要读取出来，aar 的arsc去重。 todo ,暂时不去重
+
+
 
     }
+
+    public File getOutPutArscFile() {
+        return new File(tmpDir, "output.arsc");
+    }
+
 
 }

@@ -873,12 +873,13 @@ public class AXmlResourceParser implements XmlResourceParser {
         // Delayed initialization.
         if (m_strings == null) {
             m_reader.skipCheckInt(CHUNK_AXML_FILE, CHUNK_AXML_FILE_BROKEN);
+//            m_reader.skipCheckInt(CHUNK_AXML_FILE);
 
 			/*
 			 * chunkSize
 			 */
             m_reader.skipInt();
-            m_strings = StringBlock.read(m_reader);
+            m_strings = StringBlock.read_apktool(m_reader);
             m_namespaces.increaseDepth();
             m_operational = true;
         }

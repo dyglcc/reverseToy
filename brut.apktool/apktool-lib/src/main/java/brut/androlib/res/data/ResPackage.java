@@ -20,9 +20,11 @@ import brut.androlib.AndrolibException;
 import brut.androlib.err.UndefinedResObject;
 import brut.androlib.res.data.value.ResFileValue;
 import brut.androlib.res.data.value.ResValueFactory;
+import brut.androlib.res.decoder.StringBlock;
 import brut.androlib.res.xml.ResValuesXmlSerializable;
 import brut.util.Duo;
 import com.appadhoc.reversetoy.data.AarID;
+import org.jf.dexlib2.writer.pool.StringPool;
 
 import java.util.*;
 import java.util.logging.Logger;
@@ -34,11 +36,37 @@ public class ResPackage {
     private final ResTable mResTable;
     private final int mId;
     private final String mName;
+
+    public Map<ResID, ResResSpec> getmResSpecs() {
+        return mResSpecs;
+    }
+
     private final Map<ResID, ResResSpec> mResSpecs = new LinkedHashMap<ResID, ResResSpec>();
     private final Map<ResConfigFlags, ResType> mConfigs = new LinkedHashMap<ResConfigFlags, ResType>();
+
+    public Map<String, ResTypeSpec> getmTypes() {
+        return mTypes;
+    }
+
     private final Map<String, ResTypeSpec> mTypes = new LinkedHashMap<String, ResTypeSpec>();
     private final Set<ResID> mSynthesizedRes = new HashSet<ResID>();
+    private StringBlock mTypeNames;
+    private StringBlock mSpecNames;
+    public StringBlock getmTypeNames() {
+        return mTypeNames;
+    }
 
+    public void setmTypeNames(StringBlock mTypeNames) {
+        this.mTypeNames = mTypeNames;
+    }
+
+    public StringBlock getmSpecNames() {
+        return mSpecNames;
+    }
+
+    public void setmSpecNames(StringBlock mSpecNames) {
+        this.mSpecNames = mSpecNames;
+    }
     private ResValueFactory mValueFactory;
 
     public ResPackage(ResTable resTable, int id, String name) {

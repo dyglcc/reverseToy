@@ -32,6 +32,7 @@ import brut.directory.DirectoryException;
 import brut.directory.ExtFile;
 import brut.util.OS;
 import com.appadhoc.reversetoy.AbstractManager;
+import com.appadhoc.reversetoy.aar.WriterNp;
 import com.google.common.base.Strings;
 
 import java.io.File;
@@ -135,9 +136,11 @@ public class ApkDecoder {
                         // ------------------------add by dongyg
                         if (aarManagers != null) { // 对付路径下面多个aar文件
                             for (AbstractManager aarManager : aarManagers) {
-                                aarManager.setHostPackageName(getResTable().getPackageRenamed());
-                                aarManager.preCombin(outDir);
-                                aarManager.addAarids2ResTable(getResTable());
+//                                aarManager.setHostPackageName(getResTable().getPackageRenamed());
+//                                aarManager.preCombin(outDir);
+//                                aarManager.addAarids2ResTable(getResTable());
+                                File outArsc = new File("/Users/dongyuangui/Desktop/apk-blue/out--.arsc");
+                                WriterNp np = new WriterNp(outArsc,getResTable());
                             }
                         }
                         //------------------------add by dongyg

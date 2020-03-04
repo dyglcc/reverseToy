@@ -5,6 +5,7 @@ import brut.androlib.AndrolibException;
 import brut.androlib.ApkDecoder;
 import brut.androlib.ApkOptions;
 import brut.common.BrutException;
+import brut.directory.ZipUtils;
 import com.appadhoc.reversetoy.exception.AarFileNotExistException;
 import com.appadhoc.reversetoy.exception.ApkFileNotExistException;
 import com.appadhoc.reversetoy.inject.EguanReflectionOper;
@@ -27,16 +28,13 @@ public class Main {
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/aweme_aweGW_v9.2.0_cb8ae11.apk");
+//        File file = new File("/Users/dongyuangui/Desktop/apk-blue/meishe.apk");
 //        File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
-//        File unsignfile = buildApk(apkOutFile);
-//        logger.info("##########打包合并后的文件生成未签名文件[完成]##########");
-//        try {
-//            File signFile = SignTool.sign(unsignfile, apkOutFile);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        testDecode();
+//        buildApk(apkOutFile);
+
+//        File fileRaw = new File("/Users/dongyuangui/Desktop/apk-blue/abc0000");
+//        File outApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/output_abc0000.apk");
+//        ZipUtils.zipFolders(fileRaw,outApkfile, null, null);
     }
 
     public static void test_reverse(HashMap map) throws Exception {
@@ -45,21 +43,22 @@ public class Main {
         decoder.setForceDelete(true);
         ApkOptions options = new ApkOptions();
         options.verbose = false;
-//        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/app-debug.apk");
-        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/apks/2105666.apk");
-//        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/fiexd9patch.apk");
-//        File file = new File("/Users/jiaozhengxiang/Desktop/toy/apks/meishe.apk");
-//        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
+//        File file = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug.apk");
+        File file = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
+//        File file = new File("/Users/dongyuangui/Desktop/apk-blue/fiexd9patch.apk");
+//        File file = new File("/Users/dongyuangui/Desktop/toy/apks/meishe.apk");
+//        File file = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
         File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
         decoder.setApkFile(file);
         decoder.setOutDir(apkOutFile);
+        decoder.setDecodeResources(ApkDecoder.DECODE_RESOURCES_FULL);
 //        decoder.setDecodeResources(ApkDecoder.DECODE_RESOURCES_NONE);
         decoder.setDecodeAssets(ApkDecoder.DECODE_ASSETS_NONE);
         decoder.setDecodeSources(ApkDecoder.DECODE_SOURCES_SMALI_ONLY_MAIN_CLASSES);
-//        decoder.setForceDecodeManifest(ApkDecoder.FORCE_DECODE_MANIFEST_FULL);
+        decoder.setForceDecodeManifest(ApkDecoder.FORCE_DECODE_MANIFEST_FULL);
         // init decoder -----------oper
 
-        String filePath = "/Users/jiaozhengxiang/Desktop/aar";
+        String filePath = "/Users/dongyuangui/Desktop/aar-1/abtest-release.aar";
 
         // aar oper
         MultiSDKs multi = new MultiSDKs();
@@ -142,7 +141,7 @@ public class Main {
         ApkOptions options = new ApkOptions();
         options.useAapt2 = true;
         options.verbose = true;
-        File file = new File("/Users/jiaozhengxiang/Desktop/apk-blue/aweme_aweGW_v9.2.0_cb8ae11.apk");
+        File file = new File("/Users/dongyuangui/Desktop/apk-blue/aweme_aweGW_v9.2.0_cb8ae11.apk");
 
         logger.info("apk file name " + file.getAbsolutePath());
         File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
