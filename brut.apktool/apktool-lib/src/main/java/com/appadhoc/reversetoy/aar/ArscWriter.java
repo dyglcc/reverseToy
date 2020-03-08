@@ -342,7 +342,7 @@ public class ArscWriter {
             mPkg.addResSpec(spec);
             mTypeSpec.addResSpec(spec);
         }
-        ResResource res = new ResResource(mType, spec, value);
+        ResResource res = new ResResource(mType, spec, value,null);
 
         try {
             mType.addResource(res);
@@ -554,7 +554,7 @@ public class ArscWriter {
                 }
 
                 ResValue value = new ResBoolValue(false, 0, null);
-                ResResource res = new ResResource(mType, spec, value);
+                ResResource res = new ResResource(mType, spec, value,null);
 
                 mPkg.addResource(res);
                 mType.addResource(res);

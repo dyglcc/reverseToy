@@ -74,4 +74,19 @@ todo，尝试从package里面写arsc文件呢？就是读取成数据结构然�
 将arscdata的字符串 池搞过来，写在宿主的arsc文件后面。
 
 一个type下面对应一个config，对应多个entry
+
 todo ,搞清楚type的id怎么，然后respecttype 后每个数据结构后面增加raw byte数组。一方面计算count简单，另一方面写数据简单。
+
+现在要做的是如何能够，之前的理解还是正确的，虽然type
+
+
+
+
+1.读取host arsc文件
+2。读取aar文件的arsc文件
+3。合并到宿主aar文件中，保存被替换的id
+4。写入arsc文件，检查是否正确
+5。读取aar xml文件，并替换成新的id
+6，合并文件。
+打包
+并测试。

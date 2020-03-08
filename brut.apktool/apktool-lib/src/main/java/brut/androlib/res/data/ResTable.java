@@ -21,7 +21,6 @@ import brut.androlib.err.UndefinedResObject;
 import brut.androlib.meta.VersionInfo;
 import brut.androlib.res.AndrolibResources;
 import brut.androlib.res.data.value.ResValue;
-import brut.androlib.res.decoder.StringBlock;
 
 import java.util.*;
 
@@ -31,15 +30,6 @@ import java.util.*;
 public class ResTable {
     private final AndrolibResources mAndRes;
 
-    public StringBlock getGlobalStringBlock() {
-        return globalStringBlock;
-    }
-
-    public void setGlobalStringBlock(StringBlock globalStringBlock) {
-        this.globalStringBlock = globalStringBlock;
-    }
-
-    private StringBlock globalStringBlock;
 
     public Map<Integer, ResPackage> getmPackagesById() {
         return mPackagesById;
@@ -47,6 +37,11 @@ public class ResTable {
 
     private final Map<Integer, ResPackage> mPackagesById = new HashMap<Integer, ResPackage>();
     private final Map<String, ResPackage> mPackagesByName = new HashMap<String, ResPackage>();
+
+    public Set<ResPackage> getmMainPackages() {
+        return mMainPackages;
+    }
+
     private final Set<ResPackage> mMainPackages = new LinkedHashSet<ResPackage>();
     private final Set<ResPackage> mFramePackages = new LinkedHashSet<ResPackage>();
 
@@ -96,9 +91,10 @@ public class ResTable {
         if (pkg != null) {
             return pkg;
         }
-        if (mAndRes != null) {
-            return mAndRes.loadFrameworkPkg(this, id, mAndRes.apkOptions.frameworkTag);
-        }
+        // comment for test
+//        if (mAndRes != null) {
+//            return mAndRes.loadFrameworkPkg(this, id, mAndRes.apkOptions.frameworkTag);
+//        }
         throw new UndefinedResObject(String.format("package: id=%d", id));
     }
 

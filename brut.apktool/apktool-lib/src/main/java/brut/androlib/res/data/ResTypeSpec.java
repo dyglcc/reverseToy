@@ -132,4 +132,19 @@ public final class ResTypeSpec {
         }
         // 遇到了再添加
     }
+
+    public byte[] getSkipRawBytes() {
+        return skipRawBytes;
+    }
+
+    private byte[] skipRawBytes;
+
+    public LinkedHashMap<ResConfigFlags, ResResource> getRawConfigs() {
+        return rawConfigs;
+    }
+
+    private LinkedHashMap<ResConfigFlags,ResResource>  rawConfigs = new LinkedHashMap();
+    public void setSkipRawBytes(byte[] skipRawBytes) {
+        this.skipRawBytes = skipRawBytes;
+    }
 }

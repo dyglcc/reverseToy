@@ -513,12 +513,6 @@ public class AarManager extends AbstractManager {
 //       第一步，让arsc decoder 读取文件 aar arsc文件，
 //
 //
-        ArscWriter writerHost = new ArscWriter(Utils.FileUtils.getZipFile("resources.arsc", fileHostApk)
-                , new ResTable(), false, true, outArsc);
-        ResPackage[] pkgsHost = writerHost.readTableHeader();
-        writerHost.setPackages(pkgsHost);
-        ArscWriter.ARSCData dataHost = writerHost.decode(pkgsHost, writerHost.getmResTable(), writerHost);
-        writerHost.mergeArsc(Utils.FileUtils.getZipFile("resources.arsc", fileHostApk), outArsc, fileHostApk,dataHost);
         // 读取了hostApk了
 //        第三步，去重复aar arsc文件， // 先不去重，
 //        第四部，重新写arsc文件，
@@ -527,22 +521,10 @@ public class AarManager extends AbstractManager {
 
 //        第二步，读取host arsc文件
 
-//        manager.unzipAarFile();
-//        manager.setHostPackageName("abc.abc.eea");
-//        manager.replaceAndroidManifestWithHostPackageId();
-//        manager.aaptAarPackageNew();
-//        ArscWriter writerAar = new ArscWriter(Utils.FileUtils.getZipFile("resources.arsc", manager.getTmpApkFile())
-//                , new ResTable(), false, true, manager.getOutPutArscFile());
-//        ResPackage[] pkgsAar = writerAar.readTableHeader();
-//        writerAar.setPackages(pkgsAar);
-//
-//        ArscWriter.ARSCData aarArscData = writerAar.decode(pkgsAar, writerAar.getmResTable(), writerAar);
-//        aarArscData.setmTableStrings(writerAar.getmTableStrings());
-
-//        System.out.println("abc" + aarArscData.getPackages().length);
-
-
-
+        manager.unzipAarFile();
+        manager.setHostPackageName("abc.abc.eea");
+        manager.replaceAndroidManifestWithHostPackageId();
+        manager.aaptAarPackageNew();
 
 //        如何去重呢？两个arsc文件都要读取出来，aar 的arsc去重。 todo ,暂时不去重
 

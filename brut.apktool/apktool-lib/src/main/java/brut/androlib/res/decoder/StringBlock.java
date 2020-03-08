@@ -17,6 +17,7 @@
 package brut.androlib.res.decoder;
 
 import brut.androlib.res.xml.ResXmlEncoders;
+import com.appadhoc.reversetoy.aar.WriterNp;
 import com.tencent.mm.util.ExtDataInput;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -34,6 +35,7 @@ import java.util.logging.Logger;
  *
  */
 public class StringBlock {
+
 
     /**
      * Reads whole (including chunk type) string block from stream. Stream must
@@ -70,11 +72,17 @@ public class StringBlock {
 
             // read remaining bytes
             int remaining = size % 4;
-            if (remaining >= 1) {
-                while (remaining-- > 0) {
-                    reader.readByte();
-                }
+            block.remaining = remaining;
+            block.remainingByte = new byte[remaining];
+            for(int i=0;i<remaining;i++){
+                block.remainingByte[i] = reader.readByte();
             }
+//            replace by for
+//            if (remaining >= 1) {
+//                while (remaining-- > 0) {
+//                    reader.readByte();
+//                }
+//            }
         }
 
         return block;
@@ -434,6 +442,7 @@ public class StringBlock {
 
     private boolean m_isUTF8;
     private int[] m_stringOwns;
+    private int remaining;
 
     private final CharsetDecoder UTF16LE_DECODER = Charset.forName("UTF-16LE").newDecoder();
     private final CharsetDecoder UTF8_DECODER = Charset.forName("UTF-8").newDecoder();
@@ -443,4 +452,12 @@ public class StringBlock {
     private static final int CHUNK_STRINGPOOL_TYPE = 0x001C0001;
     private static final int CHUNK_NULL_TYPE = 0x00000000;
     private static final int UTF8_FLAG = 0x00000100;
+    public byte[] getRemainingByte() {
+        return remainingByte;
+    }
+
+    private byte[] remainingByte;
+    public int getRemining() {
+        return remaining;
+    }
 }

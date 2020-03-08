@@ -23,6 +23,7 @@ import brut.androlib.res.data.value.ResValueFactory;
 import brut.androlib.res.decoder.StringBlock;
 import brut.androlib.res.xml.ResValuesXmlSerializable;
 import brut.util.Duo;
+import com.appadhoc.reversetoy.aar.ConfigFlagRaw;
 import com.appadhoc.reversetoy.data.AarID;
 import org.jf.dexlib2.writer.pool.StringPool;
 
@@ -36,6 +37,64 @@ public class ResPackage {
     private final ResTable mResTable;
     private final int mId;
     private final String mName;
+
+    // add
+    int typeString;
+    /* lastPublicType */
+    int lastPublicType;
+
+    public int getTypeString() {
+        return typeString;
+    }
+
+    public void setTypeString(int typeString) {
+        this.typeString = typeString;
+    }
+
+    public int getLastPublicType() {
+        return lastPublicType;
+    }
+
+    public void setLastPublicType(int lastPublicType) {
+        this.lastPublicType = lastPublicType;
+    }
+
+    public int getKeyStrings() {
+        return keyStrings;
+    }
+
+    public void setKeyStrings(int keyStrings) {
+        this.keyStrings = keyStrings;
+    }
+
+    public int getLastPublicKey() {
+        return lastPublicKey;
+    }
+
+    public void setLastPublicKey(int lastPublicKey) {
+        this.lastPublicKey = lastPublicKey;
+    }
+
+    public int getmTypeIdOffset() {
+        return mTypeIdOffset;
+    }
+
+    public void setmTypeIdOffset(int mTypeIdOffset) {
+        this.mTypeIdOffset = mTypeIdOffset;
+    }
+
+    /* keyStrings */
+    int keyStrings;
+    /* lastPublicKey */
+    int lastPublicKey;
+
+    int mTypeIdOffset =-1;
+
+    public LinkedHashMap<ConfigFlagRaw, List<ResResource>> getConfigFlagRawListLinkedHashMap() {
+        return configFlagRawListLinkedHashMap;
+    }
+
+    private LinkedHashMap<ConfigFlagRaw,List<ResResource>> configFlagRawListLinkedHashMap = new LinkedHashMap<>();
 
     public Map<ResID, ResResSpec> getmResSpecs() {
         return mResSpecs;
@@ -52,6 +111,16 @@ public class ResPackage {
     private final Set<ResID> mSynthesizedRes = new HashSet<ResID>();
     private StringBlock mTypeNames;
     private StringBlock mSpecNames;
+
+    public StringBlock getGlobalStringBlock() {
+        return globalStringBlock;
+    }
+
+    public void setGlobalStringBlock(StringBlock globalStringBlock) {
+        this.globalStringBlock = globalStringBlock;
+    }
+
+    private StringBlock globalStringBlock;
     public StringBlock getmTypeNames() {
         return mTypeNames;
     }
@@ -286,6 +355,7 @@ public class ResPackage {
         // 检查id是否有重复,获取一个
         resID = checkdup(resID,resTypeSpec);
 
+        // todo fixed bugs
         ResResSpec spec = new ResResSpec(resID, key, this, resTypeSpec);
         resTypeSpec.addResSpec(spec);
         LOGGER.info("add key spec " +spec.getFullName() + "######### key  is " + key );

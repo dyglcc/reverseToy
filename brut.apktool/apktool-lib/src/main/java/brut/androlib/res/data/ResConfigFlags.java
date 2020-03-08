@@ -648,4 +648,13 @@ public class ResConfigFlags {
     public final static byte COLOR_WIDE_MASK = 0x3;
 
     private static final Logger LOGGER = Logger.getLogger(ResConfigFlags.class.getName());
+
+    public byte[] getRawConfig() {
+        return rawConfig;
+    }
+
+    private byte[] rawConfig;
+    public void setRawConfigBytes(byte[] rawConfig) {
+        this.rawConfig = rawConfig;
+    }
 }

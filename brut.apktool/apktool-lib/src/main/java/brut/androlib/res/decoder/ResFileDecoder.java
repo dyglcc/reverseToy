@@ -27,6 +27,7 @@ import brut.directory.Directory;
 import brut.directory.DirectoryException;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -128,10 +129,39 @@ public class ResFileDecoder {
             LOGGER.log(Level.SEVERE, String.format(
                     "Could not decode file, replacing by FALSE value: %s",
                     inFileName), ex);
-            res.replace(new ResBoolValue(false, 0, null));
+            res.replace(new ResBoolValue(false, 0,null),getFalseValueBytes());
         }
     }
 
+    public static byte[] getFalseValueBytes(){
+        byte[] bytes = new byte[16];
+        short s = 8,flags = 0;
+        int name =0;
+
+        bytes[0] = 8;
+        bytes[1] = 0;
+        bytes[2] = 0;
+        bytes[3] = 0;
+        bytes[4] = 0;
+        bytes[5] = 0;
+        bytes[6] = 0;
+        bytes[7] = 0;
+
+
+        Short size = 8;
+        Byte zero = 0;
+        byte type = 0x12;
+        int data = 0;
+        bytes[8] = 8;
+        bytes[9] = 0;
+        bytes[10] = 0;
+        bytes[11] = 0x12;
+        bytes[12] = 0;
+        bytes[13] = 0;
+        bytes[14] = 0;
+        bytes[15] = 0;
+        return bytes;
+    }
     public void decode(Directory inDir, String inFileName, Directory outDir,
                        String outFileName, String decoder) throws AndrolibException {
         try (

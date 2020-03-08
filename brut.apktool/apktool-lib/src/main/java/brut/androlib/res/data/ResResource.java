@@ -27,10 +27,18 @@ public class ResResource {
     private final ResResSpec mResSpec;
     private final ResValue mValue;
 
-    public ResResource(ResType config, ResResSpec spec, ResValue value) {
+    public byte[] getRawBytes() {
+        return rawBytes;
+    }
+
+    private byte[] rawBytes;
+
+
+    public ResResource(ResType config, ResResSpec spec, ResValue value,byte[] rawBytes) {
         this.mConfig = config;
         this.mResSpec = spec;
         this.mValue = value;
+        this.rawBytes = rawBytes;
     }
 
     public String getFilePath() {
@@ -49,8 +57,8 @@ public class ResResource {
         return mValue;
     }
 
-    public void replace(ResValue value) throws AndrolibException {
-        ResResource res = new ResResource(mConfig, mResSpec, value);
+    public void replace(ResValue value,byte[] rawBytes) throws AndrolibException {
+        ResResource res = new ResResource(mConfig, mResSpec, value,rawBytes);
         mConfig.addResource(res, true);
         mResSpec.addResource(res, true);
     }

@@ -1,5 +1,7 @@
 package com.tencent.mm.util;
 
+import com.appadhoc.reversetoy.aar.WriterNp;
+
 import java.io.DataOutput;
 import java.io.IOException;
 

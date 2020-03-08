@@ -139,8 +139,10 @@ public class ApkDecoder {
 //                                aarManager.setHostPackageName(getResTable().getPackageRenamed());
 //                                aarManager.preCombin(outDir);
 //                                aarManager.addAarids2ResTable(getResTable());
+                                ResTable table = getResTable();
                                 File outArsc = new File("/Users/dongyuangui/Desktop/apk-blue/out--.arsc");
                                 WriterNp np = new WriterNp(outArsc,getResTable());
+                                np.write();
                             }
                         }
                         //------------------------add by dongyg
