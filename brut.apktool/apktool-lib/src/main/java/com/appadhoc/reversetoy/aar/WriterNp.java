@@ -3,7 +3,6 @@ package com.appadhoc.reversetoy.aar;
 import brut.androlib.AndrolibException;
 import brut.androlib.res.data.*;
 import brut.androlib.res.decoder.StringBlock;
-import com.appadhoc.reversetoy.utils.Resource;
 import com.appadhoc.reversetoy.utils.Utils;
 import com.mindprod.ledatastream.LEDataOutputStream;
 import com.tencent.mm.util.ExtDataOutput;
@@ -38,6 +37,7 @@ public class WriterNp {
     }
 
     public void write() throws IOException, AndrolibException {
+        // write
         writeTableHeader();
         writeGlobalStringPool();
         writePackage();

@@ -25,8 +25,6 @@ import brut.androlib.res.xml.ResValuesXmlSerializable;
 import brut.util.Duo;
 import com.appadhoc.reversetoy.aar.ConfigFlagRaw;
 import com.appadhoc.reversetoy.data.AarID;
-import org.jf.dexlib2.writer.pool.StringPool;
-
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -112,15 +110,6 @@ public class ResPackage {
     private StringBlock mTypeNames;
     private StringBlock mSpecNames;
 
-    public StringBlock getGlobalStringBlock() {
-        return globalStringBlock;
-    }
-
-    public void setGlobalStringBlock(StringBlock globalStringBlock) {
-        this.globalStringBlock = globalStringBlock;
-    }
-
-    private StringBlock globalStringBlock;
     public StringBlock getmTypeNames() {
         return mTypeNames;
     }

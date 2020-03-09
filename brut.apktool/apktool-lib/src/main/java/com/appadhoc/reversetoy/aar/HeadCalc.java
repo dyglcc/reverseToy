@@ -1,6 +1,5 @@
 package com.appadhoc.reversetoy.aar;
 
-import brut.androlib.AndrolibException;
 import brut.androlib.res.data.*;
 import brut.androlib.res.decoder.StringBlock;
 
@@ -30,11 +29,9 @@ public class HeadCalc {
         Map<Integer, ResPackage> map = data.getmPackagesById();
         System.out.println("package size is " + map.size());
         for (Map.Entry entry : map.entrySet()) {
-//            Integer key = (Integer) entry.getKey();
-//            if (key == 1) {
-//                continue;
-//            }
+
             ResPackage pa = (ResPackage) entry.getValue();
+
             int singlePackageSize = getSinglePackageSize(pa);
             System.out.println("package string all count " + singlePackageSize);
             allPackageSize += singlePackageSize;
@@ -63,7 +60,6 @@ public class HeadCalc {
             count += block.getRemining();
         }
         return count;
-
     }
 
     public static int getSinglePackageSize(ResPackage mResPackage) {
@@ -105,7 +101,7 @@ public class HeadCalc {
         for (Map.Entry entry : mResSpecs.entrySet()) {
             ConfigFlagRaw raw = (ConfigFlagRaw) entry.getKey();
             List<ResResource> list = (List<ResResource>) entry.getValue();
-            int type_count = getSingleTypeTypeSize(raw,list);
+            int type_count = getSingleTypeTypeSize(raw, list);
 //            System.out.println(rawConfig.getConfigName() + " count is " + type_count + " offset array len " + rawConfig.getEntryCount() * 4);
             count += type_count;
         }
@@ -125,7 +121,6 @@ public class HeadCalc {
 
     public static int getResEntryCount(List<ResResource> list) {
         int count = 0;
-
         for (ResResource res : list) {
             count += res.getRawBytes().length;
         }
@@ -139,12 +134,7 @@ public class HeadCalc {
     }
 
     public static StringBlock getGlobalStringBlock(ResTable data) {
-        StringBlock block = null;
-        try {
-            block = data.getPackage(127).getGlobalStringBlock();
-        } catch (AndrolibException e) {
-            e.printStackTrace();
-        }
+        StringBlock block = data.getGlobalStringBlock();
         return block;
     }
 }

@@ -85,6 +85,8 @@ public class ARSCDecoder {
         int packageCount = mIn.readInt();
 //        int startCount_global = mCountIn.getCount();
         mTableStrings = StringBlock.read_apktool(mIn);
+
+        mResTable.setGlobalStringBlock(mTableStrings);
 //        int globalStringCount = mCountIn.getCount();
 //        System.out.println("globalStringCount is " + (globalStringCount - startCount_global));
         ResPackage[] packages = new ResPackage[packageCount];
@@ -148,7 +150,6 @@ public class ARSCDecoder {
         // add stringpool
         mPkg.setmTypeNames(mTypeNames);
         mPkg.setmSpecNames(mSpecNames);
-        mPkg.setGlobalStringBlock(mTableStrings);
 
         mPkg.setTypeString(typeString);
         mPkg.setLastPublicType(lastPublicType);

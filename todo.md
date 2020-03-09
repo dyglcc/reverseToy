@@ -84,7 +84,8 @@ todo ,搞清楚type的id怎么，然后respecttype 后每个数据结构后面�
 
 1.读取host arsc文件
 2。读取aar文件的arsc文件
-3。合并到宿主aar文件中，保存被替换的id
+3。合并到宿主aar文件中，保存被替换的id doing ...
+
 4。写入arsc文件，检查是否正确
 5。读取aar xml文件，并替换成新的id
 6，合并文件。
