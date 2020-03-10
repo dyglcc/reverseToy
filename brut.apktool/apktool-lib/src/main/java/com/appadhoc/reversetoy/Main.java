@@ -21,16 +21,16 @@ public class Main {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) throws BrutException, IOException {
-//        try {
-//            HashMap map = new HashMap();
-//            map.put("cfu","asdfahttp://asdf");
-//            test_reverse(null);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        File file = new File("/Users/dongyuangui/Desktop/apk-blue/meishe.apk");
-//        File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
-//        buildApk(apkOutFile);
+        try {
+            HashMap map = new HashMap();
+            map.put("cfu","asdfahttp://asdf");
+            test_reverse(null);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        File file = new File("/Users/dongyuangui/Desktop/apk-blue/meishe.apk");
+        File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
+        buildApk(apkOutFile);
 
         File fileRaw = new File("/Users/dongyuangui/Desktop/apk-blue/abc0000");
         File outApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/output_abc0000.apk");

@@ -413,6 +413,10 @@ public class StringBlock {
     private byte[] m_strings;
 
 
+    public void setM_stringOffsets(int[] m_stringOffsets) {
+        this.m_stringOffsets = m_stringOffsets;
+    }
+
     public int[] getM_styleOffsets() {
         return m_styleOffsets;
     }
@@ -460,4 +464,7 @@ public class StringBlock {
     public int getRemining() {
         return remaining;
     }
+
+    public int hostGlobalBlockStringIndexOffset = 0;
+    public int hostGlobalBlockStyleIndexOffset = 0;
 }
