@@ -522,7 +522,7 @@ public class AarManager extends AbstractManager {
 //        第二步，读取host arsc文件
 
         manager.unzipAarFile();
-        manager.setHostPackageName("abc.abc.eea");
+//        manager.setHostPackageName("abc.abc.eea");
         manager.replaceAndroidManifestWithHostPackageId();
         manager.aaptAarPackageNew();
 

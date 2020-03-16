@@ -17,6 +17,7 @@ public class ConfigFlagRaw {
     private ResConfigFlags configFlags;
     private int[] entryOffsets;
 
+
     public String getConfigName() {
         return configName;
     }
@@ -39,5 +40,9 @@ public class ConfigFlagRaw {
     }
     public int[] getEntryOffsets(){
         return entryOffsets;
+    }
+
+    public String toString(){
+        return getConfigName();
     }
 }

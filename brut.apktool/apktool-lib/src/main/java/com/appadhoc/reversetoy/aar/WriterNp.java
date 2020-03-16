@@ -4,6 +4,7 @@ import brut.androlib.AndrolibException;
 import brut.androlib.res.data.*;
 import brut.androlib.res.decoder.StringBlock;
 import com.appadhoc.reversetoy.utils.Utils;
+import com.google.common.io.CountingOutputStream;
 import com.mindprod.ledatastream.LEDataOutputStream;
 import com.tencent.mm.util.ExtDataOutput;
 
@@ -16,10 +17,12 @@ public class WriterNp {
     ExtDataOutput mOut;
     File arscOutFile;
     ResTable data;
+    CountingOutputStream mCount;
 
     public static void main(String... args) {
-    }
 
+        String packageName = "com.abtest.demo";
+    }
 //    public WriterNp(File arscOutFile, ArscWriter.ARSCData data) throws FileNotFoundException {
 //        this.arscOutFile = arscOutFile;
 //        mOut = new ExtDataOutput(new LEDataOutputStream(new FileOutputStream(arscOutFile, false)));
@@ -30,7 +33,9 @@ public class WriterNp {
         this.arscOutFile = outArsc;
         this.data = resTable;
         try {
-            this.mOut = new ExtDataOutput(new LEDataOutputStream(new FileOutputStream(arscOutFile, false)));
+            OutputStream outputStream = new FileOutputStream(arscOutFile, false);
+            mCount = new CountingOutputStream(outputStream);
+            this.mOut = new ExtDataOutput(new LEDataOutputStream(mCount));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
@@ -38,7 +43,10 @@ public class WriterNp {
 
     public void write() throws IOException, AndrolibException {
         // write
+//        long count1 = mCount.getCount();
         writeTableHeader();
+//        long count2 = mCount.getCount();
+//        System.out.println("count is working now " + (count2 - count1));
         writeGlobalStringPool();
         writePackage();
     }
@@ -59,13 +67,13 @@ public class WriterNp {
         if (pa.getmTypeIdOffset() == -1) {
             packageHeaderSize -= 4;
         }
-        int packageChunkSize = HeadCalc.getSinglePackageSize(pa);
+        int packageChunkSize = ArscHeadCalc.getSinglePackageSize(pa);
         Header.writeHeader(mOut, packageType, packageHeaderSize, packageChunkSize);
-        int id = pa.getId() >> 24;
+        int id = pa.getId();
         mOut.writeInt(id);
         //包名称
-        byte[] nameBytes = getPackageNameBytes(pa.getName());
-        mOut.write(nameBytes);
+
+        writePackageName(mOut, pa.getName());
         //类型字符串资源池相对头部的偏移
         int typeStrings = pa.getTypeString();
         mOut.writeInt(typeStrings);
@@ -85,14 +93,23 @@ public class WriterNp {
         }
         // write string_pool
         StringBlock specName = pa.getmTypeNames();
-        writeStringPool(specName);
+        writeStringPool(specName,mOut);
         StringBlock typeNames = pa.getmSpecNames();
-        writeStringPool(typeNames);
+        writeStringPool(typeNames,mOut);
         // 如果有type_library_type的话
         writeTypeLibrary();
         // write type_spec
         writeTypeSpec(pa);
 
+    }
+
+    private void writePackageName(ExtDataOutput mOut, String name) throws IOException {
+        char[] charsName = new char[128];
+        char[] chars = name.toCharArray();
+        System.arraycopy(chars, 0, charsName, 0, chars.length);
+        for (int i = 0; i < charsName.length; i++) {
+            mOut.writeShort(charsName[i]);
+        }
     }
 
 
@@ -107,7 +124,6 @@ public class WriterNp {
 
     private void writeTypeSpecChunk(ResTypeSpec spec, ResPackage mpk) throws IOException, AndrolibException {
 
-        Header header;
         //标识资源的Type ID,Type ID是指资源的类型ID，从1开始。资源的类型有animator、anim、color、drawable、layout、menu、raw、string和xml等等若干种，每一种都会被赋予一个ID。
         byte id = (byte) spec.getId();
         //保留,始终为0
@@ -119,13 +135,17 @@ public class WriterNp {
 
         short type = Header.TYPE_SPEC_TYPE;
         short headerSize = 16;
-        int size = HeadCalc.getSingleSpectCount(spec);
+        int size = ArscHeadCalc.getSingleSpectCount(spec);
         Header.writeHeader(mOut, type, headerSize, size);
         mOut.writeByte(id);
-        mOut.writeShort(res0);
+        mOut.writeByte(res0);
         mOut.writeShort(res1);
         mOut.writeInt(entryCount);
 
+        // 这里有个mFlagsOffsets，暂时没有遇到。
+        // if (mFlagsOffsets != null) {
+        //            mFlagsOffsets.add(new FlagsOffset(mCountIn.getCount(), entryCount));
+        //        }
         mOut.write(spec.getSkipRawBytes());
 
         writeSubTypeType(spec, mpk);
@@ -137,24 +157,24 @@ public class WriterNp {
         for (Map.Entry entry : mResSpecs.entrySet()) {
             ConfigFlagRaw rawConfig = (ConfigFlagRaw) entry.getKey();
             List<ResResource> list = (List<ResResource>) entry.getValue();
-            if (checkIsExpectedType(rawConfig.getConfigName(),spec.toString())) {
+            if (checkIsExpectedType(rawConfig.getConfigName(), spec.toString())) {
                 writeSingleTypeType(rawConfig, list, spec);
             }
         }
     }
 
     private boolean checkIsExpectedType(String configName, String toString) {
-        if(!configName.contains("&&")){
+        if (!configName.contains("&&")) {
             return false;
         }
-        if(Utils.isEmpty(toString)){
+        if (Utils.isEmpty(toString)) {
             return false;
         }
         String[] types = configName.split("&&");
-        if(types.length!=2){
+        if (types.length != 2) {
             return false;
         }
-        if(types[1].equals(toString)){
+        if (types[1].equals(toString)) {
             return true;
         }
         return false;
@@ -164,9 +184,11 @@ public class WriterNp {
 
         short type = Header.TYPE_TYPE;
         short headerSize = (short) (new ResTable_type().calcCount() + raw.getConfigFlags().getRawConfig().length);
-        int size = HeadCalc.getSingleTypeTypeSize(raw, list);
+        int size = ArscHeadCalc.getSingleTypeTypeSize(raw, list);
 
         Header.writeHeader(mOut, type, headerSize, size);
+
+
         byte id = (byte) spec.getId();
         //保留,始终为0
         byte res0 = 0;
@@ -175,7 +197,7 @@ public class WriterNp {
         //等于本类型的资源项个数,指名称相同的资源项的个数。
         int entryCount = raw.getEntryCount();
         //等于资源项数据块相对头部的偏移值。
-        int entriesStart = headerSize + raw.getConfigFlags().getRawConfig().length + entryCount * 4;
+        int entriesStart = 8 + raw.getConfigFlags().getRawConfig().length + entryCount * 4 + 12;
         //指向一个ResTable_config,用来描述配置信息,地区,语言,分辨率等
         mOut.writeByte(id);
         mOut.writeByte(res0);
@@ -194,33 +216,25 @@ public class WriterNp {
 //        todo
     }
 
-    private byte[] getPackageNameBytes(String name) {
-        byte[] bytes = new byte[256];
-        byte[] nameBytes = name.getBytes();
-        System.arraycopy(nameBytes, 0, bytes, 0, nameBytes.length);
-        return bytes;
-    }
-
-
     private void writeGlobalStringPool() throws IOException, AndrolibException {
-        StringBlock stringBlock = HeadCalc.getGlobalStringBlock(data);
+        StringBlock stringBlock = ArscHeadCalc.getGlobalStringBlock(data);
 //        stringBlock.
-        writeStringPool(stringBlock);
+        writeStringPool(stringBlock,mOut);
     }
 
-    private void writeStringPool(StringBlock stringBlock) throws IOException, AndrolibException {
+    public static void writeStringPool(StringBlock stringBlock, ExtDataOutput mOut) throws IOException, AndrolibException {
         short stringBlockType = Header.TYPE_STRING_POOL;
         short stringHeaderSize = 0x1c;
         int stringChunkSize = getStringBlockChunkSize(stringBlock);
         int stringCount = stringBlock.getCount();
         int styleCount = stringBlock.getM_styleOffsets() == null ? 0 : stringBlock.getM_styleOffsets().length;
-        int flags = stringBlock.isM_isUTF8() ? ResStringPool_header.UTF8_FLAG : ResStringPool_header.STORED_FLAG;
-        int stringsOffset = stringHeaderSize + (stringBlock.getM_styleOffsets() == null ? 0 : stringBlock.getM_styleOffsets().length * 4) + stringBlock.getM_stringOffsets().length * 4;
+//        int flags = stringBlock.isM_isUTF8() ? ResStringPool_header.UTF8_FLAG : ResStringPool_header.STORED_FLAG;
+        int stringsOffset = stringHeaderSize + (stringBlock.getM_styleOffsets() == null ? 0 : stringBlock.getM_styleOffsets().length * 4) + stringBlock.getCount() * 4;
         int stylesOffset = stringBlock.getM_styleOffsets() == null ? 0 : stringsOffset + stringBlock.getM_strings().length;
         Header.writeHeader(mOut, stringBlockType, stringHeaderSize, stringChunkSize);
         mOut.writeInt(stringCount);
         mOut.writeInt(styleCount);
-        mOut.writeInt(flags);
+        mOut.writeInt(stringBlock.getFlags());
         mOut.writeInt(stringsOffset);
         mOut.writeInt(stylesOffset);
         mOut.writeIntArray(stringBlock.getM_stringOffsets());
@@ -236,14 +250,15 @@ public class WriterNp {
         }
     }
 
-    private int getStringBlockChunkSize(StringBlock sb) {
-        return HeadCalc.getBytesCountByStringBlock(sb);
+    private static int getStringBlockChunkSize(StringBlock sb) {
+        return ArscHeadCalc.getBytesCountByStringBlock(sb);
     }
 
     private void writeTableHeader() throws IOException, AndrolibException {
-        HeadCalc calc = new HeadCalc();
+        ArscHeadCalc calc = new ArscHeadCalc();
         short tableType = Header.TYPE_TABLE;
-        Header.writeHeader(mOut, tableType, (short) 8, calc.calcRestableSize(data));
+        Header.writeHeader(mOut, tableType, (short) 12, calc.calcRestableSize(data));
+        System.out.println("abc");
         mOut.writeInt(data.getmMainPackages().size());
     }
 

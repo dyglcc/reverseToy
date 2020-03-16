@@ -53,6 +53,7 @@ public class StringBlock {
         int stylesOffset = reader.readInt();
 
         StringBlock block = new StringBlock();
+        block.flags = flags;
         block.m_isUTF8 = (flags & UTF8_FLAG) != 0;
         block.m_stringOffsets = reader.readIntArray(stringCount);
         block.m_stringOwns = new int[stringCount];
@@ -436,15 +437,17 @@ public class StringBlock {
     private int[] m_styleOffsets;
     private int[] m_styles;
 
-    public boolean isM_isUTF8() {
-        return m_isUTF8;
+    public int getFlags() {
+        return flags;
     }
 
-    public void setM_isUTF8(boolean m_isUTF8) {
-        this.m_isUTF8 = m_isUTF8;
+    public void setFlags(int flags) {
+        this.flags = flags;
     }
 
-    private boolean m_isUTF8;
+    private int flags;
+
+    public boolean m_isUTF8;
     private int[] m_stringOwns;
     private int remaining;
 
@@ -465,6 +468,7 @@ public class StringBlock {
         return remaining;
     }
 
-    public int hostGlobalBlockStringIndexOffset = 0;
-    public int hostGlobalBlockStyleIndexOffset = 0;
+    // 实际上是原来字符串的个数
+    public int oldHostBlockStringCount = 0;
+    public int oldHostStyleIndexOffset = 0;
 }

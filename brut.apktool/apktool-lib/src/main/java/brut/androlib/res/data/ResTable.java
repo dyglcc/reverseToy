@@ -32,6 +32,7 @@ public class ResTable {
     private final AndrolibResources mAndRes;
 
 
+
     public StringBlock getGlobalStringBlock() {
         return globalStringBlock;
     }

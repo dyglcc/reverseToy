@@ -46,9 +46,12 @@ public final class ResTypeSpec {
     private final ResTable mResTable;
     private final ResPackage mPackage;
 
-    private final int mId;
-    private final int mEntryCount;
+    private int mId;
+    private int mEntryCount;
 
+    public void setEntryCount(int count){
+        this.mEntryCount = count;
+    }
     public ResTypeSpec(String name, ResTable resTable, ResPackage package_, int id, int entryCount) {
         this.mName = name;
         this.mResTable = resTable;
@@ -146,5 +149,9 @@ public final class ResTypeSpec {
     private LinkedHashMap<ResConfigFlags,ResResource>  rawConfigs = new LinkedHashMap();
     public void setSkipRawBytes(byte[] skipRawBytes) {
         this.skipRawBytes = skipRawBytes;
+    }
+
+    public void setId(int newId) {
+        mId = newId;
     }
 }

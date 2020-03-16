@@ -18,11 +18,14 @@ package brut.androlib.res.decoder;
 
 import android.util.TypedValue;
 import brut.androlib.AndrolibException;
+import brut.androlib.res.AndrolibResources;
 import brut.androlib.res.data.*;
 import brut.androlib.res.data.value.*;
+import brut.directory.ExtFile;
 import brut.util.Duo;
 import brut.androlib.res.data.ResTable;
 import brut.util.ExtDataInput;
+import com.appadhoc.reversetoy.MergeArsc;
 import com.appadhoc.reversetoy.aar.ConfigFlagRaw;
 import com.appadhoc.reversetoy.utils.RecordCountingInputStream;
 import com.google.common.io.LittleEndianDataInputStream;
@@ -38,6 +41,20 @@ import org.apache.commons.io.input.CountingInputStream;
  * @author Ryszard Wiśniewski <brut.alll@gmail.com>
  */
 public class ARSCDecoder {
+
+
+    public static void main(String[] args) {
+        AndrolibResources resources = new AndrolibResources();
+        ResTable hostTableTable = null;
+        try {
+            hostTableTable = resources.getResTable(new ExtFile("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk"));
+        } catch (AndrolibException e) {
+            e.printStackTrace();
+        }
+        System.out.println("host table is " + hostTableTable.getmMainPackages().size());
+    }
+
+
     public static ARSCData decode(InputStream arscStream, boolean findFlagsOffsets, boolean keepBroken)
             throws AndrolibException {
         return decode(arscStream, findFlagsOffsets, keepBroken, new ResTable());
@@ -85,6 +102,9 @@ public class ARSCDecoder {
         int packageCount = mIn.readInt();
 //        int startCount_global = mCountIn.getCount();
         mTableStrings = StringBlock.read_apktool(mIn);
+//        int endString = mCountIn.getCount();
+//        int startString = mCountIn.getCount();
+//        System.out.println(endString -startCount);
 
         mResTable.setGlobalStringBlock(mTableStrings);
 //        int globalStringCount = mCountIn.getCount();
@@ -127,7 +147,7 @@ public class ARSCDecoder {
         /* keyStrings */
         int keyStrings = mIn.readInt();
         /* lastPublicKey */
-        int lastPublicKey= mIn.readInt();
+        int lastPublicKey = mIn.readInt();
 
         // TypeIdOffset was added platform_frameworks_base/@f90f2f8dc36e7243b85e0b6a7fd5a590893c827e
         // which is only in split/new applications.
@@ -140,8 +160,15 @@ public class ARSCDecoder {
             LOGGER.warning("Please report this application to Apktool for a fix: https://github.com/iBotPeaches/Apktool/issues/1728");
         }
 
+
+        int startString = mCountIn.getCount();
         mTypeNames = StringBlock.read_apktool(mIn);
+        int endString = mCountIn.getCount();
+        System.out.println(endString -startString);
+        int s = mCountIn.getCount();
         mSpecNames = StringBlock.read_apktool(mIn);
+        int e = mCountIn.getCount();
+        System.out.println(" s" + (e-s));
 
 
         mResId = id << 24;
@@ -274,6 +301,7 @@ public class ARSCDecoder {
         raw.setConfigFlags(flags);
         raw.setEntryCount(entryCount);
         raw.setConfigName(flags.toString() + "&&" + mTypeSpec.toString());
+//        raw.setTypeId(typeId);
 //        System.out.println("raw config byte is " + raw.getConfigFlags().getRawConfig().length + " " + mTypeSpec.toString() + flags.toString());
 //        System.out.println("mCount count is " + (configCount_end - configCount_start));
 
@@ -304,12 +332,16 @@ public class ARSCDecoder {
         // create rawConfig
 
         mType = flags.isInvalid && !mKeepBroken ? null : mPkg.getOrCreateConfig(flags);
-        HashMap<Integer, EntryData> offsetsToEntryData = new HashMap<Integer, EntryData>();
+        HashMap<Integer, EntryData> offsetsToEntryData = new LinkedHashMap<Integer, EntryData>();
 //        int count_res = mCountIn.getCount();
+        int test = 0;
         for (int offset : entryOffsets) {
             if (offset == -1 || offsetsToEntryData.containsKey(offset)) {
                 continue;
             }
+            // test code
+            test++;
+            // test code
 
             offsetsToEntryData.put(offset, readEntryData());
         }
@@ -419,14 +451,6 @@ public class ARSCDecoder {
         mPkg.addResource(res);
     }
 
-    private ConfigFlagRaw findRawConfig(ResConfigFlags flags) {
-        for (ConfigFlagRaw entry : mPkg.getConfigFlagRawListLinkedHashMap().keySet()) {
-            if (entry.getConfigName().equals(flags.toString() + "&&" + mTypeSpec.toString())) {
-                return entry;
-            }
-        }
-        return null;
-    }
 
     private ResBagValue readComplexEntry() throws IOException, AndrolibException {
         int parent = mIn.readInt();
@@ -535,7 +559,6 @@ public class ARSCDecoder {
             screenHeightDp = mIn.readShort();
             read = 36;
         }
-
 
 
         char[] localeScript = null;
@@ -704,7 +727,7 @@ public class ARSCDecoder {
     private boolean[] mMissingResSpecs;
     private HashMap<Integer, ResTypeSpec> mResTypeSpecs = new HashMap<>();
 
-    private final static short ENTRY_FLAG_COMPLEX = 0x0001;
+    public final static short ENTRY_FLAG_COMPLEX = 0x0001;
     private final static short ENTRY_FLAG_PUBLIC = 0x0002;
     private final static short ENTRY_FLAG_WEAK = 0x0004;
 
@@ -729,6 +752,7 @@ public class ARSCDecoder {
             try {
                 type = in.readShort();
             } catch (EOFException ex) {
+//                ex.printStackTrace();
                 return new Header(TYPE_NONE, 0, 0, countIn.getCount());
             }
             return new Header(type, in.readShort(), in.readInt(), start);

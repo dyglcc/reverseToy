@@ -335,43 +335,6 @@ public class Utils {
             }
             saveDocument(fileIds, documentValues);
         }
-//        public static void removeDuplicateLine(Map<String, LinkedHashMap> ids, File aarres) throws ParserConfigurationException, SAXException, IOException, TransformerException {
-//
-//            Document documentValues = loadDocument(aarres);
-//            Node nodeFirst = documentValues.getFirstChild();
-//            NodeList children = nodeFirst.getChildNodes();
-//            int len = children.getLength();
-//            for (int i = 0; i < len; i++) {
-//                String type = null;
-//                Node node = children.item(i);
-//
-//                if(node ==null){
-//                    System.out.println("item " + i + "is null");
-//                    continue;
-//                }
-//                NamedNodeMap attrs = node.getAttributes();
-//                if (node.getNodeType() == Node.ELEMENT_NODE) {
-//                    type = node.getNodeName();
-//                    if (attrs != null) {
-//                        Node typeNode = attrs.getNamedItem("type");
-//                        if (typeNode != null) {
-//                            type = typeNode.getNodeValue();
-//                        }
-//                        // get type remove duplicate tag
-//                        Node keynode = attrs.getNamedItem("name");
-//                        if (keynode != null) {
-//                            String key = keynode.getNodeValue();
-//                            boolean isReadyRemove = checkIfRemoved(type, key,ids);
-//                            if(isReadyRemove){
-//                                nodeFirst.removeChild(node);
-//                                i--;
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//            saveDocument(aarres,documentValues);
-//        }
 
         private static boolean checkIfRemoved(String type, String key, Map<String, LinkedHashMap> ids) {
             LinkedHashMap<String, AarID> typeIds = null;
