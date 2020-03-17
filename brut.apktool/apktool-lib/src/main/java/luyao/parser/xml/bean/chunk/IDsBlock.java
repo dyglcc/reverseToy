@@ -1,6 +1,6 @@
 package luyao.parser.xml.bean.chunk;
 
-public class IDChunk {
+public class IDsBlock {
     private int type;
 
     public int getType() {
@@ -29,4 +29,16 @@ public class IDChunk {
 
     private int size;
     private int[] ids;
+
+    @Override
+    public String toString() {
+        StringBuilder stringBuilder = new StringBuilder();
+        if (ids != null) {
+            for (int i = 0; i < ids.length; i++) {
+                stringBuilder.append(Integer.toHexString(ids[i]) + "\n");
+            }
+            return stringBuilder.toString();
+        }
+        return "";
+    }
 }

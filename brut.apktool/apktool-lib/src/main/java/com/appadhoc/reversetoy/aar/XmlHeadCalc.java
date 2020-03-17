@@ -19,7 +19,7 @@ public class XmlHeadCalc {
     }
 
     public static int getXmlIDsSize(XmlParser data) {
-        return data.getM_resourceIDs().length * 4 + 8;
+        return data.getIdBlock().getIds().length * 4 + 8;
     }
 
     public static int getXmlStringBlockSize(XmlParser data) {

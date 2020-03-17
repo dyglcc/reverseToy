@@ -46,7 +46,7 @@ public class XmlWriter {
             OS.rmfile(destFile.getAbsolutePath());
         }
         XmlWriter xmlWriter = new XmlWriter(destFile, parser);
-        xmlWriter.encode2NewXml();
+        xmlWriter.write2NewXml();
         return destFile;
     }
 
@@ -62,10 +62,10 @@ public class XmlWriter {
         }
     }
 
-    private void encode2NewXml() throws IOException, AndrolibException {
+    public void write2NewXml() throws IOException, AndrolibException {
         writeHeader();
         writeStringPool();
-        writeIds(data.getM_resourceIDs(),data.getIdsType());
+        writeIds(data.getIdBlock(),data.getIdsType());
         writeXmlContentChunk(data.getChunkList());
     }
 
@@ -112,10 +112,10 @@ public class XmlWriter {
         }
     }
 
-    private void writeIds(int[] ids, int type) throws IOException {
+    private void writeIds(IDsBlock ids, int type) throws IOException {
         mOut.writeInt(type);
-        mOut.writeInt(ids.length * 4 + 8);
-        mOut.writeIntArray(ids);
+        mOut.writeInt(ids.getIds().length * 4 + 8);
+        mOut.writeIntArray(ids.getIds());
     }
 
     private void writeHeader() throws IOException {

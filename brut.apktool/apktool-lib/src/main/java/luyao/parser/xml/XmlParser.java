@@ -14,20 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static luyao.parser.utils.Reader.log;
+
 /**
  * Created by luyao
  * on 2018/12/14 10:00
  */
 public class XmlParser {
-    public int[] getM_resourceIDs() {
-        return m_resourceIDs;
-    }
-
-    public void setM_resourceIDs(int[] m_resourceIDs) {
-        this.m_resourceIDs = m_resourceIDs;
-    }
-
-    private int[] m_resourceIDs;
 
     public static void testNew() throws IOException {
         XmlParser xmlParser = new XmlParser(new FileInputStream("/Users/dongyuangui/Desktop/apk-blue/abcxmltest/AndroidManifest.xml"));
@@ -36,12 +28,19 @@ public class XmlParser {
 
     public static void main(String... args) throws IOException {
         testNew();
-//        testParse();
+//        testParse(123);
     }
 
     public static void testParse() throws IOException {
         XmlParser xmlParser = new XmlParser(new FileInputStream("/Users/dongyuangui/Desktop/apk-blue/aar_tmp/AndroidManifest.xml"));
         xmlParser.parse();
+    }
+    public static void testParse(int count) throws IOException {
+        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/abcxmltest/res/layout");
+        for(File file:dir.listFiles()){
+            XmlParser xmlParser = new XmlParser(new FileInputStream(file));
+            xmlParser.parse();
+        }
     }
 
     public StringBlock getStringBlock() {
@@ -138,15 +137,11 @@ public class XmlParser {
         stringBlock = StringBlock.read_apktool(reader);
     }
 
-    public IDChunk getIdTrunk() {
+    public IDsBlock getIdBlock() {
         return idTrunk;
     }
+    private IDsBlock idTrunk = new IDsBlock();
 
-    public void setIdTrunk(IDChunk idTrunk) {
-        this.idTrunk = idTrunk;
-    }
-
-    private IDChunk idTrunk = new IDChunk();
     private void parseResourceIdChunk() throws IOException {
         int chunkType = reader.readInt();
         log("chunk type: %s", Integer.toHexString(chunkType));
@@ -156,10 +151,10 @@ public class XmlParser {
         }
         this.setIdsType(chunkType);
         this.setIdsSize(chunkSize);
-        m_resourceIDs = reader.readIntArray(chunkSize / 4 - 2);
         idTrunk.setType(chunkType);
         idTrunk.setSize(chunkSize);
-        idTrunk.setIds(m_resourceIDs);
+        idTrunk.setIds(reader.readIntArray(chunkSize / 4 - 2));
+
     }
 
     private void parseXmlContentChunk() {

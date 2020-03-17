@@ -10,6 +10,7 @@ import brut.directory.ZipUtils;
 import brut.util.OS;
 import com.appadhoc.reversetoy.aar.*;
 import com.appadhoc.reversetoy.sign.SignTool;
+import com.appadhoc.reversetoy.utils.Utils;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -23,7 +24,7 @@ import static brut.androlib.res.decoder.ARSCDecoder.ENTRY_FLAG_COMPLEX;
 
 public class MergeArsc {
     private final static Logger LOGGER = Logger.getLogger(AarManager.class.getName());
-
+    public static LinkedHashMap<Integer, Duo_int> mapping = new LinkedHashMap<>();
     public static void main(String[] args) throws Exception {
 
 //        readOldApk(null);
@@ -201,22 +202,22 @@ public class MergeArsc {
 
                 byte[] rawBytes = resResource.getRawBytes();
 
-                int keyNameIndex = getInt(rawBytes, 4);
-                replaceInt(rawBytes, 4, keyNameIndex + specName.oldHostBlockStringCount);
+                int keyNameIndex = Utils.ByteUtils.getInt(rawBytes, 4);
+                Utils.ByteUtils.replaceInt(rawBytes, 4, keyNameIndex + specName.oldHostBlockStringCount);
 
-                short flags = getShort(rawBytes, 2);
+                short flags = Utils.ByteUtils.getShort(rawBytes, 2);
                 if ((flags & ENTRY_FLAG_COMPLEX) == 0) { // not bag values
                     replaceStringIndex(rawBytes, 8, globalString.oldHostBlockStringCount);
                 } else {
-                    int parent = getInt(rawBytes, 8);
+                    int parent = Utils.ByteUtils.getInt(rawBytes, 8);
                     if (mapping.get(parent) != null) {
-                        replaceInt(rawBytes, 0, mapping.get(parent).idNew);
+                        Utils.ByteUtils.replaceInt(rawBytes, 0, mapping.get(parent).idNew);
                     }
-                    int count = getInt(rawBytes, 12);
+                    int count = Utils.ByteUtils.getInt(rawBytes, 12);
                     for (int c = 0, start = 16; c < count; c++, start += 12) {
-                        int resOldId = getInt(rawBytes, start);
+                        int resOldId = Utils.ByteUtils.getInt(rawBytes, start);
                         if (mapping.get(resOldId) != null) {
-                            replaceInt(rawBytes, start, mapping.get(resOldId).idNew);
+                            Utils.ByteUtils.replaceInt(rawBytes, start, mapping.get(resOldId).idNew);
                         }
                         replaceStringIndex(rawBytes, start + 4, globalString.oldHostBlockStringCount);
                     }
@@ -249,55 +250,7 @@ public class MergeArsc {
         return null;
     }
 
-    private static int getInt(byte[] rawBytes, int start) throws Exception {
-        return (rawBytes[start + 3] & 0xff) << 24 |
-                (rawBytes[start + 2] & 0xff) << 16 |
-                (rawBytes[start + 1] & 0xff) << 8 |
-                (rawBytes[start] & 0xff);
-    }
 
-    private static short getShort(byte[] rawBytes, int start) {
-
-        return (short) ((rawBytes[start + 1] & 0xff) << 8 | (rawBytes[start] & 0xff));
-    }
-
-    private static byte getByte(byte[] rawBytes, int start) {
-        return (byte) (rawBytes[start] & 0xff);
-    }
-
-    private static void replaceInt(byte[] rawBytes, int start, int value) {
-        byte p0 = (byte) (value >> 24);
-        byte p1 = (byte) (value >> 16);
-        byte p2 = (byte) (value >> 8);
-        byte p3 = (byte) value;
-        rawBytes[start] = p3;
-        rawBytes[start + 1] = p2;
-        rawBytes[start + 2] = p1;
-        rawBytes[start + 3] = p0;
-    }
-
-    public static byte[] int2Bytes(int i) {
-        byte[] bytes = new byte[4];
-        bytes[3] = (byte) (i >> 24);
-        bytes[2] = (byte) (i >> 16);
-        bytes[1] = (byte) (i >> 8);
-        bytes[0] = (byte) i;
-        return bytes;
-//        byte[] bytes = new byte[4];
-//        bytes[0] = (byte) (i >> 24);
-//        bytes[1] = (byte) (i >> 16);
-//        bytes[2] = (byte) (i >> 8);
-//        bytes[3] = (byte) i;
-//        return bytes;
-    }
-
-    //
-    public static int bytes2Int(byte[] bytes) {
-        return bytes[3] & 0xff
-                | (bytes[2] & 0xff) << 8
-                | (bytes[1] & 0xff) << 16
-                | (bytes[0] & 0xff) << 24;
-    }
 
     private static final int NEW_TYPE = 0;
     private static final int NEW_CONFIGRATION = 1;
@@ -371,15 +324,12 @@ public class MergeArsc {
 
     private static void replaceStringIndex(byte[] rawBytes, int start, int globalStringOffset) throws Exception {
 
-        byte dataType = getByte(rawBytes, start + 3);
+        byte dataType = Utils.ByteUtils.getByte(rawBytes, start + 3);
         if (dataType == TypedValue.TYPE_STRING) {
-            int data = getInt(rawBytes, start + 4);
-            replaceInt(rawBytes, start + 4, data + globalStringOffset);
+            int data = Utils.ByteUtils.getInt(rawBytes, start + 4);
+            Utils.ByteUtils.replaceInt(rawBytes, start + 4, data + globalStringOffset);
         }
     }
-
-    private static LinkedHashMap<Integer, Duo_int> mapping = new LinkedHashMap<>();
-
 
     // merge exist type.
     private static void mergeSingleSameType(ConfigFlagRaw hostRaw, ConfigFlagRaw aarRaw,
@@ -480,8 +430,6 @@ public class MergeArsc {
             }
         }
 
-        //merge count
-        mergeStringCount(hostStringBlock, aarStringBlock);
         // combine merge offset
         mergeStringOffset(hostStringBlock, aarStringBlock);
 
@@ -497,8 +445,6 @@ public class MergeArsc {
 
     }
 
-    private static void mergeStringCount(StringBlock hostStringBlock, StringBlock aarStringBlock) {
-    }
 
     public static void reEncode2UTF16(StringBlock aarStringBlock) {
         int[] offsets = aarStringBlock.getM_stringOffsets();

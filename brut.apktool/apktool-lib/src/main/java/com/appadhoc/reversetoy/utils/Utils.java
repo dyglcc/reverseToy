@@ -699,4 +699,45 @@ public class Utils {
             return getDrawableStartId() - range;
         }
     }
+    public static class ByteUtils{
+        public static int getInt(byte[] rawBytes, int start) {
+            return (rawBytes[start + 3] & 0xff) << 24 |
+                    (rawBytes[start + 2] & 0xff) << 16 |
+                    (rawBytes[start + 1] & 0xff) << 8 |
+                    (rawBytes[start] & 0xff);
+        }
+        public static int bytes2Int(byte[] bytes) {
+            return bytes[3] & 0xff
+                    | (bytes[2] & 0xff) << 8
+                    | (bytes[1] & 0xff) << 16
+                    | (bytes[0] & 0xff) << 24;
+        }
+        public static short getShort(byte[] rawBytes, int start) {
+
+            return (short) ((rawBytes[start + 1] & 0xff) << 8 | (rawBytes[start] & 0xff));
+        }
+
+        public static byte getByte(byte[] rawBytes, int start) {
+            return (byte) (rawBytes[start] & 0xff);
+        }
+
+        public static void replaceInt(byte[] rawBytes, int start, int value) {
+            byte p0 = (byte) (value >> 24);
+            byte p1 = (byte) (value >> 16);
+            byte p2 = (byte) (value >> 8);
+            byte p3 = (byte) value;
+            rawBytes[start] = p3;
+            rawBytes[start + 1] = p2;
+            rawBytes[start + 2] = p1;
+            rawBytes[start + 3] = p0;
+        }
+        public static byte[] int2Bytes(int i) {
+            byte[] bytes = new byte[4];
+            bytes[3] = (byte) (i >> 24);
+            bytes[2] = (byte) (i >> 16);
+            bytes[1] = (byte) (i >> 8);
+            bytes[0] = (byte) i;
+            return bytes;
+        }
+    }
 }
