@@ -1,10 +1,9 @@
 package com.appadhoc.reversetoy;
 
+import android.util.TypedValue;
 import brut.androlib.AndrolibException;
 import brut.androlib.res.decoder.StringBlock;
-import brut.util.ExtDataInput;
 import com.appadhoc.reversetoy.aar.Duo_int;
-import com.appadhoc.reversetoy.utils.RecordCountingInputStream;
 import com.appadhoc.reversetoy.utils.Utils;
 import luyao.parser.xml.XmlParser;
 import luyao.parser.xml.XmlWriter;
@@ -15,21 +14,27 @@ import java.io.*;
 import java.util.List;
 
 public class XmlResIDReplaceTool {
-    private RecordCountingInputStream mCountIn;
-    private ExtDataInput mIn;
 
     public static void main(String[] args) throws IOException, AndrolibException {
-        XmlResIDReplaceTool tool = new XmlResIDReplaceTool();
-        File file = new File("/Users/dongyuangui/Desktop/apk-blue/abcxmltest/res");
-        decodeAllFiles(file);
+//        XmlResIDReplaceTool tool = new XmlResIDReplaceTool();
+        File resDir = new File("/Users/dongyuangui/Desktop/apk-blue/abcxmltest/res");
+//        decodeDirAndReplace(file);
+//        File file = new File("/Users/dongyuangui/Desktop/apk-blue/abcxmltest/AndroidManifest.xml");
+        Duo_int duo_int = new Duo_int(2131492919,123);
+        Duo_int duo_int1 = new Duo_int(2131099743,456);
+        MergeArsc.mapping.put(2131492919,duo_int);
+        MergeArsc.mapping.put(2131099743,duo_int1);
+
+//        decodeSingleFileAndReplacIds(file);
+        decodeDirAndReplace(resDir);
     }
 
-    public static void decodeAllFiles(File resDir) throws IOException, AndrolibException {
+    public static void decodeDirAndReplace(File resDir) throws IOException, AndrolibException {
         for (File file : resDir.listFiles()) {
             if (file.isFile()) {
                 decodeSingleFileAndReplacIds(file);
             } else if (file.isDirectory()) {
-                decodeAllFiles(file);
+                decodeDirAndReplace(file);
             }
         }
     }
@@ -40,8 +45,8 @@ public class XmlResIDReplaceTool {
             XmlParser parser = new XmlParser(new FileInputStream(file));
             parser.parse();
             boolean success = replaceIdsFromMapping(parser);
-            if (success) {
-                XmlWriter writer = new XmlWriter(new File(file.getAbsolutePath() + "-out"), parser);
+            if (success) { // 覆盖文件
+                XmlWriter writer = new XmlWriter(new File(file.getAbsolutePath()), parser);
                 writer.write2NewXml();
             }
         }
@@ -57,7 +62,7 @@ public class XmlResIDReplaceTool {
         replaceIdArrays(iDsBlock);
         replacChunks(chunkList);
 
-        return false;
+        return true;
     }
 
     private static void replaceIdArrays(IDsBlock iDsBlock) {
@@ -67,17 +72,26 @@ public class XmlResIDReplaceTool {
             if (id < (0x7f << 24)) { // 系统id
                 continue;
             }
-            Duo_int duo_int = MergeArsc.mapping.get(id);
-
-            if (duo_int != null) {
-
-                if (duo_int.idOld == id) {
-
-                    arrays[i] = duo_int.idNew;
-
-                }
+            int newId = getMappingID(id);
+            if (newId != -1) {
+                arrays[i] = newId;
             }
         }
+    }
+
+    private static int getMappingID(int oldId) {
+
+        Duo_int duo_int = MergeArsc.mapping.get(oldId);
+
+        if (duo_int != null) {
+
+            if (duo_int.idOld == oldId) {
+
+                return duo_int.idNew;
+
+            }
+        }
+        return -1;
     }
 
     private static void replacChunks(List<Chunk> aarList) {
@@ -91,9 +105,13 @@ public class XmlResIDReplaceTool {
 
                     Attribute attribute = list.get(i);
                     byte[] rawBytes = attribute.getRawBytes();
-                    int namespaceUriAttr = Utils.ByteUtils.getInt(rawBytes, 0);
-                    if (namespaceUriAttr != -1) {
-//                        Utils.ByteUtils.replaceInt(rawBytes, 0, mappingid);
+                    byte type = Utils.ByteUtils.getByte(rawBytes, 15);
+                    if (TypedValue.TYPE_REFERENCE == type) {
+                        int id = Utils.ByteUtils.getInt(rawBytes, 16);
+                        int newId = getMappingID(id);
+                        if (newId != -1) {
+                            Utils.ByteUtils.replaceInt(rawBytes, 16, newId);
+                        }
                     }
                 }
             } else if (chunk instanceof StartNameSpaceChunk) {

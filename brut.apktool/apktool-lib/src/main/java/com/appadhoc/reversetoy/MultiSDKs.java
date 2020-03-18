@@ -16,12 +16,12 @@ public class MultiSDKs {
     }
 
     private List<File> smaliFolder = new ArrayList<>();
-    public void dealWithSDKpackages(String sdktype, File sdkFile, File apkOutFile, ApkDecoder decoder) throws Exception {
+    public void dealWithSDKpackages(String sdktype, File sdkFile, File apkOutFile) throws Exception {
         List<AbstractManager> managers = ManagerFactory.getIToyManager(sdkFile.getAbsolutePath());
         for(AbstractManager manager:managers){
             manager.setSdkType(sdktype);
         }
-        decoder.decode(managers);
+//        decoder.decode(managers);
         for(AbstractManager manager:managers){
 
             manager.setHostDir(apkOutFile);

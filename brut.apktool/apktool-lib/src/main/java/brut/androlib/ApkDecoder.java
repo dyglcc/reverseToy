@@ -81,7 +81,7 @@ public class ApkDecoder {
         mApi = api;
     }
 
-    public void decode(List<AbstractManager> aarManagers) throws Exception {
+    public void decode() throws Exception {
         try {
             File outDir = getOutDir();
             AndrolibResources.sKeepBroken = mKeepBrokenResources;
@@ -133,19 +133,6 @@ public class ApkDecoder {
                         if (hasManifest()) {
                             mAndrolib.decodeManifestWithResources(mApkFile, outDir, getResTable());
                         }
-                        // ------------------------add by dongyg
-                        if (aarManagers != null) { // 对付路径下面多个aar文件
-                            for (AbstractManager aarManager : aarManagers) {
-//                                aarManager.setHostPackageName(getResTable().getPackageRenamed());
-//                                aarManager.preCombin(outDir);
-//                                aarManager.addAarids2ResTable(getResTable());
-                                ResTable table = getResTable();
-                                File outArsc = new File("/Users/dongyuangui/Desktop/apk-blue/out--.arsc");
-                                WriterNp np = new WriterNp(outArsc,getResTable());
-                                np.write();
-                            }
-                        }
-                        //------------------------add by dongyg
                         mAndrolib.decodeResourcesFull(mApkFile, outDir, getResTable());
                         break;
                 }

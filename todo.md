@@ -91,3 +91,9 @@ todo ,搞清楚type的id怎么，然后respecttype 后每个数据结构后面�
 6，合并文件。
 打包
 并测试。
+
+
+todo ...
+模块集成起来。
+1。解析文件，把apktool dex decode拿出来，
+2。解析文件出来。

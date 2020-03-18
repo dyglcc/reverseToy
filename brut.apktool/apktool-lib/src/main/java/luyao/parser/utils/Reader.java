@@ -16,7 +16,7 @@ public class Reader {
 
     private volatile InputStream in;
     private byte[] buffer = new byte[8];
-    private static boolean showLog = true;
+    private static boolean showLog = false;
     private boolean isLittleEndian = true;
 
     public Reader(InputStream in) {
@@ -134,7 +134,11 @@ public class Reader {
         if (showLog){
             System.out.printf(format, params);
         }
-//        System.out.println();
+    }
+    public static void log(String format) {
+        if (showLog){
+            System.out.println(format);
+        }
     }
 
 }

@@ -885,7 +885,7 @@ public class ArscWriter {
 
     private void reWriteTable(File srcApkFile) throws AndrolibException, IOException {
 
-        InputStream inputStream = Utils.FileUtils.getZipFile("resources.arsc", srcApkFile);
+        InputStream inputStream = Utils.FileUtils.getZipEntryFile("resources.arsc", srcApkFile);
         BufferedInputStream bfi = new BufferedInputStream(inputStream);
         mCountIn = new CountingInputStream(bfi);
         mIn = new ExtDataInput(new LEDataInputStream(mCountIn));

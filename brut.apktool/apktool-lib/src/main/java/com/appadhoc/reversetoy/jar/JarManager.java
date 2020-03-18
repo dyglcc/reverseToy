@@ -61,11 +61,11 @@ public class JarManager extends AbstractManager {
     public void unzipJarFile()
             throws IOException {
         if (jarFile.isFile()) {
-            Utils.FileUtils.unzip("assets", tmpDir, jarFile);
+            Utils.FileUtils.unzipSubDri2DestDir("assets", tmpDir, jarFile);
         } else if (jarFile.isDirectory()) {
             for (File file : Objects.requireNonNull(jarFile.listFiles())) {
                 if (file.getName().endsWith(".jar")) {
-                    Utils.FileUtils.unzip("assets", tmpDir, file);
+                    Utils.FileUtils.unzipSubDri2DestDir("assets", tmpDir, file);
                 }
             }
         }
@@ -159,7 +159,7 @@ public class JarManager extends AbstractManager {
     }
 
     @Override
-    public void addAarids2ResTable(ResTable resTable) {
+    public void addMergeArscFile(ResTable resTable) {
 
     }
 

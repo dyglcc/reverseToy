@@ -4,15 +4,21 @@ import brut.androlib.Androlib;
 import brut.androlib.AndrolibException;
 import brut.androlib.ApkDecoder;
 import brut.androlib.ApkOptions;
+import brut.androlib.res.AndrolibResources;
+import brut.androlib.res.data.ResTable;
 import brut.common.BrutException;
+import brut.directory.ExtFile;
 import brut.directory.ZipUtils;
+import brut.util.OS;
 import com.appadhoc.reversetoy.exception.AarFileNotExistException;
 import com.appadhoc.reversetoy.exception.ApkFileNotExistException;
 import com.appadhoc.reversetoy.inject.EguanReflectionOper;
 import com.appadhoc.reversetoy.sign.SignTool;
 import com.appadhoc.reversetoy.utils.Utils;
+import luyao.parser.xml.XmlParser;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.logging.Logger;
@@ -39,31 +45,28 @@ public class Main {
     }
 
     public static void test_reverse(HashMap map) throws Exception {
-
-        ApkDecoder decoder = new ApkDecoder();
-        decoder.setForceDelete(true);
-        ApkOptions options = new ApkOptions();
-        options.verbose = false;
+        AndrolibResources resources = new AndrolibResources();
 //        File file = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug.apk");
-        File file = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
+        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
 //        File file = new File("/Users/dongyuangui/Desktop/apk-blue/fiexd9patch.apk");
 //        File file = new File("/Users/dongyuangui/Desktop/toy/apks/meishe.apk");
 //        File file = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
-        File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
-        decoder.setApkFile(file);
-        decoder.setOutDir(apkOutFile);
-        decoder.setDecodeResources(ApkDecoder.DECODE_RESOURCES_FULL);
-//        decoder.setDecodeResources(ApkDecoder.DECODE_RESOURCES_NONE);
-        decoder.setDecodeAssets(ApkDecoder.DECODE_ASSETS_NONE);
-        decoder.setDecodeSources(ApkDecoder.DECODE_SOURCES_SMALI_ONLY_MAIN_CLASSES);
-        decoder.setForceDecodeManifest(ApkDecoder.FORCE_DECODE_MANIFEST_FULL);
-        // init decoder -----------oper
+        File apkOutFile = new File(srcApkfile.getParentFile(), Utils.getNameRemovedSuffix(srcApkfile.getName()));
+
+        unZipHostApk(srcApkfile,apkOutFile);
+
+        ResTable hostTableTable = resources.getResTable(new ExtFile("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk"));
+
+        XmlParser parser = new XmlParser(new FileInputStream(new File(apkOutFile,"AndroidManifest.xml")));
+
+        SmaliDecoderReverse smaliDecoderReverse = new SmaliDecoderReverse(srcApkfile,apkOutFile,parser);
+        smaliDecoderReverse.decodeSmali();
 
         String filePath = "/Users/dongyuangui/Desktop/aar-1/abtest-release.aar";
-
         // aar oper
         MultiSDKs multi = new MultiSDKs();
-        multi.dealWithSDKpackages("eguan",new File(filePath),apkOutFile,decoder);
+
+        multi.dealWithSDKpackages(AbstractManager.TYPE_Yaohe,new File(filePath),apkOutFile);
 
         // smali oper --------------------
         EguanReflectionOper oper = new EguanReflectionOper();
@@ -80,6 +83,13 @@ public class Main {
         logger.info("########################################################");
     }
 
+    public static void unZipHostApk(File srcApkfile, File apkOutFile) throws BrutException, IOException {
+        if(apkOutFile.exists()){
+            OS.rmdir(apkOutFile);
+        }
+        Utils.FileUtils.unzip(srcApkfile,apkOutFile);
+    }
+
     public static void reverse(File apkfile, File aar, String sdktype, HashMap operOptions) throws Exception {
         if (!apkfile.exists()) {
             throw new ApkFileNotExistException("apk file not exist or can not read");
@@ -90,20 +100,20 @@ public class Main {
 //        if (!json.exists()) {
 //            throw new AarFileNotExistException("aar/jar file not exist or can not read");
 //        }
-        //-----------decoder setting--------------
-        ApkDecoder decoder = new ApkDecoder();
-        decoder.setForceDelete(true);
-        ApkOptions options = new ApkOptions();
-        options.verbose = true;
-        decoder.setDecodeSources(ApkDecoder.DECODE_SOURCES_SMALI_ONLY_MAIN_CLASSES);
+        AndrolibResources resources = new AndrolibResources();
         logger.info("apk file name " + apkfile.getAbsolutePath());
         File apkOutFile = new File(apkfile.getParentFile(), Utils.getNameRemovedSuffix(apkfile.getName()));
-        decoder.setApkFile(apkfile);
-        decoder.setOutDir(apkOutFile);
+        unZipHostApk(apkfile,apkOutFile);
+
+        ResTable hostTableTable = resources.getResTable(new ExtFile("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk"));
+
+        XmlParser hostParse = new XmlParser(new FileInputStream(new File(apkOutFile,"AndroidManifest.xml")));
+        SmaliDecoderReverse smaliDecoderReverse = new SmaliDecoderReverse(apkfile,apkOutFile,hostParse);
+        smaliDecoderReverse.decodeSmali();
 
         // aar oper
         MultiSDKs multi = new MultiSDKs();
-        multi.dealWithSDKpackages(sdktype,aar,apkOutFile,decoder);
+        multi.dealWithSDKpackages(sdktype,aar,apkOutFile);
 
 
         EguanReflectionOper oper = new EguanReflectionOper();

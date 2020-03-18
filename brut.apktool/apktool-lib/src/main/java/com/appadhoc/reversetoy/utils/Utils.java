@@ -50,7 +50,7 @@ public class Utils {
 
     public static class FileUtils {
 
-        public static InputStream getZipFile(String fileName,File zipFile) throws IOException {
+        public static InputStream getZipEntryFile(String fileName, File zipFile) throws IOException {
             if(isEmpty(fileName)){
                 return null;
             }
@@ -64,8 +64,38 @@ public class Utils {
             return null;
         }
 
+        public static void unzip(File zipfile,File outDir) throws IOException {
 
-        public static void unzip(String assets, File outDir, File jarFile) throws IOException {
+            ZipFile zipFile = new ZipFile(zipfile);
+            for (Enumeration entries = zipFile.entries(); entries.hasMoreElements(); ) {
+                ZipEntry entry = (ZipEntry) entries.nextElement();
+                String zipEntryName = entry.getName();
+                InputStream in = zipFile.getInputStream(entry);
+                //指定解压后的文件夹+当前zip文件的名称
+                String outPath = (outDir.getAbsolutePath() + "/" + zipEntryName).replace("/", File.separator);
+                //判断路径是否存在,不存在则创建文件路径
+                File file = new File(outPath.substring(0, outPath.lastIndexOf(File.separator)));
+                if (!file.exists()) {
+                    file.mkdirs();
+                }
+                //判断文件全路径是否为文件夹,如果是上面已经上传,不需要解压
+                if (new File(outPath).isDirectory()) {
+                    continue;
+                }
+                //保存文件路径信息（可利用md5.zip名称的唯一性，来判断是否已经解压）
+                OutputStream out = new FileOutputStream(outPath);
+                byte[] buf1 = new byte[2048];
+                int len;
+                while ((len = in.read(buf1)) > 0) {
+                    out.write(buf1, 0, len);
+                }
+                in.close();
+                out.close();
+            }
+            //必须关闭，要不然这个zip文件一直被占用着，要删删不掉，改名也不可以，移动也不行，整多了，系统还崩了。
+            zipFile.close();
+        }
+        public static void unzipSubDri2DestDir(String assets, File outDir, File jarFile) throws IOException {
 
             ZipFile zipFile = new ZipFile(jarFile);
             for (Enumeration entries = zipFile.entries(); entries.hasMoreElements(); ) {

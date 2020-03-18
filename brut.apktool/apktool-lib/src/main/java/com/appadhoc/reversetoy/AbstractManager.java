@@ -14,7 +14,7 @@ public abstract class AbstractManager {
 
     public abstract  void preCombin(File outputdir) throws BrutException;
 
-    public abstract  void addAarids2ResTable(ResTable resTable) throws Exception;
+    public abstract  void addMergeArscFile(ResTable resTable) throws Exception;
 
     public abstract  void addIDs2HostFile(File apkOutFile) throws Exception;
 

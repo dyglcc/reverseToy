@@ -13,6 +13,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static android.util.TypedValue.TYPE_FIRST_INT;
+import static android.util.TypedValue.TYPE_STRING;
 import static luyao.parser.utils.Reader.log;
 
 /**
@@ -22,7 +24,7 @@ import static luyao.parser.utils.Reader.log;
 public class XmlParser {
 
     public static void testNew() throws IOException {
-        XmlParser xmlParser = new XmlParser(new FileInputStream("/Users/dongyuangui/Desktop/apk-blue/abcxmltest/AndroidManifest.xml"));
+        XmlParser xmlParser = new XmlParser(new FileInputStream("/Users/dongyuangui/Desktop/apk-blue/abcxmltest/AndroidManifest.xml-out"));
         xmlParser.parse();
     }
 
@@ -35,9 +37,10 @@ public class XmlParser {
         XmlParser xmlParser = new XmlParser(new FileInputStream("/Users/dongyuangui/Desktop/apk-blue/aar_tmp/AndroidManifest.xml"));
         xmlParser.parse();
     }
+
     public static void testParse(int count) throws IOException {
         File dir = new File("/Users/dongyuangui/Desktop/apk-blue/abcxmltest/res/layout");
-        for(File file:dir.listFiles()){
+        for (File file : dir.listFiles()) {
             XmlParser xmlParser = new XmlParser(new FileInputStream(file));
             xmlParser.parse();
         }
@@ -64,7 +67,6 @@ public class XmlParser {
     private List<Chunk> chunkList = new ArrayList<>();
     private RecordCountingInputStream mCountIn;
     private ExtDataInput reader;
-    private int count;
 
     public XmlParser(InputStream inputStream) {
         inputStream = mCountIn = new RecordCountingInputStream(inputStream);
@@ -72,28 +74,16 @@ public class XmlParser {
     }
 
     public void parse() throws IOException {
-        int start = mCountIn.getCount();
-        parseHeader();
-        int headerCount = mCountIn.getCount();
-        System.out.println(" header count is " + (headerCount - start));
 
+        parseHeader();
 
         parseStringChunk();
-        int stringCount = mCountIn.getCount();
-        System.out.println(" string count is " + (stringCount - headerCount));
-
 
         parseResourceIdChunk();
-        int idCount = mCountIn.getCount();
-        System.out.println(" ids count is " + (idCount - stringCount));
-
 
         parseXmlContentChunk();
-        int countCount = mCountIn.getCount();
-        System.out.println(" content count is " + (countCount - idCount));
 
-
-        generateXml();
+        log(generateXml());
     }
 
 
@@ -140,6 +130,7 @@ public class XmlParser {
     public IDsBlock getIdBlock() {
         return idTrunk;
     }
+
     private IDsBlock idTrunk = new IDsBlock();
 
     private void parseResourceIdChunk() throws IOException {
@@ -376,9 +367,9 @@ public class XmlParser {
         log("\nparse Text Chunk");
     }
 
-    private void generateXml() {
+    private String generateXml() {
         Xml xml = new Xml(stringBlock, null, chunkList);
-        System.out.println(xml.toString());
+        return xml.toString();
     }
 
     public static String format(String format, Object... params) {
@@ -403,4 +394,47 @@ public class XmlParser {
         return result;
     }
 
+    public int getCompileVersion(int defaultApi) {
+        for (int i = 0; i < chunkList.size(); i++) {
+            Chunk chunk = chunkList.get(i);
+            if (chunk instanceof StartTagChunk) {
+                StartTagChunk startTagChunk = (StartTagChunk) chunk;
+                if (startTagChunk.getName().equals("manifest")) {
+                    List attributs = ((StartTagChunk) chunk).getAttributeList();
+                    for (int j = 0; j < attributs.size(); j++) {
+                        Attribute attribute = (Attribute) attributs.get(j);
+                        if (attribute.getName().equals("compileSdkVersion")) {
+                            if (attribute.getType() == TYPE_FIRST_INT) {
+                                return Integer.parseInt(attribute.getData());
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+        return defaultApi;
+    }
+
+    public String getAppName() {
+        for (int i = 0; i < chunkList.size(); i++) {
+            Chunk chunk = chunkList.get(i);
+            if (chunk instanceof StartTagChunk) {
+                StartTagChunk startTagChunk = (StartTagChunk) chunk;
+                if (startTagChunk.getName().equals("application")) {
+                    List attributs = ((StartTagChunk) chunk).getAttributeList();
+                    for (int j = 0; j < attributs.size(); j++) {
+                        Attribute attribute = (Attribute) attributs.get(j);
+                        if (attribute.getName().equals("android:name")) {
+                            if (attribute.getType() == TYPE_STRING) {
+                                return attribute.getData();
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+        return null;
+    }
 }

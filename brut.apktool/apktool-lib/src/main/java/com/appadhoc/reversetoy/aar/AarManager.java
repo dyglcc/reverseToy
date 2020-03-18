@@ -2,11 +2,13 @@ package com.appadhoc.reversetoy.aar;
 
 
 import brut.androlib.AndrolibException;
+import brut.androlib.res.AndrolibResources;
 import brut.androlib.res.data.ResPackage;
 import brut.androlib.res.data.ResTable;
 import brut.common.BrutException;
 import brut.directory.Directory;
 import brut.directory.DirectoryException;
+import brut.directory.ExtFile;
 import brut.directory.ZipRODirectory;
 import brut.util.AaptManager;
 import brut.util.OS;
@@ -25,7 +27,7 @@ import java.util.logging.Logger;
 public class AarManager extends AbstractManager {
     private final static Logger LOGGER = Logger.getLogger(AarManager.class.getName());
     private String aarPackageName;
-    private Map<String, LinkedHashMap> ids;
+//    private Map<String, LinkedHashMap> ids;
     private File toyWorkspace;
     private File tmpDir;
     private File rFiledir;
@@ -122,49 +124,58 @@ public class AarManager extends AbstractManager {
     }
 
 
-    public void addAarids2ResTable(ResTable resTable) throws Exception {
-        if (!getAarres().exists()) {
-            LOGGER.fine("aar file have no res file");
-            return;
-        }
-
-        ResPackage mainPackage = resTable.getPackage(127);
-        // 将restyp里面的都替换一下
-        // 重新组成新的respect
-        // type eg id integer string  attr bool
-        for (String typeKey : ids.keySet()) {
-            Map<String, AarID> aarIdMap = (LinkedHashMap) ids.get(typeKey);
-            for (String resKey : aarIdMap.keySet()) {
-                AarID source_aarID = aarIdMap.get(resKey);
-                mainPackage.addAarRes(source_aarID, typeKey, resKey);
-            }
-        }
-        // 将resTable中的数据重新加载一次。
-        mainPackage.reArrange();
-
-        // 删除valuse文件里的重复的key
-        Utils.XmlUtils.removeDuplicateLineAndRemoveIdType(ids, getAarres());
-
-    }
+//    public void addAarids2ResTable(ResTable resTable) throws Exception {
+//        if (!getAarres().exists()) {
+//            LOGGER.fine("aar file have no res file");
+//            return;
+//        }
+//
+//        ResPackage mainPackage = resTable.getPackage(127);
+//        // 将restyp里面的都替换一下
+//        // 重新组成新的respect
+//        // type eg id integer string  attr bool
+//        for (String typeKey : ids.keySet()) {
+//            Map<String, AarID> aarIdMap = (LinkedHashMap) ids.get(typeKey);
+//            for (String resKey : aarIdMap.keySet()) {
+//                AarID source_aarID = aarIdMap.get(resKey);
+//                mainPackage.addAarRes(source_aarID, typeKey, resKey);
+//            }
+//        }
+//        // 将resTable中的数据重新加载一次。
+//        mainPackage.reArrange();
+//
+//        // 删除valuse文件里的重复的key
+//        Utils.XmlUtils.removeDuplicateLineAndRemoveIdType(ids, getAarres());
+//
+//    }
 
     public void preCombin(File hostUnzipDir) {
         try {
             unzipAarFile();
             setAarPackageId();
             replaceAndroidManifestWithHostPackageId();
-            aaptAarPackageOld();
+            aaptAarPackageNew();
             compileRfile2class();
             // read aar ids
             File rRile = getRjavaFile();
-            if (rRile.exists()) {
-                ids = Utils.RFileUtils.readAarIds(rRile);
-            }
+//            if (rRile.exists()) {
+//                ids = Utils.RFileUtils.readAarIds(rRile);
+//            }
             // 合并AndroidManifest文件
-            combinHostManifestWithAar(hostUnzipDir);
+//            combinHostManifestWithAar(hostUnzipDir);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void addMergeArscFile() throws Exception {
+        AndrolibResources resources = new AndrolibResources();
+        ResTable hostTableTable = resources.getResTable(new ExtFile("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk"));
+        todo ..merge arsc file ,
+
+
     }
 
     private void setAarPackageId() throws IOException, SAXException, ParserConfigurationException {
