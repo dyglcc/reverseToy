@@ -51,7 +51,7 @@ public class ExternalEntityTest extends BaseTest {
         LOGGER.info("Decoding doctype.apk...");
         ApkDecoder apkDecoder = new ApkDecoder(testApk);
         apkDecoder.setOutDir(new File(sTestOrigDir + File.separator + "output"));
-        apkDecoder.decode(null);
+        apkDecoder.decode();
     }
 
     @AfterClass

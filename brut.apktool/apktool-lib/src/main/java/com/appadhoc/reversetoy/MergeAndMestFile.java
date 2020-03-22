@@ -22,35 +22,80 @@ public class MergeAndMestFile {
     public static void main(String[] args) throws Exception {
 //        XmlParser parser = mergeAndroidMestFile();
 //        writeTest(parser);
+        File fileHost = new File("/Users/dongyuangui/Desktop/apk-blue/app/AndroidManifest.xml");
+        File fileAar = new File("/Users/dongyuangui/Desktop/aar-1/aar/tmpaaa77/aar_tmp/AndroidManifest.xml");
+        File out = new File("/Users/dongyuangui/Desktop/apk-blue/app/AndroidManifest.xml-out");
+        XmlParser parser = mergeAndroidMestFile(fileHost, fileAar);
+        XmlWriter.write2NewXml(out, parser);
+//        todo 能够正常解析，但是安卓的解析却不认。，怎么回事
+
+        System.out.println("bengin merge ");
+        XmlParser.parse(new FileInputStream(out));
+        System.out.println("after merge");
         testParseNew();
 
 
+//        testGetApplicationAndName();
+
     }
 
-    public static void testParseNew() throws IOException {
-        XmlParser parser = new XmlParser(new FileInputStream("/Users/dongyuangui/Desktop/apk-blue/abcxmltest/AndroidManifest-aaa.xml"));
-        parser.parse();
+    private static void testGetApplicationAndName() throws Exception {
+//        File fileHost = new File("/Users/dongyuangui/Desktop/apk-blue/app/AndroidManifest.xml");
+        File fileHost = new File("/Users/dongyuangui/Desktop/aar-1/aar/tmp16bd0/aar_tmp/AndroidManifest.xml");
+        File fileHostout = new File("/Users/dongyuangui/Desktop/aar-1/aar/tmp16bd0/aar_tmp/AndroidManifest.xml-out");
+        XmlParser parser = XmlParser.parse(new FileInputStream(fileHost));
+        StartTagChunk application = (StartTagChunk) MergeAndMestFile.getStartChunk(parser.getChunkList(), "application");
+        Attribute appNameChunk = MergeAndMestFile.getAttributeFromTrunk(application, "name");
+        if (appNameChunk == null) {
+            addNameAttribute(application, parser, "wo ca shenmgoushi.com.cn");
+        }
+        XmlWriter.write2NewXml(fileHostout, parser);
+        XmlParser parse1 = XmlParser.parse(new FileInputStream(fileHostout));
+        System.out.println("hello");
+    }
+
+    public static void addNameAttribute(StartTagChunk application, XmlParser parser, String appName) throws Exception {
+        StringBlock block = parser.getStringBlock();
+        String schmas = "http://schemas.android.com/apk/res/android";
+        int nameSpaceUriIndex = MergeArsc.getPosFromBlockByString(block, schmas);
+        int nameIndex = MergeArsc.addSingleString2StringBlockTail(block, "name");
+        int appNameValueIndex = MergeArsc.addSingleString2StringBlockTail(block, appName);
+        int type = 3;
+        byte[] attributeAppName = new byte[20];
+        Utils.ByteUtils.replaceInt(attributeAppName, 0, nameSpaceUriIndex);
+        Utils.ByteUtils.replaceInt(attributeAppName, 4, nameIndex);
+        Utils.ByteUtils.replaceInt(attributeAppName, 8, appNameValueIndex);
+        Utils.ByteUtils.replaceInt(attributeAppName, 12, type);
+        Utils.ByteUtils.replaceInt(attributeAppName, 16, appNameValueIndex);
+        Attribute newAtr = new Attribute(schmas, "name", appNameValueIndex, type, appNameValueIndex + "");
+        newAtr.setRawBytes(attributeAppName);
+        List<Attribute> list = application.getAttributeList();
+        application.setAtCount(application.getAtCount() + 1);
+        if (list == null) {
+            list = new ArrayList<>();
+            application.setAttributeList(list);
+        }
+        list.add(newAtr);
+    }
+
+    private static void testParseNew() throws IOException {
+        XmlParser parser = XmlParser.parse(new FileInputStream("/Users/dongyuangui/Desktop/apk-blue/abcxmltest/AndroidManifest-aaa.xml"));
     }
 
 
-    public static XmlParser mergeAndroidMestFile() throws Exception {
-        File fileHost = new File("/Users/dongyuangui/Desktop/apk-blue/abcxmltest/AndroidManifest.xml");
-        File fileAar = new File("/Users/dongyuangui/Desktop/apk-blue/aar_tmp/AndroidManifest.xml");
+    public static XmlParser mergeAndroidMestFile(File HostManifest, File fileAarManifest) throws Exception {
 
-        XmlParser hostParse = new XmlParser(new FileInputStream(fileHost));
-        hostParse.parse();
-        XmlParser aarParser = new XmlParser(new FileInputStream(fileAar));
-        aarParser.parse();
+        XmlParser hostParse = XmlParser.parse(new FileInputStream(HostManifest));
+        XmlParser aarParser = XmlParser.parse(new FileInputStream(fileAarManifest));
         XmlParser xmlParser = mergeXml(hostParse, aarParser);
         return xmlParser;
     }
 
     private static void writeTest(XmlParser parser) throws Exception {
-        XmlWriter writer = new XmlWriter(new File("/Users/dongyuangui/Desktop/apk-blue/abcxmltest/AndroidManifest-aaa.xml"), parser);
-        writer.write2NewXml();
+        XmlWriter.write2NewXml(new File("/Users/dongyuangui/Desktop/apk-blue/abcxmltest/AndroidManifest-aaa.xml"), parser);
     }
 
-    private static XmlParser mergeXml(XmlParser hostParse, XmlParser aarParser) throws Exception {
+    public static XmlParser mergeXml(XmlParser hostParse, XmlParser aarParser) throws Exception {
 
         MergeArsc.mergelStringBlock(hostParse.getStringBlock(), aarParser.getStringBlock());
 
@@ -66,7 +111,7 @@ public class MergeAndMestFile {
 
     private static void mergeContentChunks(List<Chunk> hostTrunkList, List<Chunk> aarList, XmlParser hostParse, XmlParser aarParser) {
 
-        replaceStringIndex(aarList, hostParse.getStringBlock());
+        replaceStringIndex(aarList, hostParse.getStringBlock(), hostParse.getIdBlock());
 
         List<Chunk> permissions = getTrunksFromAarlist(aarList, "uses-permission");
         List<Chunk> feachers = getTrunksFromAarlist(aarList, "uses-feature");
@@ -92,7 +137,7 @@ public class MergeAndMestFile {
 
     }
 
-    private static void replaceStringIndex(List<Chunk> aarList, StringBlock stringBlock) {
+    private static void replaceStringIndex(List<Chunk> aarList, StringBlock stringBlock, IDsBlock iDsBlock) {
         for (int x = 0; x < aarList.size(); x++) {
             Chunk chunk = aarList.get(x);
             if (chunk instanceof StartTagChunk) {
@@ -129,7 +174,7 @@ public class MergeAndMestFile {
             } else if (chunk instanceof StartNameSpaceChunk) {
                 replaceSimpleChunkStringIndex(chunk, stringBlock);
             } else if (chunk instanceof EndTagChunk) {
-                replaceSimpleChunkStringIndex(chunk,stringBlock);
+                replaceSimpleChunkStringIndex(chunk, stringBlock);
             } else if (chunk instanceof EndNameSpaceChunk) {
                 replaceSimpleChunkStringIndex(chunk, stringBlock);
             }
@@ -160,42 +205,72 @@ public class MergeAndMestFile {
         return 0;
     }
 
+    public static Chunk getStartChunk(List<Chunk> hostTrunkList, String chunkName) {
+        return hostTrunkList.get(findStartPostion(hostTrunkList, chunkName));
+    }
+
     private static List<Chunk> getTrunksFromAarlist(List<Chunk> aarList, String name) {
         ArrayList<Chunk> list = new ArrayList();
-        boolean closed = true;
+        boolean open = false;
         for (int i = 0; i < aarList.size(); i++) {
             Chunk chunk = aarList.get(i);
             if (chunk instanceof StartTagChunk) {
                 StartTagChunk startTagChunk = (StartTagChunk) chunk;
                 if (startTagChunk.getName().equals(name)) {
                     list.add(chunk);
-                    closed = false;
+                    open = true;
                 }
             } else if (chunk instanceof EndTagChunk) {
                 EndTagChunk endTagChunk = (EndTagChunk) chunk;
                 if (endTagChunk.getName().equals(name)) {
                     list.add(chunk);
-                    closed = true;
+                    open = false;
                 }
-            } else {
-                if (!closed) {
+            }
+            if (open) {
+                if (list.get(list.size() - 1) != chunk) {
                     list.add(chunk);
                 }
             }
+
         }
         return list;
     }
 
-    private static void mergeIds(XmlParser hostParse, XmlParser aarParser) {
+    private static void mergeIds(XmlParser hostParse, XmlParser aarParser) throws Exception {
+
+
+        // nameAttr 一个数字表示两个意思，1.ids对应的系统资源id，2对应block的index
         IDsBlock idHostBlock = hostParse.getIdBlock();
+
+        StringBlock hostBlock = hostParse.getStringBlock();
+        int blockLen = hostBlock.oldHostBlockStringCount;
+        int iDLen = idHostBlock.getIds().length;
+        int gapLen = blockLen - iDLen;
+        if (blockLen < idHostBlock.getIds().length) {
+            throw new Exception("晕！理论上ids个数不可能多于stringBlock的");
+        }
+
         IDsBlock idAarBlock = aarParser.getIdBlock();
 
         int[] idsArrayHost = idHostBlock.getIds();
+        int[] gapArray = new int[gapLen];
         int[] aarArrayAar = idAarBlock.getIds();
-        int[] newIdsArray = new int[idsArrayHost.length + aarArrayAar.length];
+        int[] newIdsArray = new int[idsArrayHost.length + aarArrayAar.length + gapArray.length];
         System.arraycopy(idsArrayHost, 0, newIdsArray, 0, idsArrayHost.length);
-        System.arraycopy(aarArrayAar, 0, newIdsArray, idsArrayHost.length, aarArrayAar.length);
+        System.arraycopy(gapArray, 0, newIdsArray, idsArrayHost.length, gapArray.length);
+        System.arraycopy(aarArrayAar, 0, newIdsArray, idsArrayHost.length + gapArray.length, aarArrayAar.length);
         idHostBlock.setIds(newIdsArray);
     }
 
+    public static Attribute getAttributeFromTrunk(StartTagChunk application, String name) {
+        List<Attribute> attributes = application.getAttributeList();
+        for (int i = 0; i < attributes.size(); i++) {
+            Attribute attribute = attributes.get(i);
+            if (attribute.getName().equals("name")) {
+                return attribute;
+            }
+        }
+        return null;
+    }
 }

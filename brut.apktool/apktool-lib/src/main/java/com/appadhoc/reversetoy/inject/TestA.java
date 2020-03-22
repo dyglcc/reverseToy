@@ -11,7 +11,7 @@ import java.io.InputStream;
 
 public class TestA {
     public static void main(String[] args) throws Exception {
-//            InputStream file = Resource.getResourceAsStream("/brut/androlib/EguanApp.smali", TestA.class);
+//            InputStream file = Resource.getResourceAsStream("/brut/androlib/ReverseApp.smali", TestA.class);
 //            String code = Utils.FileUtils.readStringFromStream(file).toString();
 //
 //            EguanSmaliOper oper = new EguanSmaliOper("eguan");

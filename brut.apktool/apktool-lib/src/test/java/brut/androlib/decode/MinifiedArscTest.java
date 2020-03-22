@@ -53,7 +53,7 @@ public class MinifiedArscTest extends BaseTest {
         apkDecoder.setOutDir(sTestNewDir);
 
         // this should not raise an exception:
-        apkDecoder.decode(null);
+        apkDecoder.decode();
     }
 
     @AfterClass

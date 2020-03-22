@@ -30,6 +30,16 @@ public class IDsBlock {
     private int size;
     private int[] ids;
 
+//    public int getOldLen() {
+//        return oldLen;
+//    }
+//
+//    public void setOldLen(int oldLen) {
+//        this.oldLen = oldLen;
+//    }
+//
+//    private int oldLen;
+
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();

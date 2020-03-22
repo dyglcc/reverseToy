@@ -50,7 +50,7 @@ public class EmptyResourcesArscTest {
         LOGGER.info("Decoding issue1730.apk...");
         ApkDecoder apkDecoder = new ApkDecoder(testApk);
         apkDecoder.setOutDir(sTestNewDir);
-        apkDecoder.decode(null);
+        apkDecoder.decode();
 
         LOGGER.info("Building issue1730.apk...");
         ApkOptions apkOptions = new ApkOptions();

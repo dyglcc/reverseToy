@@ -2,7 +2,6 @@ package com.appadhoc.reversetoy;
 
 import android.util.TypedValue;
 import brut.androlib.AndrolibException;
-import brut.androlib.res.decoder.StringBlock;
 import com.appadhoc.reversetoy.aar.Duo_int;
 import com.appadhoc.reversetoy.utils.Utils;
 import luyao.parser.xml.XmlParser;
@@ -39,15 +38,13 @@ public class XmlResIDReplaceTool {
         }
     }
 
-    public static void decodeSingleFileAndReplacIds(File file) throws IOException, AndrolibException {
+    private static void decodeSingleFileAndReplacIds(File file) throws IOException, AndrolibException {
 
         if (file.getName().endsWith(".xml")) {
-            XmlParser parser = new XmlParser(new FileInputStream(file));
-            parser.parse();
+            XmlParser parser = XmlParser.parse(new FileInputStream(file));
             boolean success = replaceIdsFromMapping(parser);
             if (success) { // 覆盖文件
-                XmlWriter writer = new XmlWriter(new File(file.getAbsolutePath()), parser);
-                writer.write2NewXml();
+                XmlWriter.write2NewXml(new File(file.getAbsolutePath()), parser);
             }
         }
 
@@ -120,15 +117,5 @@ public class XmlResIDReplaceTool {
             }
         }
 
-    }
-
-    private static void replaceSimpleChunkStringIndex(Chunk chunk, StringBlock stringBlock) {
-        byte[] rawBytes = chunk.getRawBytes();
-        int namespaceUriAttr = Utils.ByteUtils.getInt(rawBytes, 12);
-        if (namespaceUriAttr != -1) {
-            Utils.ByteUtils.replaceInt(rawBytes, 12, namespaceUriAttr + stringBlock.oldHostBlockStringCount);
-        }
-        int name = Utils.ByteUtils.getInt(rawBytes, 16);
-        Utils.ByteUtils.replaceInt(rawBytes, 16, name + stringBlock.oldHostBlockStringCount);
     }
 }

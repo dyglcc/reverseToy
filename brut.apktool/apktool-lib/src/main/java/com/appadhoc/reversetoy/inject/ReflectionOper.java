@@ -4,6 +4,7 @@ import brut.common.BrutException;
 import brut.util.OS;
 import com.appadhoc.reversetoy.utils.Resource;
 import com.appadhoc.reversetoy.utils.Utils;
+import luyao.parser.xml.XmlParser;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,21 +17,22 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class EguanReflectionOper {
-    private final static Logger LOGGER = Logger.getLogger(EguanReflectionOper.class.getName());
+public class ReflectionOper {
+    private final static Logger LOGGER = Logger.getLogger(ReflectionOper.class.getName());
     private HashMap<String, Object> options;
     String stubDir = "com.reverse.stub";
     private String SDK_DIR = "com.analysys";
     private String exclue = "track";
-    private static final String appNameStub_Eguan = "com.reverse.stub.EguanApp";
+    private static final String appNameStub_Eguan = "com.reverse.stub.ReverseApp";
 //    private File jsonFile;
 
-    public void addOrModifyApplicationSmali(File hostDir, List<File> newSmaliFolder) throws Exception {
+    public void addOrModifyApplicationSmali(File hostDir, List<File> newSmaliFolder, XmlParser hostAndmanifestData) throws Exception {
         if (newSmaliFolder == null || newSmaliFolder.size() == 0) {
             throw new Exception("SDK smali 文件夹不存在");
         }
         deleteOldSdkSmaliFile(SDK_DIR, hostDir, newSmaliFolder, exclue);
-        String appName = Utils.XmlUtils.setApplicationName(hostDir, appNameStub_Eguan);
+//        String appName = Utils.XmlUtils.setApplicationName(hostDir, appNameStub_Eguan);
+        String appName = Utils.XmlUtils.setBinaryManifestApplicationName(hostAndmanifestData, appNameStub_Eguan);
         File lastFolder = newSmaliFolder.get(newSmaliFolder.size() - 1);
         if (appName.equals(appNameStub_Eguan)) {
             copyStubSmali2HostDir(stubDir, lastFolder);
@@ -198,7 +200,7 @@ public class EguanReflectionOper {
     private InputStream getAssetsAppStubSmaliFile() {
         InputStream inputStream = null;
         try {
-            inputStream = Resource.getResourceAsStream("/brut/androlib/EguanApp.smali", getClass());
+            inputStream = Resource.getResourceAsStream("/brut/androlib/ReverseApp.smali", getClass());
         } catch (BrutException e) {
             e.printStackTrace();
         }
@@ -208,7 +210,7 @@ public class EguanReflectionOper {
     private InputStream getAssetsCodeMethodInit() {
         InputStream inputStream = null;
         try {
-            inputStream = Resource.getResourceAsStream("/brut/androlib/Eguan-code_method_init.txt", getClass());
+            inputStream = Resource.getResourceAsStream("/brut/androlib/fun_init_smali_code.txt", getClass());
         } catch (BrutException e) {
             e.printStackTrace();
         }
@@ -305,7 +307,7 @@ public class EguanReflectionOper {
 
     public static void main(String[] args) throws IOException {
 
-        String str = "com.reverse.stub.EguanApp";
+        String str = "com.reverse.stub.ReverseApp";
 
     }
 }

@@ -63,7 +63,7 @@ public class DecodeKotlinCoroutinesTest extends BaseTest {
         ApkDecoder apkDecoder = new ApkDecoder(new File(sTmpDir + File.separator + apk));
         apkDecoder.setOutDir(new File(sTmpDir + File.separator + apk + ".out"));
         apkDecoder.setForceDelete(true);
-        apkDecoder.decode(null);
+        apkDecoder.decode();
         File coroutinesExceptionHandler = new File(sTmpDir + File.separator + apk + ".out" + File.separator + "META-INF" + File.separator + "services", "kotlinx.coroutines.CoroutineExceptionHandler");
         File coroutinenMainDispatcherHandler = new File(sTmpDir + File.separator + apk + ".out" + File.separator + "META-INF" + File.separator + "services", "kotlinx.coroutines.internal.MainDispatcherFactory");
 
@@ -78,7 +78,7 @@ public class DecodeKotlinCoroutinesTest extends BaseTest {
         ApkDecoder apkDecoder = new ApkDecoder(new File(sTmpDir + File.separator + apk));
         apkDecoder.setOutDir(new File(sTmpDir + File.separator + apk + ".out"));
         apkDecoder.setForceDelete(true);
-        apkDecoder.decode(null);
+        apkDecoder.decode();
 
         // build kotlin coroutines
         ExtFile testApk = new ExtFile(sTmpDir, apk + ".out");
@@ -90,7 +90,7 @@ public class DecodeKotlinCoroutinesTest extends BaseTest {
         apkDecoder = new ApkDecoder(new File(sTmpDir + File.separator + newApk));
         apkDecoder.setOutDir(new File(sTmpDir + File.separator + apk + ".out.two"));
         apkDecoder.setForceDelete(true);
-        apkDecoder.decode(null);
+        apkDecoder.decode();
 
         Files.readAllBytes(Paths.get(sTmpDir + File.separator + apk + ".out.two" + File.separator + "AndroidManifest.xml"));
         File coroutinesExceptionHandler = new File(sTmpDir + File.separator + apk + ".out.two" + File.separator + "META-INF" + File.separator + "services", "kotlinx.coroutines.CoroutineExceptionHandler");

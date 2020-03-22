@@ -19,20 +19,21 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
-
+import static luyao.parser.utils.Reader.log;
 import static brut.androlib.res.decoder.ARSCDecoder.ENTRY_FLAG_COMPLEX;
 
 public class MergeArsc {
     private final static Logger LOGGER = Logger.getLogger(AarManager.class.getName());
     public static LinkedHashMap<Integer, Duo_int> mapping = new LinkedHashMap<>();
+
     public static void main(String[] args) throws Exception {
 
-//        readOldApk(null);
+        readOldApk(null);
 //
-        ResTable hostTableTable = merge2Arsc();
+//        ResTable hostTableTable = merge2Arsc();
 //        //        以上合并，并且打包出一个apk
 //////        // ########################################################################################################
-        File outputFile = createApk(hostTableTable);
+//        File outputFile = createApk(hostTableTable);
 //        // code 读取合并后的文件。
 //        // 读取合成后的apk文件看问题出在哪里
 //        readNew(outputFile);
@@ -61,8 +62,7 @@ public class MergeArsc {
         if (outArsc.exists()) {
             OS.rmfile(outArsc.getAbsolutePath());
         }
-        WriterNp np = new WriterNp(outArsc, hostTableTable);
-        np.write();
+        WriterNp.write(outArsc, hostTableTable);
         long t0 = System.currentTimeMillis();
         System.out.println("write file 耗时" + (t0 - t1));
         // copy 新的arsc文件到abc0000
@@ -81,6 +81,7 @@ public class MergeArsc {
         ResTable mytable = resources.getResTable(new ExtFile(outputFile));
         System.out.println("host table is " + mytable.getmMainPackages().size());
     }
+
     public static void readNewApk(String path) throws AndrolibException {
         AndrolibResources resources = new AndrolibResources();
         ResTable mytable = resources.getResTable(new ExtFile(path));
@@ -94,7 +95,7 @@ public class MergeArsc {
         System.out.println("host table is " + mytable.getmMainPackages().size());
     }
 
-    private static void mergeAarTable2HostTable(ResTable hostTableTable, ResTable aarTable) throws Exception {
+    public static ResTable mergeAarTable2HostTable(ResTable hostTableTable, ResTable aarTable) throws Exception {
 
         // merge GlobalStringBlock
 
@@ -105,6 +106,7 @@ public class MergeArsc {
         mergePackage(hostTableTable.getPackage(127), aarTable.getPackage(127), hostTableTable);
 
         // merge type
+        return hostTableTable;
 
     }
 
@@ -120,7 +122,7 @@ public class MergeArsc {
                 if (hostDupSpec != null) {
                     ResID resID = resResSpec.getId();
                     mapping.put(resID.id, new Duo_int(resID.id, hostDupSpec.getId().id));
-                    int[]  offsets = aarRaw.getEntryOffsets();
+                    int[] offsets = aarRaw.getEntryOffsets();
                     short id = (short) resID.id;
                     offsets[id] = -1;
                     LOGGER.info(" remove dup spec name " + keyNameAar + "  " + typeName + " " + aarRaw.getConfigName());
@@ -150,7 +152,7 @@ public class MergeArsc {
         mergelStringBlock(hostPackage.getmTypeNames(), aarPackage.getmTypeNames());
         mergelStringBlock(hostPackage.getmSpecNames(), aarPackage.getmSpecNames());
         StringBlock type = hostPackage.getmTypeNames();
-        hostPackage.setKeyStrings(hostPackage.getTypeString()+ ArscHeadCalc.getBytesCountByStringBlock(type));
+        hostPackage.setKeyStrings(hostPackage.getTypeString() + ArscHeadCalc.getBytesCountByStringBlock(type));
 
         mergeLibrary();
 
@@ -183,6 +185,7 @@ public class MergeArsc {
             ResTypeSpec typeSpec = hostPackage.getmTypes().get(typeName);
             if (hostRaw != null) {
                 // 都存在的config
+                log("exist" + hostRaw.getConfigName());
                 mergeSingleSameType(hostRaw, aarRaw, host.get(hostRaw), aar.get(aarRaw), typeSpec.getId());
             } else {
                 // 不存在的config
@@ -251,7 +254,6 @@ public class MergeArsc {
     }
 
 
-
     private static final int NEW_TYPE = 0;
     private static final int NEW_CONFIGRATION = 1;
 
@@ -259,15 +261,14 @@ public class MergeArsc {
                                             ConfigFlagRaw aarRaw,
                                             List<ResResource> aarList,
                                             int typeId, String configName, String typeName) throws Exception {
-//        String name = aarRaw.getConfigName();
-//        String[] splits = name.split("&&");
-        int newType = checkNewType(configName, typeName, host);
+        int newType = checkNewType(typeName, host);
+        log("new Type is "+ newType);
 
         if (newType == NEW_CONFIGRATION) {
             // 需要需要找到default的ConfigRaw，获取到entryOffsetCount
 //            String typeName = splits[1];
-            String keyName = "[DEFAULT]" + "&&" + typeName;
-            ConfigFlagRaw hostConfig = findConfigRawFromHost(keyName, host);
+//            String keyName = "[DEFAULT]" + "&&" + typeName;
+            ConfigFlagRaw hostConfig = findAModelConfigRawFromHost(typeName, host);
             if (hostConfig == null) {
                 throw new Exception("find configRaw npe ");
             }
@@ -301,7 +302,7 @@ public class MergeArsc {
         }
     }
 
-    private static int checkNewType(String config_name, String type, LinkedHashMap<ConfigFlagRaw, List<ResResource>> host) {
+    private static int checkNewType(String type, LinkedHashMap<ConfigFlagRaw, List<ResResource>> host) {
         for (Map.Entry entry : host.entrySet()) {
             ConfigFlagRaw raw = (ConfigFlagRaw) entry.getKey();
             String keyName = raw.getConfigName();
@@ -312,10 +313,11 @@ public class MergeArsc {
         return NEW_TYPE;
     }
 
-    private static ConfigFlagRaw findConfigRawFromHost(String keyName, LinkedHashMap<ConfigFlagRaw, List<ResResource>> host) {
+    private static ConfigFlagRaw findAModelConfigRawFromHost(String type, LinkedHashMap<ConfigFlagRaw, List<ResResource>> host) {
         for (Map.Entry entry : host.entrySet()) {
             ConfigFlagRaw raw = (ConfigFlagRaw) entry.getKey();
-            if (raw.getConfigName().equals(keyName)) {
+            String keyName = raw.getConfigName();
+            if (keyName.endsWith("&&" + type)) {
                 return raw;
             }
         }
@@ -445,6 +447,46 @@ public class MergeArsc {
 
     }
 
+    public static int addSingleString2StringBlockTail(StringBlock hostStringBlock, String str) throws Exception {
+        int flags = hostStringBlock.getFlags();
+        byte[] strBytes;
+        byte[] m_stringsOld = hostStringBlock.getM_strings();
+        int[] m_stringOffsetOld = hostStringBlock.getM_stringOffsets();
+        int[] newStringOffset = new int[m_stringOffsetOld.length + 1];
+        byte[] newStrings;
+        System.arraycopy(m_stringOffsetOld, 0, newStringOffset, 0, m_stringOffsetOld.length);
+        int remain = 0;
+        if (flags == 256) { // utf8
+            strBytes = str.getBytes(StandardCharsets.UTF_8);
+            int allLen = m_stringsOld.length + strBytes.length + 3;
+            if (allLen % 4 != 0) {
+                remain = 4 - (allLen % 4);
+                allLen += remain;
+            }
+            newStrings = new byte[allLen];
+            System.arraycopy(m_stringsOld, 0, newStrings, 0, m_stringsOld.length);
+
+            writeSingleStrBytesUTF8(strBytes, newStrings, m_stringsOld.length, str.length());
+        } else {
+            strBytes = str.getBytes(StandardCharsets.UTF_16LE);
+            int allLen = m_stringsOld.length + strBytes.length + 4;
+            if (allLen % 4 != 0) {
+                remain = 4 - (allLen % 4);
+                allLen += remain;
+            }
+            newStrings = new byte[allLen];
+            System.arraycopy(m_stringsOld, 0, newStrings, 0, m_stringsOld.length);
+
+            writeSingleStrBytesUTF16LE(strBytes, newStrings, m_stringsOld.length, str.length());
+        }
+        // offsets
+        newStringOffset[m_stringOffsetOld.length] = m_stringsOld.length;
+        // combine merge offset
+        hostStringBlock.setM_strings(newStrings);
+        hostStringBlock.setM_stringOffsets(newStringOffset);
+        return m_stringOffsetOld.length;
+    }
+
 
     public static void reEncode2UTF16(StringBlock aarStringBlock) {
         int[] offsets = aarStringBlock.getM_stringOffsets();
@@ -459,7 +501,7 @@ public class MergeArsc {
         for (int i = 0, offset = 0; i < newOffset.length; i++) {
             newOffset[i] = offset;
             byte[] strBytes = strings[i].getBytes(StandardCharsets.UTF_16LE);
-            writeEveryStrBytesUTF16LE(strBytes, newStrings, offset, strings[i].length());
+            writeSingleStrBytesUTF16LE(strBytes, newStrings, offset, strings[i].length());
             offset += strBytes.length + 4;
         }
         aarStringBlock.setM_strings(newStrings);
@@ -481,7 +523,7 @@ public class MergeArsc {
         for (int i = 0, offset = 0; i < newOffset.length; i++) {
             newOffset[i] = offset;
             byte[] strBytes = strings[i].getBytes(StandardCharsets.UTF_8);
-            writeEveryStrBytesUTF8(strBytes, newStrings, offset, strings[i].length());
+            writeSingleStrBytesUTF8(strBytes, newStrings, offset, strings[i].length());
             offset += strBytes.length + 3;
         }
         aarStringBlock.setM_strings(newStrings);
@@ -490,7 +532,7 @@ public class MergeArsc {
         aarStringBlock.m_isUTF8 = true;
     }
 
-    private static void writeEveryStrBytesUTF16LE(byte[] strBytes, byte[] newStrings, int offset, int nameLen) {
+    private static void writeSingleStrBytesUTF16LE(byte[] strBytes, byte[] newStrings, int offset, int nameLen) {
         int len = strBytes.length;
         byte high = (byte) ((nameLen & 0xff) >> 8);
         byte low = (byte) nameLen;
@@ -501,7 +543,7 @@ public class MergeArsc {
         newStrings[offset + len + 3] = 0;
     }
 
-    private static void writeEveryStrBytesUTF8(byte[] strBytes, byte[] newStrings, int offset, int charLen) {
+    private static void writeSingleStrBytesUTF8(byte[] strBytes, byte[] newStrings, int offset, int charLen) {
         int len = strBytes.length;
         newStrings[offset] = (byte) charLen;
         newStrings[offset + 1] = (byte) charLen;
@@ -601,5 +643,15 @@ public class MergeArsc {
         for (int i = 0; i < aarStringBlockOffset.length; i++) {
             aarStringBlockOffset[i] += length;
         }
+    }
+
+    public static int getPosFromBlockByString(StringBlock block, String schmas) {
+        int len = block.getM_stringOffsets().length;
+        for (int i = 0; i < len; i++) {
+            if (schmas.equals(block.get(i))) {
+                return i;
+            }
+        }
+        return -1;
     }
 }

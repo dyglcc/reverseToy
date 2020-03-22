@@ -54,7 +54,7 @@ public class Empty9PatchTest extends BaseTest {
         sTestOrigDir = new ExtFile(sTmpDir + File.separator + apk + ".out");
 
         apkDecoder.setOutDir(new File(sTmpDir + File.separator + apk + ".out"));
-        apkDecoder.decode(null);
+        apkDecoder.decode();
 
         File aPng =  new File(sTestOrigDir,"res/drawable-xhdpi/empty.9.png");
         assertTrue(aPng.isFile());

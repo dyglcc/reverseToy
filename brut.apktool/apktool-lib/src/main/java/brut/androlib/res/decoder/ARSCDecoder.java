@@ -117,10 +117,10 @@ public class ARSCDecoder {
             mTypeIdOffset = 0;
             packages[i] = readTablePackage();
             int packageCountByte = mCountIn.getCount();
-            System.out.println("package[" + i + "] is " + (packageCountByte - startCountPackage));
+//            System.out.println("package[" + i + "] is " + (packageCountByte - startCountPackage));
         }
         int packageCountByte = mCountIn.getCount();
-        System.out.println("packageCount is " + (packageCountByte - startCount));
+//        System.out.println("packageCount is " + (packageCountByte - startCount));
         return packages;
     }
 

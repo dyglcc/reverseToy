@@ -3,7 +3,6 @@ package com.appadhoc.reversetoy.aar;
 
 import brut.androlib.AndrolibException;
 import brut.androlib.res.AndrolibResources;
-import brut.androlib.res.data.ResPackage;
 import brut.androlib.res.data.ResTable;
 import brut.common.BrutException;
 import brut.directory.Directory;
@@ -13,8 +12,12 @@ import brut.directory.ZipRODirectory;
 import brut.util.AaptManager;
 import brut.util.OS;
 import com.appadhoc.reversetoy.AbstractManager;
-import com.appadhoc.reversetoy.data.AarID;
+import com.appadhoc.reversetoy.MergeAndMestFile;
+import com.appadhoc.reversetoy.MergeArsc;
+import com.appadhoc.reversetoy.XmlResIDReplaceTool;
 import com.appadhoc.reversetoy.utils.Utils;
+import luyao.parser.xml.XmlParser;
+import luyao.parser.xml.XmlWriter;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -27,12 +30,14 @@ import java.util.logging.Logger;
 public class AarManager extends AbstractManager {
     private final static Logger LOGGER = Logger.getLogger(AarManager.class.getName());
     private String aarPackageName;
-//    private Map<String, LinkedHashMap> ids;
+    private Map<String, LinkedHashMap> ids;
     private File toyWorkspace;
     private File tmpDir;
     private File rFiledir;
     private String hostPackageName;
     private File aarFile;
+    private File hostDir;
+    private ResTable mHostTable;
 
     private String getAarFileName() {
         return aarFile == null ? "" : Utils.getNameRemovedSuffix(aarFile.getName());
@@ -149,12 +154,13 @@ public class AarManager extends AbstractManager {
 //
 //    }
 
-    public void preCombin(File hostUnzipDir) {
+    public void unzipAarAndCreateTmpApk() {
         try {
             unzipAarFile();
             setAarPackageId();
             replaceAndroidManifestWithHostPackageId();
             aaptAarPackageNew();
+            unzipCompiledTmpApk();
             compileRfile2class();
             // read aar ids
             File rRile = getRjavaFile();
@@ -169,13 +175,31 @@ public class AarManager extends AbstractManager {
         }
     }
 
+    private void unzipCompiledTmpApk() throws IOException {
+        File zipfile = getTmpApkFile();
+        compiledAarApkDir = new File(zipfile.getParentFile(),Utils.getNameRemovedSuffix(zipfile.getName()));
+        Utils.FileUtils.unzip(zipfile, compiledAarApkDir);
+    }
+
     @Override
-    public void addMergeArscFile() throws Exception {
+    public void mergeArscFile() throws Exception {
         AndrolibResources resources = new AndrolibResources();
-        ResTable hostTableTable = resources.getResTable(new ExtFile("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk"));
-        todo ..merge arsc file ,
+        ResTable aarTableTable = resources.getResTable(new ExtFile(getTmpApkFile()));
+        MergeArsc.mergeAarTable2HostTable(mHostTable,aarTableTable);
+        WriterNp.write(new File(hostDir,"resources.arsc"),mHostTable);
+    }
 
+    private File compiledAarApkDir;
+    @Override
+    public void mergeManifestFile(XmlParser hostAndroidMenifest) throws Exception {
+        File fileAar = new File(compiledAarApkDir,"AndroidManifest.xml");
+        XmlParser aarParse = XmlParser.parse(new FileInputStream(fileAar));
+//        aarParse.parse(new FileInputStream(fileAar));
 
+        XmlParser data = MergeAndMestFile.mergeXml(hostAndroidMenifest,aarParse);
+        File dest = new File(hostDir,"AndroidManifest.xml");
+        XmlWriter.write2NewXml(dest, data); // 生成了mapping文件
+        LOGGER.info("merge AndroidManifest.xml 2 " +dest.getAbsolutePath());
     }
 
     private void setAarPackageId() throws IOException, SAXException, ParserConfigurationException {
@@ -303,37 +327,37 @@ public class AarManager extends AbstractManager {
         return new File(tmpDir, "aar_tmp.apk");
     }
 
-    public void aaptAarPackageOld()
-            throws BrutException, IOException {
-        List<String> cmd = new ArrayList<String>();
-        if (!getAarres().exists()) {
-            LOGGER.fine("aar file have no res file");
-            return;
-        }
-        try {
-            String aaptCommand = AaptManager.getAppt1().getAbsolutePath();
-            cmd.add(aaptCommand);
-        } catch (BrutException ex) {
-            LOGGER.warning("aapt: " + ex.getMessage() + " (defaulting to $PATH binary)");
-        }
-        cmd.add("package");
-        cmd.add("-f");
-        cmd.add("-m");
-        cmd.add("-J");
-        cmd.add(getRFileDir().getAbsolutePath());
-//        cmd.add("-F");
-//        cmd.add(getTmpApkFile().getAbsolutePath());
-
-        cmd.add("-S");
-        cmd.add(getAarres().getAbsolutePath());
-        cmd.add("-I");
-
-        cmd.add(Utils.BuildPackage.getAndroidJar(AarManager.class).getAbsolutePath());
-        cmd.add("-M");
-
-        cmd.add(getAarManifest().getAbsolutePath());
-        Utils.OSCMD.runCMD(cmd);
-    }
+//    public void aaptAarPackageOld()
+//            throws BrutException, IOException {
+//        List<String> cmd = new ArrayList<String>();
+//        if (!getAarres().exists()) {
+//            LOGGER.fine("aar file have no res file");
+//            return;
+//        }
+//        try {
+//            String aaptCommand = AaptManager.getAppt1().getAbsolutePath();
+//            cmd.add(aaptCommand);
+//        } catch (BrutException ex) {
+//            LOGGER.warning("aapt: " + ex.getMessage() + " (defaulting to $PATH binary)");
+//        }
+//        cmd.add("package");
+//        cmd.add("-f");
+//        cmd.add("-m");
+//        cmd.add("-J");
+//        cmd.add(getRFileDir().getAbsolutePath());
+////        cmd.add("-F");
+////        cmd.add(getTmpApkFile().getAbsolutePath());
+//
+//        cmd.add("-S");
+//        cmd.add(getAarres().getAbsolutePath());
+//        cmd.add("-I");
+//
+//        cmd.add(Utils.BuildPackage.getAndroidJar(AarManager.class).getAbsolutePath());
+//        cmd.add("-M");
+//
+//        cmd.add(getAarManifest().getAbsolutePath());
+//        Utils.OSCMD.runCMD(cmd);
+//    }
     public void aaptAarPackageNew()
             throws BrutException, IOException {
         List<String> cmd = new ArrayList<String>();
@@ -376,40 +400,46 @@ public class AarManager extends AbstractManager {
 
     @Override
     public void setHostDir(File hostDir) throws Exception {
+        this.hostDir = hostDir;
+    }
+
+    @Override
+    public void sethostArscTable(ResTable mHostTable) {
+        this.mHostTable = mHostTable;
 
     }
 
-    private void copyFiles(File hostdir) throws IOException, BrutException {
-        File unzipFile = new File(tmpDir, getAarFileName());
-        File valuesFile = new File(unzipFile, "/res/values");
+    private void copyFiles(File hostdir) throws  BrutException {
+//        File unzipFile = new File(tmpDir, getAarFileName());
+//        File valuesFile = new File(unzipFile, "/res/values");
         // rename values files
-        if (valuesFile.exists()) {
-            for (File xmlFile : valuesFile.listFiles()) {
-                if (xmlFile.getName().endsWith(".xml")) {
-                    String fileName = xmlFile.getName();
-                    fileName = fileName.substring(0, fileName.lastIndexOf(".xml"));
-                    String newName = fileName + System.currentTimeMillis() + "_sdk.xml";
-                    File rename = new File(valuesFile, newName);
-                    boolean success = Utils.FileUtils.reNameFile(xmlFile.getAbsolutePath(), rename.getAbsolutePath());
-                    LOGGER.info("change file " + fileName + " 2 " + newName + " success " + success);
-                }
-            }
-        } else {
-            LOGGER.info("res/values/ file not exist");
-        }
-
+//        if (valuesFile.exists()) {
+//            for (File xmlFile : valuesFile.listFiles()) {
+//                if (xmlFile.getName().endsWith(".xml")) {
+//                    String fileName = xmlFile.getName();
+//                    fileName = fileName.substring(0, fileName.lastIndexOf(".xml"));
+//                    String newName = fileName + System.currentTimeMillis() + "_sdk.xml";
+//                    File rename = new File(valuesFile, newName);
+//                    boolean success = Utils.FileUtils.reNameFile(xmlFile.getAbsolutePath(), rename.getAbsolutePath());
+//                    LOGGER.info("change file " + fileName + " 2 " + newName + " success " + success);
+//                }
+//            }
+//        } else {
+//            LOGGER.info("res/values/ file not exist");
+//        }
         // copy res
         File resHost = new File(hostdir, "res");
-        File resAar = new File(unzipFile, "res");
+        File resAar = new File(compiledAarApkDir, "res");
+        if(!resHost.exists()){
+            resHost.mkdirs();
+        }
         if (resAar.exists()) {
             OS.cpdir(resAar, resHost);
             LOGGER.info("拷贝res文件到host文件");
         }
-
-
         // copy assets
         File assetsHost = new File(hostdir, "assets");
-        File assetsAar = new File(unzipFile, "assets");
+        File assetsAar = new File(compiledAarApkDir, "assets");
         if (assetsAar.exists()) {
             OS.cpdir(assetsAar, assetsHost);
             LOGGER.info("拷贝assets文件到host文件");
@@ -418,16 +448,59 @@ public class AarManager extends AbstractManager {
         // copy jni
 
         File jniHost = new File(hostdir, "jni");
-        File jniAar = new File(unzipFile, "jni");
+        File jniAar = new File(compiledAarApkDir, "jni");
         if (jniAar.exists()) {
             OS.cpdir(jniAar, jniHost);
             LOGGER.info("拷贝jni文件到host文件");
         }
 
     }
+//    private void copyFiles(File hostdir) throws IOException, BrutException {
+//        File unzipFile = new File(tmpDir, getAarFileName());
+//        File valuesFile = new File(unzipFile, "/res/values");
+//        // rename values files
+//        if (valuesFile.exists()) {
+//            for (File xmlFile : valuesFile.listFiles()) {
+//                if (xmlFile.getName().endsWith(".xml")) {
+//                    String fileName = xmlFile.getName();
+//                    fileName = fileName.substring(0, fileName.lastIndexOf(".xml"));
+//                    String newName = fileName + System.currentTimeMillis() + "_sdk.xml";
+//                    File rename = new File(valuesFile, newName);
+//                    boolean success = Utils.FileUtils.reNameFile(xmlFile.getAbsolutePath(), rename.getAbsolutePath());
+//                    LOGGER.info("change file " + fileName + " 2 " + newName + " success " + success);
+//                }
+//            }
+//        } else {
+//            LOGGER.info("res/values/ file not exist");
+//        }
+//
+//        // copy res
+//        File resHost = new File(hostdir, "res");
+//        File resAar = new File(unzipFile, "res");
+//        if (resAar.exists()) {
+//            OS.cpdir(resAar, resHost);
+//            LOGGER.info("拷贝res文件到host文件");
+//        }
+//        // copy assets
+//        File assetsHost = new File(hostdir, "assets");
+//        File assetsAar = new File(unzipFile, "assets");
+//        if (assetsAar.exists()) {
+//            OS.cpdir(assetsAar, assetsHost);
+//            LOGGER.info("拷贝assets文件到host文件");
+//        }
+//
+//        // copy jni
+//
+//        File jniHost = new File(hostdir, "jni");
+//        File jniAar = new File(unzipFile, "jni");
+//        if (jniAar.exists()) {
+//            OS.cpdir(jniAar, jniHost);
+//            LOGGER.info("拷贝jni文件到host文件");
+//        }
+//
+//    }
 
     private void reArrangeRsmalifileIDs(File aarSmaliFilerDirs) throws Exception {
-
 
         if (aarSmaliFilerDirs == null || !aarSmaliFilerDirs.exists()) {
             throw new Exception("need all aarSmaliFile but not found");
@@ -437,7 +510,7 @@ public class AarManager extends AbstractManager {
             throw new Exception("aar file pacagename is null");
         }
 
-        if (ids == null) {
+        if (MergeArsc.mapping == null) {
             LOGGER.fine("ids is empty");
             return;
         }
@@ -451,7 +524,7 @@ public class AarManager extends AbstractManager {
         for (File file : Objects.requireNonNull(rSmalidir.listFiles())) {
             if (file.getName().contains("R$")) {
                 System.out.println(file.getName());
-                StringBuilder stringBuilder = Utils.RFileUtils.smaliFileIdReplace(file, ids);
+                StringBuilder stringBuilder = Utils.RFileUtils.smaliFileIdReplace(file, MergeArsc.mapping);
                 Utils.FileUtils.writeString2File(new File(file.getAbsolutePath()), stringBuilder.toString());
             }
         }
@@ -511,41 +584,24 @@ public class AarManager extends AbstractManager {
 
     }
 
-    public void addIDs2HostFile(File apkOutFile) throws Exception {
-
-        Utils.XmlUtils.addIDs2HostIds(ids, apkOutFile);
+    public void replacAarIdsIDs(File apkOutFile) throws Exception {
+        XmlResIDReplaceTool.decodeDirAndReplace(new File(compiledAarApkDir,"res"));
     }
 
     public static void main(String[] args) throws Exception {
+        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
+        File apkOutFile = new File(srcApkfile.getParentFile(), Utils.getNameRemovedSuffix(srcApkfile.getName()));
+        AndrolibResources resources = new AndrolibResources();
+
+        ResTable hostTableTable = resources.getResTable(new ExtFile("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk"));
 
         AarManager manager = new AarManager("/Users/dongyuangui/Desktop/aar-1/abtest-release.aar");
-        File fileHostApk = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
-        File outArsc = new File("/Users/dongyuangui/Desktop/apk-blue/out--.arsc");
-//       第一步，让arsc decoder 读取文件 aar arsc文件，
-//
-//
-        // 读取了hostApk了
-//        第三步，去重复aar arsc文件， // 先不去重，
-//        第四部，重新写arsc文件，
-//        写的时候，从aar arsc table里面拿出来数据，填进去
-
-
-//        第二步，读取host arsc文件
-
-        manager.unzipAarFile();
-//        manager.setHostPackageName("abc.abc.eea");
-        manager.replaceAndroidManifestWithHostPackageId();
-        manager.aaptAarPackageNew();
-
-//        如何去重呢？两个arsc文件都要读取出来，aar 的arsc去重。 todo ,暂时不去重
-
+        manager.setHostPackageName("abc.abc.eea");
+        manager.setHostDir(apkOutFile);
+        manager.sethostArscTable(hostTableTable);
+        manager.unzipAarAndCreateTmpApk();
 
 
     }
-
-    public File getOutPutArscFile() {
-        return new File(tmpDir, "output.arsc");
-    }
-
 
 }

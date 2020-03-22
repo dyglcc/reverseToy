@@ -3,6 +3,7 @@ package luyao.parser.xml;
 import brut.androlib.AndrolibException;
 import brut.common.BrutException;
 import brut.util.OS;
+import com.appadhoc.reversetoy.MergeAndMestFile;
 import com.appadhoc.reversetoy.aar.WriterNp;
 import com.appadhoc.reversetoy.aar.XmlHeadCalc;
 import com.google.common.io.CountingOutputStream;
@@ -21,32 +22,40 @@ public class XmlWriter {
     XmlParser data;
     CountingOutputStream mCount;
 
-    public static void main(String... args) throws IOException, BrutException {
-        File file = testWriteFile();
-        testReadNewFile(file);
+    public static void main(String... args) throws Exception {
+//        File file = testWriteFile();
+        File out = testMergeWriteRead();
+        testReadNewFile(out);
 //        testOldFile(null);
     }
 
     private static void testReadNewFile(File file) throws IOException {
-        XmlParser parser = new XmlParser(new FileInputStream(file));
-        parser.parse();
+        XmlParser parser = XmlParser.parse(new FileInputStream(file));
+    }
+    private static File testMergeWriteRead() throws Exception {
+        File host = new File("/Users/dongyuangui/Desktop/apk-blue/app/AndroidManifest.xml");
+        File aar = new File("/Users/dongyuangui/Desktop/aar-1/aar/tmp0b785/aar_tmp/AndroidManifest.xml");
+        XmlParser hosData = MergeAndMestFile.mergeAndroidMestFile(host,aar);
+
+        File destFile = new File("/Users/dongyuangui/Desktop/apk-blue/abcxmltest/AndroidManifest-aaa.xml");
+        XmlWriter.write2NewXml(destFile,hosData);
+        return destFile;
+
     }
 
     private static void testOldFile(File file) throws IOException {
-        XmlParser parser = new XmlParser(new FileInputStream("/Users/dongyuangui/Desktop/apk-blue/abcxmltest/AndroidManifest.xml"));
-        parser.parse();
+        XmlParser parser = XmlParser.parse(new FileInputStream("/Users/dongyuangui/Desktop/apk-blue/abcxmltest/AndroidManifest.xml"));
         System.out.println("read file count " + XmlHeadCalc.getXmlSize(parser));
     }
 
     private static File testWriteFile() throws IOException, BrutException {
-        XmlParser parser = new XmlParser(new FileInputStream("/Users/dongyuangui/Desktop/apk-blue/abcxmltest/AndroidManifest.xml"));
-        parser.parse();
+        XmlParser parser = XmlParser.parse(new FileInputStream("/Users/dongyuangui/Desktop/apk-blue/app/AndroidManifest.xml"));
+
         File destFile = new File("/Users/dongyuangui/Desktop/apk-blue/abcxmltest/AndroidManifest-aaa.xml");
         if (destFile.exists()) {
             OS.rmfile(destFile.getAbsolutePath());
         }
-        XmlWriter xmlWriter = new XmlWriter(destFile, parser);
-        xmlWriter.write2NewXml();
+        XmlWriter.write2NewXml(destFile, parser);
         return destFile;
     }
 
@@ -62,11 +71,12 @@ public class XmlWriter {
         }
     }
 
-    public void write2NewXml() throws IOException, AndrolibException {
-        writeHeader();
-        writeStringPool();
-        writeIds(data.getIdBlock(),data.getIdsType());
-        writeXmlContentChunk(data.getChunkList());
+    public static void write2NewXml(File outXml, XmlParser parser) throws IOException, AndrolibException {
+        XmlWriter writer = new XmlWriter(outXml,parser);
+        writer.writeHeader();
+        writer.writeStringPool();
+        writer.writeIds(parser.getIdBlock(),parser.getIdsType());
+        writer.writeXmlContentChunk(parser.getChunkList());
     }
 
     private void writeStringPool() throws IOException, AndrolibException {

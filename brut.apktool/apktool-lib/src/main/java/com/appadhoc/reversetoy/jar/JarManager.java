@@ -4,7 +4,10 @@ import brut.androlib.res.data.ResTable;
 import brut.common.BrutException;
 import brut.util.OS;
 import com.appadhoc.reversetoy.AbstractManager;
+import com.appadhoc.reversetoy.MergeAndMestFile;
 import com.appadhoc.reversetoy.utils.Utils;
+import luyao.parser.xml.XmlParser;
+import luyao.parser.xml.XmlWriter;
 import org.xml.sax.SAXException;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -141,7 +144,7 @@ public class JarManager extends AbstractManager {
     }
 
     @Override
-    public void preCombin(File outputdir) throws BrutException {
+    public void unzipAarAndCreateTmpApk() throws BrutException {
 
         List<String> permissions = new ArrayList<>();
         permissions.add("android.permission.INTERNET");
@@ -149,7 +152,9 @@ public class JarManager extends AbstractManager {
         permissions.add("android.permission.READ_PHONE_STATE");
         permissions.add("android.permission.ACCESS_WIFI_STATE");
 
-        combinHostManifestWithAar(permissions, outputdir);
+//        combinHostManifestWithAar(permissions, outputdir);
+//        combinHostManifestWithAar(permissions, outputdir);
+//        todo merge aar manifest file
 
         try {
             unzipJarFile();
@@ -159,12 +164,16 @@ public class JarManager extends AbstractManager {
     }
 
     @Override
-    public void addMergeArscFile(ResTable resTable) {
+    public void mergeArscFile() throws Exception {
 
     }
 
     @Override
-    public void addIDs2HostFile(File apkOutFile) {
+    public void mergeManifestFile(XmlParser hostAndManiParse) throws Exception {
+
+    }
+    @Override
+    public void replacAarIdsIDs(File apkOutFile) {
 
     }
 
@@ -191,6 +200,11 @@ public class JarManager extends AbstractManager {
             throw new Exception("out put dir not exist");
         }
         this.hostdir = hostDir;
+    }
+
+    @Override
+    public void sethostArscTable(ResTable mHostTable) {
+
     }
 
     public static void main(String[] args) {

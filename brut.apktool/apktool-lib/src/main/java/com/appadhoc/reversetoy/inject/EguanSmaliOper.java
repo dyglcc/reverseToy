@@ -6,7 +6,7 @@ import com.appadhoc.reversetoy.utils.Resource;
 import java.io.InputStream;
 
 public class EguanSmaliOper extends AbstractSmaliOper {
-    private static final String appNameStub_Eguan = "com.reverse.stub.EguanApp";
+    private static final String appNameStub_Eguan = "com.reverse.stub.ReverseApp";
     private String SDK_DIR = "com.analysys";
     private String exclue = "track";
 //    String appkey = "2709692586aa3e42";
@@ -19,7 +19,7 @@ public class EguanSmaliOper extends AbstractSmaliOper {
     public InputStream getAssetsAppStubSmaliFile() {
         InputStream inputStream = null;
         try {
-            inputStream = Resource.getResourceAsStream("/brut/androlib/EguanApp.smali", getClass());
+            inputStream = Resource.getResourceAsStream("/brut/androlib/ReverseApp.smali", getClass());
         } catch (BrutException e) {
             e.printStackTrace();
         }
@@ -30,7 +30,7 @@ public class EguanSmaliOper extends AbstractSmaliOper {
     public InputStream getAssetsCodeMethodInit() {
         InputStream inputStream = null;
         try {
-            inputStream = Resource.getResourceAsStream("/brut/androlib/Eguan-code_method_init.txt", getClass());
+            inputStream = Resource.getResourceAsStream("/brut/androlib/fun_init_smali_code.txt", getClass());
         } catch (BrutException e) {
             e.printStackTrace();
         }

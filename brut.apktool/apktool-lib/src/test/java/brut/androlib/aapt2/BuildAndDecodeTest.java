@@ -56,7 +56,7 @@ public class BuildAndDecodeTest extends BaseTest {
         LOGGER.info("Decoding testapp.apk...");
         ApkDecoder apkDecoder = new ApkDecoder(testApk);
         apkDecoder.setOutDir(sTestNewDir);
-        apkDecoder.decode(null);
+        apkDecoder.decode();
     }
 
     @AfterClass

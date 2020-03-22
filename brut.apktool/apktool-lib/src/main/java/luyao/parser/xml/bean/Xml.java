@@ -1,7 +1,6 @@
 package luyao.parser.xml.bean;
 
 import brut.androlib.res.decoder.StringBlock;
-import luyao.parser.utils.Reader;
 import luyao.parser.xml.bean.chunk.Chunk;
 
 import java.util.HashMap;

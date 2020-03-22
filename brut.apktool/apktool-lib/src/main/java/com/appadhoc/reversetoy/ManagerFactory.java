@@ -1,6 +1,5 @@
 package com.appadhoc.reversetoy;
 
-import brut.util.Jar;
 import com.appadhoc.reversetoy.aar.AarManager;
 import com.appadhoc.reversetoy.jar.JarManager;
 

@@ -54,7 +54,7 @@ public class NonStandardPkgIdTest extends BaseTest {
         LOGGER.info("Decoding pkgid8.apk...");
         ApkDecoder apkDecoder = new ApkDecoder(testApk);
         apkDecoder.setOutDir(sTestNewDir);
-        apkDecoder.decode(null);
+        apkDecoder.decode();
         mResTable = apkDecoder.getResTable();
     }
 

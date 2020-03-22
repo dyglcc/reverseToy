@@ -114,7 +114,6 @@ public class StartTagChunk extends Chunk {
     @Override
     public String toXmlString() {
         StringBuilder builder = new StringBuilder();
-        System.out.println("test " + name);
         if (name.replace(" ", "").equals("manifest")) {
             builder.append("<manifest");
             for (String key : Xml.nameSpaceMap.keySet()) {

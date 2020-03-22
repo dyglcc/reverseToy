@@ -54,6 +54,6 @@ public class ParentDirectoryTraversalTest extends BaseTest {
         apkDecoder.setOutDir(new File(sTmpDir + File.separator + apk + ".out"));
 
         // this should not raise an exception:
-        apkDecoder.decode(null);
+        apkDecoder.decode();
     }
 }

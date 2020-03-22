@@ -50,7 +50,7 @@ public class DuplicateDexTest extends BaseTest {
         LOGGER.info("Decoding duplicatedex.apk...");
         ApkDecoder apkDecoder = new ApkDecoder(testApk);
         apkDecoder.setOutDir(sTestNewDir);
-        apkDecoder.decode(null);
+        apkDecoder.decode();
 
         LOGGER.info("Building duplicatedex.apk...");
         ApkOptions apkOptions = new ApkOptions();
@@ -65,7 +65,7 @@ public class DuplicateDexTest extends BaseTest {
         ApkDecoder apkDecoder = new ApkDecoder(testApk);
         apkDecoder.setDecodeSources(ApkDecoder.DECODE_SOURCES_SMALI_ONLY_MAIN_CLASSES);
         apkDecoder.setOutDir(sTestNewDir);
-        apkDecoder.decode(null);
+        apkDecoder.decode();
 
         LOGGER.info("Building duplicatedex.apk...");
         ApkOptions apkOptions = new ApkOptions();

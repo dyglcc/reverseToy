@@ -1,12 +1,20 @@
 package com.appadhoc.reversetoy;
 
-import brut.androlib.ApkDecoder;
+import brut.androlib.res.data.ResTable;
+import luyao.parser.xml.XmlParser;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MultiSDKs {
+    private ResTable mHostTable;
+    private XmlParser hostParse;
+    public MultiSDKs(ResTable hostTableTable,XmlParser hostParse) {
+        this.mHostTable = hostTableTable;
+        this.hostParse = hostParse;
+    }
+
     public List<File> getSmaliFolder() {
         return smaliFolder;
     }
@@ -25,7 +33,12 @@ public class MultiSDKs {
         for(AbstractManager manager:managers){
 
             manager.setHostDir(apkOutFile);
-            manager.addIDs2HostFile(apkOutFile);
+            manager.sethostArscTable(mHostTable);
+            manager.setHostPackageName(mHostTable.getPackage(127).getName());
+            manager.unzipAarAndCreateTmpApk();
+            manager.mergeArscFile();
+            manager.mergeManifestFile(this.hostParse);
+            manager.replacAarIdsIDs(apkOutFile);
             File smaliFile = manager.smaliClassFilesAndModifyids(apkOutFile);
             smaliFolder.add(smaliFile);
         }

@@ -58,7 +58,7 @@ public class ProviderAttributeTest extends BaseTest {
         // decode issue636.apk
         ApkDecoder apkDecoder = new ApkDecoder(new File(sTmpDir + File.separator + apk));
         apkDecoder.setOutDir(new File(sTmpDir + File.separator + apk + ".out"));
-        apkDecoder.decode(null);
+        apkDecoder.decode();
 
         // build issue636
         ExtFile testApk = new ExtFile(sTmpDir, apk + ".out");
@@ -69,7 +69,7 @@ public class ProviderAttributeTest extends BaseTest {
         // decode issues636 again
         apkDecoder = new ApkDecoder(new File(sTmpDir + File.separator + newApk));
         apkDecoder.setOutDir(new File(sTmpDir + File.separator + apk + ".out.two"));
-        apkDecoder.decode(null);
+        apkDecoder.decode();
 
         String expected = TestUtils.replaceNewlines("<?xml version=\"1.0\" encoding=\"utf-8\" standalone=\"no\"?>\n" +
                 "<manifest xmlns:android=\"http://schemas.android.com/apk/res/android\" android:compileSdkVersion=\"23\" android:compileSdkVersionCodename=\"6.0-2438415\" package=\"com.ibotpeaches.issue636\" platformBuildVersionCode=\"22\" platformBuildVersionName=\"5.1-1756733\">\n" +

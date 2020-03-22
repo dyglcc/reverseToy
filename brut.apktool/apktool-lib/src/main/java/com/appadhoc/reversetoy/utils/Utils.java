@@ -1,12 +1,20 @@
 package com.appadhoc.reversetoy.utils;
 
 import brut.androlib.AndrolibException;
+import brut.androlib.res.decoder.StringBlock;
 import brut.common.BrutException;
 import brut.util.Jar;
 import brut.util.OS;
 import brut.util.OSDetection;
+import com.appadhoc.reversetoy.MergeAndMestFile;
+import com.appadhoc.reversetoy.MergeArsc;
 import com.appadhoc.reversetoy.aar.AarManager;
+import com.appadhoc.reversetoy.aar.Duo_int;
 import com.appadhoc.reversetoy.data.AarID;
+import luyao.parser.xml.XmlParser;
+import luyao.parser.xml.bean.Attribute;
+import luyao.parser.xml.bean.chunk.Chunk;
+import luyao.parser.xml.bean.chunk.StartTagChunk;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -51,20 +59,20 @@ public class Utils {
     public static class FileUtils {
 
         public static InputStream getZipEntryFile(String fileName, File zipFile) throws IOException {
-            if(isEmpty(fileName)){
+            if (isEmpty(fileName)) {
                 return null;
             }
             ZipFile zp = new ZipFile(zipFile);
             for (Enumeration entries = zp.entries(); entries.hasMoreElements(); ) {
                 ZipEntry entry = (ZipEntry) entries.nextElement();
-                if(entry.getName().equals(fileName)){
+                if (entry.getName().equals(fileName)) {
                     return zp.getInputStream(entry);
                 }
             }
             return null;
         }
 
-        public static void unzip(File zipfile,File outDir) throws IOException {
+        public static void unzip(File zipfile, File outDir) throws IOException {
 
             ZipFile zipFile = new ZipFile(zipfile);
             for (Enumeration entries = zipFile.entries(); entries.hasMoreElements(); ) {
@@ -95,6 +103,7 @@ public class Utils {
             //必须关闭，要不然这个zip文件一直被占用着，要删删不掉，改名也不可以，移动也不行，整多了，系统还崩了。
             zipFile.close();
         }
+
         public static void unzipSubDri2DestDir(String assets, File outDir, File jarFile) throws IOException {
 
             ZipFile zipFile = new ZipFile(jarFile);
@@ -200,13 +209,47 @@ public class Utils {
     public static class RFileUtils {
 
 
-        public static StringBuilder smaliFileIdReplace(File file, Map<String, LinkedHashMap> ids) throws IOException {
+        //        public static StringBuilder smaliFileIdReplace(File file, Map<String, LinkedHashMap> ids) throws IOException {
+//            if (!file.exists() || file.getName().startsWith(".")) {
+//                return null;
+//            }
+//            String key = getKeyByFileName(file.getName());
+//
+//            LinkedHashMap<String, AarID> values = ids.get(key);
+//
+//
+//            BufferedReader br = new BufferedReader(new FileReader(file));
+//            StringBuilder sb = new StringBuilder();
+//            String line;
+//            try {
+//                while ((line = br.readLine()) != null) {
+//                    if (line.contains("field public static final")) {
+//                        String[] words = line.split(" ");
+//                        String[] keys = words[4].split(":");
+//                        AarID integer_value = values.get(keys[0]);
+//                        words[6] = "0x" + Integer.toHexString(integer_value.getId());
+//                        StringBuilder s = new StringBuilder();
+//                        for (int i = 0; i < words.length; i++) {
+//                            s.append(words[i]).append(" ");
+//                        }
+//                        line = s.toString().trim();
+//                    }
+//                    sb.append(line).append("\n");
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            } finally {
+//                br.close();
+//            }
+//            return sb;
+//        }
+        public static StringBuilder smaliFileIdReplace(File file, LinkedHashMap<Integer, Duo_int> mapping) throws IOException {
             if (!file.exists() || file.getName().startsWith(".")) {
                 return null;
             }
-            String key = getKeyByFileName(file.getName());
+//            String key = getKeyByFileName(file.getName());
 
-            LinkedHashMap<String, AarID> values = ids.get(key);
+//            LinkedHashMap<String, AarID> values = ids.get(key);
 
 
             BufferedReader br = new BufferedReader(new FileReader(file));
@@ -217,8 +260,13 @@ public class Utils {
                     if (line.contains("field public static final")) {
                         String[] words = line.split(" ");
                         String[] keys = words[4].split(":");
-                        AarID integer_value = values.get(keys[0]);
-                        words[6] = "0x" + Integer.toHexString(integer_value.getId());
+//                        AarID integer_value = values.get(keys[0]);
+                        String radix16 = words[6].substring(2);
+                        int oldInt = Integer.parseInt(radix16, 16);
+                        Duo_int newIntDuo = mapping.get(oldInt);
+                        if (newIntDuo != null) { // 提换
+                            words[6] = "0x" + Integer.toHexString(newIntDuo.idNew);
+                        }
                         StringBuilder s = new StringBuilder();
                         for (int i = 0; i < words.length; i++) {
                             s.append(words[i]).append(" ");
@@ -511,7 +559,7 @@ public class Utils {
             return "";
         }
 
-        public static String setApplicationName(File hostdir, String appname) throws Exception {
+        public static String setPlainTextXmlApplicationName(File hostdir, String appname) throws Exception {
 
             File manifest = new File(hostdir, "AndroidManifest.xml");
             if (!manifest.exists()) {
@@ -534,9 +582,24 @@ public class Utils {
             }
             return null;
         }
+
+        public static String setBinaryManifestApplicationName(XmlParser hostParser, String appname) throws Exception {
+
+            StringBlock block = hostParser.getStringBlock();
+            StartTagChunk application = (StartTagChunk) MergeAndMestFile.getStartChunk(hostParser.getChunkList(), "application");
+            Attribute appNameChunk = MergeAndMestFile.getAttributeFromTrunk(application, "name");
+            if (appNameChunk != null) {
+                String oldAppName = block.getString(appNameChunk.getValueStr());
+                return oldAppName;
+            } else {
+                // 把appname 添加到二进制文件当中。
+                MergeAndMestFile.addNameAttribute(application, hostParser, appname);
+                return appname;
+            }
+        }
     }
 
-    public static boolean isEmpty(String str){
+    public static boolean isEmpty(String str) {
         return str == null || str.equals("");
     }
 
@@ -709,7 +772,7 @@ public class Utils {
     public static class SmaliUtils {
         public static void checkExistSmaliCode(String code) throws Exception {
             if (code == null || code.equals("")) {
-                throw new Exception("请检查是否有存在Eguan SDK的代码片段或者存在EguanApp.smali文件");
+                throw new Exception("请检查是否有存在Eguan SDK的代码片段或者存在ReverseApp.smali文件");
             }
         }
     }
@@ -729,19 +792,22 @@ public class Utils {
             return getDrawableStartId() - range;
         }
     }
-    public static class ByteUtils{
+
+    public static class ByteUtils {
         public static int getInt(byte[] rawBytes, int start) {
             return (rawBytes[start + 3] & 0xff) << 24 |
                     (rawBytes[start + 2] & 0xff) << 16 |
                     (rawBytes[start + 1] & 0xff) << 8 |
                     (rawBytes[start] & 0xff);
         }
+
         public static int bytes2Int(byte[] bytes) {
             return bytes[3] & 0xff
                     | (bytes[2] & 0xff) << 8
                     | (bytes[1] & 0xff) << 16
                     | (bytes[0] & 0xff) << 24;
         }
+
         public static short getShort(byte[] rawBytes, int start) {
 
             return (short) ((rawBytes[start + 1] & 0xff) << 8 | (rawBytes[start] & 0xff));
@@ -761,6 +827,7 @@ public class Utils {
             rawBytes[start + 2] = p1;
             rawBytes[start + 3] = p0;
         }
+
         public static byte[] int2Bytes(int i) {
             byte[] bytes = new byte[4];
             bytes[3] = (byte) (i >> 24);
@@ -768,6 +835,13 @@ public class Utils {
             bytes[1] = (byte) (i >> 8);
             bytes[0] = (byte) i;
             return bytes;
+        }
+
+        public static void replaceNewName(XmlParser hostParser, String appname, Attribute attribute) throws Exception {
+            StringBlock stringBlock = hostParser.getStringBlock();
+            int newIndex = MergeArsc.addSingleString2StringBlockTail(stringBlock, appname);
+            byte[] rawBytes = attribute.getRawBytes();
+            Utils.ByteUtils.replaceInt(rawBytes, 16, newIndex);
         }
     }
 }

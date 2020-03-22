@@ -2,8 +2,11 @@ package luyao.parser.xml;
 
 import android.util.TypedValue;
 import brut.androlib.res.decoder.StringBlock;
+import brut.common.BrutException;
 import brut.util.ExtDataInput;
+import com.appadhoc.reversetoy.Main;
 import com.appadhoc.reversetoy.utils.RecordCountingInputStream;
+import com.appadhoc.reversetoy.utils.Utils;
 import com.google.common.io.LittleEndianDataInputStream;
 import luyao.parser.xml.bean.Attribute;
 import luyao.parser.xml.bean.Xml;
@@ -23,27 +26,50 @@ import static luyao.parser.utils.Reader.log;
  */
 public class XmlParser {
 
-    public static void testNew() throws IOException {
-        XmlParser xmlParser = new XmlParser(new FileInputStream("/Users/dongyuangui/Desktop/apk-blue/abcxmltest/AndroidManifest.xml-out"));
-        xmlParser.parse();
+    public static void testNew() throws Exception {
+        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton");
+        File fileHost = new File(srcApkfile, "AndroidManifest.xml");
+        XmlParser xmlParser = XmlParser.parse(new FileInputStream(fileHost));
+        StringBlock block = xmlParser.getStringBlock();
+//        int x = MergeArsc.addSingleString2StringBlockTail(block,"hello world");
+//        String str = block.getString(x);
+//        for(int i = 0;i<=x;i++){
+//            System.out.println(block.getString(i));
+//        }
+//        System.out.println(str);
+//        parseHost();
+
+
     }
 
-    public static void main(String... args) throws IOException {
-        testNew();
+    private static void parseHost() throws IOException, BrutException {
+        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
+        File apkOutFile = new File(srcApkfile.getParentFile(), Utils.getNameRemovedSuffix(srcApkfile.getName()));
+
+        Main.unZipHostApk(srcApkfile,apkOutFile);
+        File fileHost = new File(apkOutFile, "AndroidManifest.xml");
+        XmlParser hostParse = XmlParser.parse(new FileInputStream(fileHost));
+        System.out.println("abc");
+    }
+
+    public static void main(String... args) throws Exception {
+//        testNew();
 //        testParse(123);
+        testParse(12);
     }
 
     public static void testParse() throws IOException {
-        XmlParser xmlParser = new XmlParser(new FileInputStream("/Users/dongyuangui/Desktop/apk-blue/aar_tmp/AndroidManifest.xml"));
-        xmlParser.parse();
+        XmlParser xmlParser = XmlParser.parse(new FileInputStream("/Users/dongyuangui/Desktop/apk-blue/app/AndroidManifest.xml-out"));
+//        XmlParser xmlParser = XmlParser.parse(new FileInputStream("/Users/dongyuangui/Downloads/AbTestDemo-debug/AndroidManifest.xml"));
+//        XmlParser xmlParser = XmlParser.parse(new FileInputStream("/Users/dongyuangui/Desktop/apk-blue/AbTestDemo-debug-1/AndroidManifest.xml"));
+        System.out.println("abc");
     }
 
     public static void testParse(int count) throws IOException {
-        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/abcxmltest/res/layout");
-        for (File file : dir.listFiles()) {
-            XmlParser xmlParser = new XmlParser(new FileInputStream(file));
-            xmlParser.parse();
-        }
+        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/aar_tmp_raw/AndroidManifest.xml");
+//        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/aar_tmp-1/AndroidManifest.xml");
+        XmlParser xmlParser = XmlParser.parse(new FileInputStream(dir));
+        System.out.println("hello");
     }
 
     public StringBlock getStringBlock() {
@@ -73,17 +99,20 @@ public class XmlParser {
         reader = new ExtDataInput((DataInput) new LittleEndianDataInputStream(inputStream));
     }
 
-    public void parse() throws IOException {
+    public static XmlParser parse(FileInputStream fileInputStream) throws IOException {
 
-        parseHeader();
+        XmlParser parser = new XmlParser(fileInputStream);
 
-        parseStringChunk();
+        parser.parseHeader();
 
-        parseResourceIdChunk();
+        parser.parseStringChunk();
 
-        parseXmlContentChunk();
+        parser.parseResourceIdChunk();
 
-        log(generateXml());
+        parser.parseXmlContentChunk();
+
+        log(parser.generateXml());
+        return parser;
     }
 
 
@@ -191,7 +220,7 @@ public class XmlParser {
             log("line number: %d", lineNumber);
 
 //            reader.skipBytes(4); // 0xffffffff
-            reader.readInt();
+            int x = reader.readInt();
 
             int prefix = reader.readInt();
             log("prefix: %s", stringBlock.getString(prefix));

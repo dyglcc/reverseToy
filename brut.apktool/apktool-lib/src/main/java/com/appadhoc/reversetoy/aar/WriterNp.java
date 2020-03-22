@@ -41,14 +41,15 @@ public class WriterNp {
         }
     }
 
-    public void write() throws IOException, AndrolibException {
+    public static void write(File outArsc, ResTable resTable) throws IOException, AndrolibException {
+        WriterNp writerNp = new WriterNp(outArsc,resTable);
         // write
 //        long count1 = mCount.getCount();
-        writeTableHeader();
+        writerNp.writeTableHeader();
 //        long count2 = mCount.getCount();
 //        System.out.println("count is working now " + (count2 - count1));
-        writeGlobalStringPool();
-        writePackage();
+        writerNp.writeGlobalStringPool();
+        writerNp.writePackage();
     }
 
     private void writePackage() throws IOException, AndrolibException {

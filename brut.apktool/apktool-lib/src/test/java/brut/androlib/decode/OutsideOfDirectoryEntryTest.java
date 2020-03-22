@@ -49,7 +49,7 @@ public class OutsideOfDirectoryEntryTest extends BaseTest {
         sTestNewDir = new ExtFile(sTmpDir + File.separator + apk + ".out");
 
         apkDecoder.setOutDir(new File(sTmpDir + File.separator + apk + ".out"));
-        apkDecoder.decode(null);
+        apkDecoder.decode();
     }
 
     @AfterClass

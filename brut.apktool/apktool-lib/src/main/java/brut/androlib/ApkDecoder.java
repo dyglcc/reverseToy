@@ -81,7 +81,7 @@ public class ApkDecoder {
         mApi = api;
     }
 
-    public void decode() throws Exception {
+    public void decode() throws DirectoryException, IOException, AndrolibException {
         try {
             File outDir = getOutDir();
             AndrolibResources.sKeepBroken = mKeepBrokenResources;
@@ -195,6 +195,7 @@ public class ApkDecoder {
             writeMetaFile();
         } catch (Exception ex) {
             throw ex;
+//            ex.printStackTrace();
         } finally {
             try {
                 mApkFile.close();

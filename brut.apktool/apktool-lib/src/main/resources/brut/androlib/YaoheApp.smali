@@ -67,7 +67,7 @@
     invoke-super {p0}, Landroid/app/Application;->onCreate()V
 
     .line 12
-    invoke-direct {p0}, Lcom/reverse/stub/App;->initReverseSDK()V
+    invoke-direct {p0}, Lcom/reverse/stub/YaoheApp;->initReverseSDK()V
 
     .line 13
     return-void

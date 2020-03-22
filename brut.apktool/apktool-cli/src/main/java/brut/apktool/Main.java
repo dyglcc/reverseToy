@@ -292,7 +292,7 @@ public class Main {
         decoder.setApkFile(new File(apkName));
 
         try {
-            decoder.decode(null);
+            decoder.decode();
         } catch (OutDirExistsException ex) {
             System.err
                     .println("Destination directory ("

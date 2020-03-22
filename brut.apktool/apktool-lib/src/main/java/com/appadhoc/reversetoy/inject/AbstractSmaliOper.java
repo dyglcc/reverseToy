@@ -1,14 +1,12 @@
 package com.appadhoc.reversetoy.inject;
 
 import brut.util.OS;
-import com.appadhoc.reversetoy.AbstractManager;
 import com.appadhoc.reversetoy.utils.Utils;
 
 import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -151,7 +149,7 @@ public abstract class AbstractSmaliOper {
             throw new Exception("SDK smali 文件夹不存在");
         }
         deleteOldSdkSmaliFile(getSDKdir(), hostDir, newSmaliFolder, getExcludeSDKdir());
-        String appName = Utils.XmlUtils.setApplicationName(hostDir, getStubApplicationName());
+        String appName = Utils.XmlUtils.setPlainTextXmlApplicationName(hostDir, getStubApplicationName());
         if (appName.equals(getStubApplicationName())) {
             copyStubSmali2HostDir(stubDir, newSmaliFolder.get(newSmaliFolder.size() - 1));
         } else {
