@@ -112,6 +112,14 @@ public class AarManager extends AbstractManager {
         }
         return res;
     }
+    private File getAArJNIDir() {
+        File unzipFile = new File(tmpDir, getAarFileName());
+        File jni = new File(unzipFile, "jni");
+        if (jni.exists()) {
+            return jni;
+        }
+        return null;
+    }
 
     // 替换了manestfest文件的place holder
     private void replaceAndroidManifestWithHostPackageId() throws IOException, BrutException {
@@ -447,10 +455,15 @@ public class AarManager extends AbstractManager {
 
         // copy jni
 
-        File jniHost = new File(hostdir, "jni");
-        File jniAar = new File(compiledAarApkDir, "jni");
-        if (jniAar.exists()) {
-            OS.cpdir(jniAar, jniHost);
+        File jniHost = new File(hostdir, "lib");
+        File jniAar = getAArJNIDir();
+        if (jniAar!=null) {
+            for(File jniFolder:jniAar.listFiles()){
+                File fileHostFolder = new File(jniHost,jniFolder.getName());
+                if(fileHostFolder.exists()){
+                    OS.cpdir(jniFolder, fileHostFolder);
+                }
+            }
             LOGGER.info("拷贝jni文件到host文件");
         }
 

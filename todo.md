@@ -17,3 +17,7 @@
 需求列表
 1。仅仅更新代码。
 
+merge -ousc com.adhoc -exclude abc /Users/dongyuangui/Desktop/apk-blue/lingdandaren-release.apk /Users/dongyuangui/Desktop/aar-1/abtest-release.aar /Users/dongyuangui/Desktop/apk-blue/reverse_init_code.txt 
+merge -ousc com.adhoc -exclude abc /Users/dongyuangui/Desktop/apk-blue/lingdandaren-release.apk /Users/dongyuangui/Desktop/aar-1/riskmanager-release.aar /Users/dongyuangui/Desktop/apk-blue/reverse_init_code.txt 
+java -jar ~/work/apktool_2.4.1.jar d -f -only-main-classes signed1584858989429.apk 
+

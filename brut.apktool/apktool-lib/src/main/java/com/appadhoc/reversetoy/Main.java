@@ -26,13 +26,15 @@ public class Main {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) throws Exception {
-        try {
-            HashMap map = new HashMap();
-            map.put("cfu","asdfahttp://asdf");
-            test_reverse(null);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+//        try {
+//            HashMap map = new HashMap();
+//            map.put("cfu","asdfahttp://asdf");
+//            map.put("ousc","com.adhoc");
+//            map.put("hello","com.adhoc");
+//            test_reverse(map);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
 //        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
 //        File apkOutFile = new File(srcApkfile.getParentFile(), Utils.getNameRemovedSuffix(srcApkfile.getName()));
 //        unZipHostApk(srcApkfile,apkOutFile);
@@ -41,18 +43,18 @@ public class Main {
 //        File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
 //        buildApk(apkOutFile);
 
-//        File fileRaw = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton/signed1584783469307");
-//        File outApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/output_abc0000.apk");
-//        ZipUtils.zipFolders(fileRaw,outApkfile, null, null);
-//        SignTool.sign(outApkfile, new File("/Users/dongyuangui/Desktop/apk-blue/output_abc0000-sign.apk"));
+        File fileRaw = new File("/Users/dongyuangui/Desktop/apk-blue/signed1584869817798");
+        File outApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/output_abc0000.apk");
+        ZipUtils.zipFolders(fileRaw,outApkfile, null, null);
+        SignTool.sign(outApkfile, new File("/Users/dongyuangui/Desktop/apk-blue/output_lingdan-sign.apk"));
     }
 
     public static void test_reverse(HashMap map) throws Exception {
         AndrolibResources resources = new AndrolibResources();
-//        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
+        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
 //        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/com.xunmeng.pinduoduo_47101.apk");
 //        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/com.jingdong.app.mall_69021.apk");
-        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/meishe.apk");
+//        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/meishe.apk");
 //        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/com.xingin.xhs_6370100.apk");
 //        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/com.qiyi.video_81350.apk");
         String filePath = "/Users/dongyuangui/Desktop/aar-1/abtest-release.aar";
@@ -70,14 +72,15 @@ public class Main {
         smaliDecoderReverse.decodeSmali();
 
         // aar oper
-        MultiSDKs multi = new MultiSDKs(hostTableTable,parser);
-        multi.dealWithSDKpackages(AbstractManager.TYPE_Yaohe,new File(filePath),apkOutFile);
+        MultiSDKs multi = new MultiSDKs(hostTableTable,parser,map);
+        multi.dealWithSDKpackages(new File(filePath),apkOutFile);
 
         // smali oper --------------------
         ReflectionOper oper = new ReflectionOper();
         oper.setOptions(map);
 //        oper.setAppkey(appkey);
-        oper.addOrModifyApplicationSmali(apkOutFile, multi.getSmaliFolder(),parser);
+        oper.deleteOldSdkSmaliFile(apkOutFile, multi.getSmaliFolder(),parser);
+//        oper.addOrModifyApplicationSmali(apkOutFile, multi.getSmaliFolder(),parser);
         logger.info("##########添加或者修改Application smali代码[完成]##########");
         File unsignfile = buildApk(apkOutFile, smaliDecoderReverse);
         logger.info("##########打包合并后的文件生成未签名文件[完成]##########");
@@ -95,7 +98,7 @@ public class Main {
         Utils.FileUtils.unzip(srcApkfile,apkOutFile);
     }
 
-    public static void reverse(File apkfile, File aar, String sdktype, HashMap operOptions) throws Exception {
+    public static void reverse(File apkfile, File aar, HashMap options) throws Exception {
         if (!apkfile.exists()) {
             throw new ApkFileNotExistException("apk file not exist or can not read");
         }
@@ -117,14 +120,15 @@ public class Main {
         smaliDecoderReverse.decodeSmali();
 
         // aar oper
-        MultiSDKs multi = new MultiSDKs(hostTableTable,hostParse);
-        multi.dealWithSDKpackages(sdktype,aar,apkOutFile);
+        MultiSDKs multi = new MultiSDKs(hostTableTable,hostParse,options);
+        multi.dealWithSDKpackages(aar,apkOutFile);
 
 
         ReflectionOper oper = new ReflectionOper();
-        oper.setOptions(operOptions);
+        oper.setOptions(options);
 //        oper.setJson(json);
-        oper.addOrModifyApplicationSmali(apkOutFile, multi.getSmaliFolder(),hostParse);
+        oper.deleteOldSdkSmaliFile(apkOutFile, multi.getSmaliFolder(),hostParse);
+//        oper.addOrModifyApplicationSmali();
         logger.info("添加或者修改Application smali代码[完成]");
         File unsignfile = buildApk(apkOutFile,smaliDecoderReverse);
         logger.info("打包合并后的文件生成未签名文件[完成]");

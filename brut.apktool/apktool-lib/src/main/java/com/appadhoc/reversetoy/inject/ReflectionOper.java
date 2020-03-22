@@ -21,20 +21,20 @@ public class ReflectionOper {
     private final static Logger LOGGER = Logger.getLogger(ReflectionOper.class.getName());
     private HashMap<String, Object> options;
     String stubDir = "com.reverse.stub";
-    private String SDK_DIR = "com.analysys";
-    private String exclue = "track";
-    private static final String appNameStub_Eguan = "com.reverse.stub.ReverseApp";
+    private String SDK_DIR = "com.analysys";//代码路径
+    private String exclue = "track";//路径路径下面有子项目不能删除
+    private static final String appNameStub = "com.reverse.stub.ReverseApp";
 //    private File jsonFile;
 
-    public void addOrModifyApplicationSmali(File hostDir, List<File> newSmaliFolder, XmlParser hostAndmanifestData) throws Exception {
+    private void addOrModifyApplicationSmali(File hostDir, List<File> newSmaliFolder, XmlParser hostAndmanifestData) throws Exception {
         if (newSmaliFolder == null || newSmaliFolder.size() == 0) {
             throw new Exception("SDK smali 文件夹不存在");
         }
-        deleteOldSdkSmaliFile(SDK_DIR, hostDir, newSmaliFolder, exclue);
+//        deleteOldSdkSmaliFile(SDK_DIR, hostDir, newSmaliFolder, exclue);
 //        String appName = Utils.XmlUtils.setApplicationName(hostDir, appNameStub_Eguan);
-        String appName = Utils.XmlUtils.setBinaryManifestApplicationName(hostAndmanifestData, appNameStub_Eguan);
+        String appName = Utils.XmlUtils.setBinaryManifestApplicationName(hostAndmanifestData, appNameStub);
         File lastFolder = newSmaliFolder.get(newSmaliFolder.size() - 1);
-        if (appName.equals(appNameStub_Eguan)) {
+        if (appName.equals(appNameStub)) {
             copyStubSmali2HostDir(stubDir, lastFolder);
         } else {
             modifyExistAppSmali(hostDir, appName, lastFolder);
@@ -139,7 +139,7 @@ public class ReflectionOper {
 
 //        srcStr = srcStr.replaceFirst(".method\\s+public\\s+constructor\\s+<init>\\(\\)V(.*\\n)+?\\s*.locals\\s+\\d+", "$0\n\n" + callMethodCode);
         // add copy lastFolder avoid 65536 error
-        File newLocationAppFile = createNewApplicationFileinLastFolder(hostAppName,lastFolder);
+        File newLocationAppFile = createNewApplicationFileinLastFolder(hostAppName, lastFolder);
 
         // 在新的file那里新建。
         Utils.FileUtils.writeString2File(newLocationAppFile, srcStr);
@@ -192,7 +192,7 @@ public class ReflectionOper {
     }
 
     private String getSmaliApplicationName() {
-        String fupath = appNameStub_Eguan;
+        String fupath = appNameStub;
         String[] names = fupath.split("\\.");
         return names[names.length - 1] + ".smali";
     }
@@ -218,9 +218,18 @@ public class ReflectionOper {
     }
 
     // 删除旧sdk 的smali文件 // upgrade sdk may be useful
-    private void deleteOldSdkSmaliFile(String path, File hostdir, List<File> exclude, String excludeSDKdir) throws Exception {
+    public void deleteOldSdkSmaliFile(File hostdir, List<File> aarSmaliFolder, XmlParser hostAndmanifestData) throws Exception {
+        String path = SDK_DIR;
+        String excludeSDKdir = exclue;
+        if (options != null) {
+            if (options.get("exclude") != null) {
+                excludeSDKdir = (String) options.get("exclude");
+            }
+            if (options.get("ousc") != null) {
+                path = (String) options.get("ousc");
+            }
+        }
 
-//        System.out.println("old sdk path " + path);
         if (path == null || path.equals("")) {
             throw new Exception("旧的SDK路径不存在");
         }
@@ -230,7 +239,7 @@ public class ReflectionOper {
         path = path.replaceAll("\\.", File.separator);
         for (File file : Objects.requireNonNull(hostdir.listFiles())) {
             String fileName = file.getName();
-            if (fileName.startsWith("smali") && !fileNameInList(fileName, exclude)) { // 新生成的sdk smali不删除
+            if (fileName.startsWith("smali") && !fileNameInList(fileName, aarSmaliFolder)) { // 新生成的sdk smali不删除
                 File existOldSdkdir = new File(file, path);
                 if (existOldSdkdir.exists()) {
                     for (File fileYiguan : Objects.requireNonNull(existOldSdkdir.listFiles())) {
@@ -246,6 +255,9 @@ public class ReflectionOper {
 
                 }
             }
+        }
+        if (options == null || options.get("upg") == null) {
+            this.addOrModifyApplicationSmali(hostdir, aarSmaliFolder, hostAndmanifestData);
         }
     }
 

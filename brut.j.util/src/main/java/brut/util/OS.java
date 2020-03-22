@@ -32,7 +32,8 @@ import org.apache.commons.io.IOUtils;
  */
 public class OS {
 
-    private static final Logger LOGGER = Logger.getLogger("");
+    private static final Logger LOGGER = Logger.getLogger("OS");
+    private static boolean showLog = true;
 
     public static void rmdir(File dir) throws BrutException {
         if (!dir.exists()) {
@@ -94,6 +95,9 @@ public class OS {
                 IOUtils.copy(in, out);
                 in.close();
                 out.close();
+                if (showLog) {
+                    LOGGER.info("copy " + file.getName() + " to " + destFile.getAbsolutePath());
+                }
             } catch (IOException ex) {
                 throw new BrutException("Could not copy file: " + file, ex);
             }

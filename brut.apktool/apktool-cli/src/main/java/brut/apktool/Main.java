@@ -115,15 +115,18 @@ public class Main {
 
     private static void cmdMerge(CommandLine cli) throws Exception {
         int paraCount = cli.getArgList().size();
-        String aarFileName = cli.getArgList().get(paraCount - 1);
-        String apkFile = cli.getArgList().get(paraCount - 2);
-        String sdk_type = null;
+        String aarFileName = cli.getArgList().get(paraCount - 2);
+        String apkFile = cli.getArgList().get(paraCount - 3);
+        String initCodeFile = cli.getArgList().get(paraCount - 1);
+
+//        String sdk_type = null;
 //        String appkey = null;
 //        // check for merge options
 //        if (cli.hasOption("st") || cli.hasOption("sdk-type")) {
 //            sdk_type = cli.getOptionValue("st");
 //        }
         HashMap<String, Object> operOptions = new HashMap<>();
+        operOptions.put("json",new File(initCodeFile).getAbsolutePath());
 //
 //        if (cli.hasOption("ak") || cli.hasOption("appkey")) {
 //            appkey = cli.getOptionValue("ak");
@@ -195,15 +198,15 @@ public class Main {
 //            operOptions.put("ene",false);
 //        }
 ////        String uploadUrl = "https://arkpaastest.analysys.cn:4089";
-        if (cli.hasOption("upg") || cli.hasOption("upgrade")) {
-            String upuV = cli.getOptionValue("upg");
-            Utils.ParaUtils.checkCmdliPara("upgrade",upuV);
-            operOptions.put("upg",upuV);
+        if (cli.hasOption("ousc") || cli.hasOption("only-update-source-code")) {
+            String upuV = cli.getOptionValue("ousc");
+            Utils.ParaUtils.checkCmdliPara("ousc",upuV);
+            operOptions.put("ousc",upuV);
         }
-        if (cli.hasOption("excp") || cli.hasOption("exceptDir")) {
-            String except = cli.getOptionValue("excp");
-            Utils.ParaUtils.checkCmdliPara("exceptDir",except);
-            operOptions.put("excp",except);
+        if (cli.hasOption("exclude") || cli.hasOption("excludeDir")) {
+            String except = cli.getOptionValue("exclude");
+            Utils.ParaUtils.checkCmdliPara("excludeDir",except);
+            operOptions.put("exclude",except);
         }
 ////        String debugUrl ="wss://arkpaastest.analysys.cn:4091";
 //        if (cli.hasOption("deu") || cli.hasOption("debugUrl")) {
@@ -212,14 +215,14 @@ public class Main {
 //            operOptions.put("deu",deuV);
 //        }
 //        String configUrl ="https://arkpaastest.analysys.cn:4089";
-        if (cli.hasOption("-json") || cli.hasOption("json")) {
-            String cfuV = cli.getOptionValue("json");
-            Utils.ParaUtils.checkCmdliPara("json", cfuV);
-            operOptions.put("json", cfuV);
-        }
+//        if (cli.hasOption("-json") || cli.hasOption("json")) {
+//            String cfuV = cli.getOptionValue("json");
+//            Utils.ParaUtils.checkCmdliPara("json", cfuV);
+//            operOptions.put("json", cfuV);
+//        }
         logger.fine("code json config file " + operOptions.get("json"));
         try {
-            com.appadhoc.reversetoy.Main.reverse(new File(apkFile), new File(aarFileName), sdk_type, operOptions);
+            com.appadhoc.reversetoy.Main.reverse(new File(apkFile), new File(aarFileName),operOptions);
         } catch (ApkFileNotExistException e) {
             System.out.println("APK file not found or can not read");
             System.exit(1);
@@ -668,14 +671,14 @@ public class Main {
 //                .build();
 //
 ////        String uploadUrl = "https://arkpaastest.analysys.cn:4089";
-        Option uploadUrlOption = Option.builder("upg")
-                .longOpt("upgrade")
-                .desc("升级sdk删除旧目录")
+        Option uploadUrlOption = Option.builder("ousc")
+                .longOpt("only-update-source-code")
+                .desc("仅仅更新代码")
                 .argName("tag")
                 .hasArg(true)
                 .build();
-        Option upgradeExcepDir = Option.builder("excp")
-                .longOpt("exceptDir")
+        Option upgradeExcepDir = Option.builder("exclude")
+                .longOpt("excludeDir")
                 .desc("升级sdk删除旧目录但不包含目录")
                 .argName("tag")
                 .hasArg(true)
@@ -688,12 +691,12 @@ public class Main {
 //                .hasArg(true)
 //                .build();
 //        String configUrl ="https://arkpaastest.analysys.cn:4089";
-        Option configUrlOption = Option.builder("json")
-                .longOpt("json_code_config")
-                .desc("指定初始化代码配置文件,文件名字全路径")
-                .argName("tag")
-                .hasArg(true)
-                .build();
+//        Option configUrlOption = Option.builder("json")
+//                .longOpt("json_code_config")
+//                .desc("指定初始化代码配置文件,文件名字全路径")
+//                .argName("tag")
+//                .hasArg(true)
+//                .build();
 
         // check for advance mode
         if (isAdvanceMode()) {
@@ -785,7 +788,7 @@ public class Main {
         mergeOptions.addOption(uploadUrlOption);
         mergeOptions.addOption(upgradeExcepDir);
 //        mergeOptions.addOption(debugUrlOption);
-        mergeOptions.addOption(configUrlOption);
+//        mergeOptions.addOption(configUrlOption);
 
 //        mergeOptions.addOption(mergeAppkeyOption);
 
@@ -826,7 +829,7 @@ public class Main {
         formatter.printHelp("apktool " + verbosityHelp() + "if|install-framework [options] <framework.apk>", frameOptions);
         formatter.printHelp("apktool " + verbosityHelp() + "d[ecode] [options] <file_apk>", DecodeOptions);
         formatter.printHelp("apktool " + verbosityHelp() + "b[uild] [options] <app_path>", BuildOptions);
-        formatter.printHelp("apktool " + verbosityHelp() + "m[erge] [options] <file_apk> <[AAR]_file>|<[LIB]_dir>", mergeOptions);
+        formatter.printHelp("apktool " + verbosityHelp() + "m[erge] [options] <file_apk> <[AAR]_file>|<[LIB]_dir> <init_code_file>", mergeOptions);
 //        formatter.printHelp("apktool " + verbosityHelp() + "m[erge] [options] <file_apk> <[LIB]_dir>", mergeOptions);
         if (isAdvanceMode()) {
             formatter.printHelp("apktool " + verbosityHelp() + "publicize-resources <file_path>", emptyOptions);

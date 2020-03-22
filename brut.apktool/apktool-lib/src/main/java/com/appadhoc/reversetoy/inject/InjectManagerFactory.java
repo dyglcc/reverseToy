@@ -13,9 +13,9 @@ public class InjectManagerFactory {
     }
 
     public static AbstractSmaliOper createOper(String sdktype) throws Exception {
-        if(sdktype == null){
-            sdktype = AbstractManager.TYPE_Eguan;
-        }
+//        if(sdktype == null){
+//            sdktype = AbstractManager.TYPE_Eguan;
+//        }
         AbstractSmaliOper oper = null;
         if("yaohe".equals(sdktype)){
             oper = new YaoheSmaliOper(sdktype);
