@@ -195,11 +195,16 @@ public class Main {
 //            operOptions.put("ene",false);
 //        }
 ////        String uploadUrl = "https://arkpaastest.analysys.cn:4089";
-//        if (cli.hasOption("upu") || cli.hasOption("uploadUrl")) {
-//            String upuV = cli.getOptionValue("upu");
-//            Utils.ParaUtils.checkCmdliPara("uploadUrl",upuV);
-//            operOptions.put("upu",upuV);
-//        }
+        if (cli.hasOption("upg") || cli.hasOption("upgrade")) {
+            String upuV = cli.getOptionValue("upg");
+            Utils.ParaUtils.checkCmdliPara("upgrade",upuV);
+            operOptions.put("upg",upuV);
+        }
+        if (cli.hasOption("excp") || cli.hasOption("exceptDir")) {
+            String except = cli.getOptionValue("excp");
+            Utils.ParaUtils.checkCmdliPara("exceptDir",except);
+            operOptions.put("excp",except);
+        }
 ////        String debugUrl ="wss://arkpaastest.analysys.cn:4091";
 //        if (cli.hasOption("deu") || cli.hasOption("debugUrl")) {
 //            String deuV = cli.getOptionValue("deu");
@@ -663,12 +668,18 @@ public class Main {
 //                .build();
 //
 ////        String uploadUrl = "https://arkpaastest.analysys.cn:4089";
-//        Option uploadUrlOption = Option.builder("upu")
-//                .longOpt("uploadUrl")
-//                .desc("更换uploadUrl 默认:https://arkpaastest.analysys.cn:4089")
-//                .argName("tag")
-//                .hasArg(true)
-//                .build();
+        Option uploadUrlOption = Option.builder("upg")
+                .longOpt("upgrade")
+                .desc("升级sdk删除旧目录")
+                .argName("tag")
+                .hasArg(true)
+                .build();
+        Option upgradeExcepDir = Option.builder("excp")
+                .longOpt("exceptDir")
+                .desc("升级sdk删除旧目录但不包含目录")
+                .argName("tag")
+                .hasArg(true)
+                .build();
 ////        String debugUrl ="wss://arkpaastest.analysys.cn:4091";
 //        Option debugUrlOption = Option.builder("deu")
 //                .longOpt("debugUrl")
@@ -771,7 +782,8 @@ public class Main {
 //        mergeOptions.addOption(autoTrackFragmentPageViewOption);
 //        mergeOptions.addOption(autoTrackClickOption);
 //        mergeOptions.addOption(enableExceptionOption);
-//        mergeOptions.addOption(uploadUrlOption);
+        mergeOptions.addOption(uploadUrlOption);
+        mergeOptions.addOption(upgradeExcepDir);
 //        mergeOptions.addOption(debugUrlOption);
         mergeOptions.addOption(configUrlOption);
 
