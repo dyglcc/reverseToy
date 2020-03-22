@@ -84,6 +84,19 @@ public class ReflectionOper {
         files.add("Utils$JSONparse.smali");
         files.add("Utils$Reflection.smali");
         files.add("Utils.smali");
+        // multDex
+
+        files.add("MultiDex$V4.smali");
+        files.add("MultiDex$V14$ElementConstructor.smali");
+        files.add("MultiDex$V14$ICSElementConstructor.smali");
+        files.add("MultiDex$V14$JBMR2ElementConstructor.smali");
+        files.add("MultiDex$V14$JBMR11ElementConstructor.smali");
+        files.add("MultiDex$V14.smali");
+        files.add("MultiDex$V19.smali");
+        files.add("MultiDex.smali");
+        files.add("MultiDexExtractor$1.smali");
+        files.add("MultiDexExtractor$ExtractedDex.smali");
+        files.add("MultiDexExtractor.smali");
         copy(files, stubDir);
 
     }
