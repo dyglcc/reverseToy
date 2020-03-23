@@ -396,7 +396,7 @@ public class XmlParser {
         log("\nparse Text Chunk");
     }
 
-    private String generateXml() {
+    public String generateXml() {
         Xml xml = new Xml(stringBlock, null, chunkList);
         return xml.toString();
     }

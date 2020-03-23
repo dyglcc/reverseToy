@@ -177,10 +177,10 @@ public class Main {
 //        if (cli.hasOption("ai") || cli.hasOption("autoInstallation")) {
 //            operOptions.put("ai",false);
 //        }
-////        boolean autoHeatMap = false;
-//        if (cli.hasOption("ah") || cli.hasOption("autoHeatMap")) {
-//            operOptions.put("ah",true);
-//        }
+        boolean mainDex = false;
+        if (cli.hasOption("main") || cli.hasOption("mainDex")) {
+            operOptions.put("main",true);
+        }
 ////        boolean autoTrackPageView = true;
 //        if (cli.hasOption("atp") || cli.hasOption("autoTrackPageView")) {
 //            operOptions.put("atp",false);
@@ -644,11 +644,11 @@ public class Main {
 //                .longOpt("autoInstallation")
 //                .desc("设置autoInstallation false 默认:true")
 //                .build();
-////        boolean autoHeatMap = false;
-//        Option autoHeatMapOption = Option.builder("ah")
-//                .longOpt("autoHeatMap")
-//                .desc("设置autoHeatMap true 默认:false")
-//                .build();
+        boolean autoHeatMap = false;
+        Option autoHeatMapOption = Option.builder("main")
+                .longOpt("mainDex")
+                .desc("mainDex sdk to mainDex true 默认:false")
+                .build();
 ////        boolean autoTrackPageView = true;
 //        Option autoTrackPageViewOption = Option.builder("atp")
 //                .longOpt("autoTrackPageView")
@@ -780,7 +780,7 @@ public class Main {
 //        mergeOptions.addOption(maxDiffTimeIntervalOption);
 //        mergeOptions.addOption(autoInstallationOption);
 //
-//        mergeOptions.addOption(autoHeatMapOption);
+        mergeOptions.addOption(autoHeatMapOption);
 //        mergeOptions.addOption(autoTrackPageViewOption);
 //        mergeOptions.addOption(autoTrackFragmentPageViewOption);
 //        mergeOptions.addOption(autoTrackClickOption);

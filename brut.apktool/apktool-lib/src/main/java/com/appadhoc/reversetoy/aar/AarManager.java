@@ -27,6 +27,8 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.Logger;
 
+import static luyao.parser.utils.Reader.log;
+
 public class AarManager extends AbstractManager {
     private final static Logger LOGGER = Logger.getLogger(AarManager.class.getName());
     private String aarPackageName;
@@ -195,6 +197,7 @@ public class AarManager extends AbstractManager {
         ResTable aarTableTable = resources.getResTable(new ExtFile(getTmpApkFile()));
         MergeArsc.mergeAarTable2HostTable(mHostTable,aarTableTable);
         WriterNp.write(new File(hostDir,"resources.arsc"),mHostTable);
+        LOGGER.info("merge Arsc finished");
     }
 
     private File compiledAarApkDir;
@@ -205,6 +208,8 @@ public class AarManager extends AbstractManager {
 //        aarParse.parse(new FileInputStream(fileAar));
 
         XmlParser data = MergeAndMestFile.mergeXml(hostAndroidMenifest,aarParse);
+        boolean success = XmlResIDReplaceTool.replaceIdsFromMapping(data);
+        log("AarManager replace merged AndroidManifest.xml ids");
         File dest = new File(hostDir,"AndroidManifest.xml");
         XmlWriter.write2NewXml(dest, data); // 生成了mapping文件
         LOGGER.info("merge AndroidManifest.xml 2 " +dest.getAbsolutePath());

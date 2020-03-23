@@ -12,6 +12,7 @@ import com.appadhoc.reversetoy.aar.AarManager;
 import com.appadhoc.reversetoy.aar.Duo_int;
 import com.appadhoc.reversetoy.data.AarID;
 import luyao.parser.xml.XmlParser;
+import luyao.parser.xml.XmlWriter;
 import luyao.parser.xml.bean.Attribute;
 import luyao.parser.xml.bean.chunk.Chunk;
 import luyao.parser.xml.bean.chunk.StartTagChunk;
@@ -583,7 +584,23 @@ public class Utils {
             return null;
         }
 
-        public static String setBinaryManifestApplicationName(XmlParser hostParser, String appname) throws Exception {
+        public static void addBinaryManifestApplicationName(XmlParser hostParser, String appName,File hostDir) throws Exception {
+//            StringBlock block = hostParser.getStringBlock();
+            StartTagChunk application = (StartTagChunk) MergeAndMestFile.getStartChunk(hostParser.getChunkList(), "application");
+            // 把appname 添加到二进制文件当中。
+            MergeAndMestFile.addNameAttribute(application, hostParser, appName);
+            XmlWriter.write2NewXml(new File(hostDir,"AndroidManifest.xml"),hostParser);
+            System.out.println("abc");
+        }
+        public static String updateBinaryManifestApplicationName(XmlParser hostParser, String appname,File hostDir) throws Exception {
+            StartTagChunk application = (StartTagChunk) MergeAndMestFile.getStartChunk(hostParser.getChunkList(), "application");
+            // 把appname 添更新到二进制文件当中。
+            Attribute appNameChunk = MergeAndMestFile.getAttributeFromTrunk(application, "name");
+            MergeAndMestFile.updateAppNameAttribute(appNameChunk, hostParser, appname);
+            XmlWriter.write2NewXml(new File(hostDir,"AndroidManifest.xml"),hostParser);
+            return appname;
+        }
+        public static String getManifestApplicationName(XmlParser hostParser) throws Exception {
 
             StringBlock block = hostParser.getStringBlock();
             StartTagChunk application = (StartTagChunk) MergeAndMestFile.getStartChunk(hostParser.getChunkList(), "application");
@@ -591,11 +608,8 @@ public class Utils {
             if (appNameChunk != null) {
                 String oldAppName = block.getString(appNameChunk.getValueStr());
                 return oldAppName;
-            } else {
-                // 把appname 添加到二进制文件当中。
-                MergeAndMestFile.addNameAttribute(application, hostParser, appname);
-                return appname;
             }
+            return null;
         }
     }
 

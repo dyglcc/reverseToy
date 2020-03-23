@@ -12,6 +12,8 @@ import luyao.parser.xml.bean.chunk.*;
 import java.io.*;
 import java.util.List;
 
+import static luyao.parser.utils.Reader.log;
+
 public class XmlResIDReplaceTool {
 
     public static void main(String[] args) throws IOException, AndrolibException {
@@ -43,6 +45,7 @@ public class XmlResIDReplaceTool {
         if (file.getName().endsWith(".xml")) {
             XmlParser parser = XmlParser.parse(new FileInputStream(file));
             boolean success = replaceIdsFromMapping(parser);
+            log("try replace ids ,file name is " + file.getAbsolutePath());
             if (success) { // 覆盖文件
                 XmlWriter.write2NewXml(new File(file.getAbsolutePath()), parser);
             }
@@ -50,7 +53,7 @@ public class XmlResIDReplaceTool {
 
     }
 
-    private static boolean replaceIdsFromMapping(XmlParser parser) {
+    public static boolean replaceIdsFromMapping(XmlParser parser) {
 
         List<Chunk> chunkList = parser.getChunkList();
 
@@ -107,6 +110,7 @@ public class XmlResIDReplaceTool {
                         int id = Utils.ByteUtils.getInt(rawBytes, 16);
                         int newId = getMappingID(id);
                         if (newId != -1) {
+                            log("replace old id " + id+" new id is " + newId);
                             Utils.ByteUtils.replaceInt(rawBytes, 16, newId);
                         }
                     }

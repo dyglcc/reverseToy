@@ -259,7 +259,7 @@ public class TypedValue {
             case TYPE_NULL:
                 return null;
             case TYPE_REFERENCE:
-                return "@" + data;
+                return "@" + data+"#"+Integer.toHexString(data) ;
             case TYPE_ATTRIBUTE:
                 return "?" + data;
             case TYPE_FLOAT:

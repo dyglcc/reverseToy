@@ -16,6 +16,8 @@ import luyao.parser.xml.bean.chunk.*;
 import java.io.*;
 import java.util.List;
 
+import static luyao.parser.utils.Reader.log;
+
 public class XmlWriter {
     ExtDataOutput mOut;
     File arscOutFile;
@@ -59,7 +61,7 @@ public class XmlWriter {
         return destFile;
     }
 
-    public XmlWriter(File outXml, XmlParser parser) {
+    private XmlWriter(File outXml, XmlParser parser) {
         this.arscOutFile = outXml;
         this.data = parser;
         try {
@@ -77,6 +79,8 @@ public class XmlWriter {
         writer.writeStringPool();
         writer.writeIds(parser.getIdBlock(),parser.getIdsType());
         writer.writeXmlContentChunk(parser.getChunkList());
+        log("after write Xml outXml is " +outXml.getAbsolutePath());
+        log(parser.generateXml());
     }
 
     private void writeStringPool() throws IOException, AndrolibException {

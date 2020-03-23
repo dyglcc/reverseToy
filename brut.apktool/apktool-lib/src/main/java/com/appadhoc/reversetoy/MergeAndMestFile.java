@@ -12,6 +12,7 @@ import luyao.parser.xml.bean.chunk.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -22,32 +23,32 @@ public class MergeAndMestFile {
     public static void main(String[] args) throws Exception {
 //        XmlParser parser = mergeAndroidMestFile();
 //        writeTest(parser);
-        File fileHost = new File("/Users/dongyuangui/Desktop/apk-blue/app/AndroidManifest.xml");
-        File fileAar = new File("/Users/dongyuangui/Desktop/aar-1/aar/tmpaaa77/aar_tmp/AndroidManifest.xml");
-        File out = new File("/Users/dongyuangui/Desktop/apk-blue/app/AndroidManifest.xml-out");
-        XmlParser parser = mergeAndroidMestFile(fileHost, fileAar);
-        XmlWriter.write2NewXml(out, parser);
-//        todo 能够正常解析，但是安卓的解析却不认。，怎么回事
+//        File fileHost = new File("/Users/dongyuangui/Desktop/apk-blue/app/AndroidManifest.xml");
+//        File fileAar = new File("/Users/dongyuangui/Desktop/aar-1/aar/tmpaaa77/aar_tmp/AndroidManifest.xml");
+//        File out = new File("/Users/dongyuangui/Desktop/apk-blue/app/AndroidManifest.xml-out");
+//        XmlParser parser = mergeAndroidMestFile(fileHost, fileAar);
+//        XmlWriter.write2NewXml(out, parser);
+////        todo 能够正常解析，但是安卓的解析却不认。，怎么回事
+//
+//        System.out.println("bengin merge ");
+//        XmlParser.parse(new FileInputStream(out));
+//        System.out.println("after merge");
+//        testParseNew();
 
-        System.out.println("bengin merge ");
-        XmlParser.parse(new FileInputStream(out));
-        System.out.println("after merge");
-        testParseNew();
 
-
-//        testGetApplicationAndName();
+        testAddApplicationAndName();
 
     }
 
-    private static void testGetApplicationAndName() throws Exception {
+    private static void testAddApplicationAndName() throws Exception {
 //        File fileHost = new File("/Users/dongyuangui/Desktop/apk-blue/app/AndroidManifest.xml");
-        File fileHost = new File("/Users/dongyuangui/Desktop/aar-1/aar/tmp16bd0/aar_tmp/AndroidManifest.xml");
-        File fileHostout = new File("/Users/dongyuangui/Desktop/aar-1/aar/tmp16bd0/aar_tmp/AndroidManifest.xml-out");
+        File fileHost = new File("/Users/dongyuangui/GITHUB/MyApplication/app/build/outputs/apk/debug/app-debug/AndroidManifest.xml");
+        File fileHostout = new File("/Users/dongyuangui/Desktop/apk-blue/AndroidManifest.xml-out");
         XmlParser parser = XmlParser.parse(new FileInputStream(fileHost));
         StartTagChunk application = (StartTagChunk) MergeAndMestFile.getStartChunk(parser.getChunkList(), "application");
         Attribute appNameChunk = MergeAndMestFile.getAttributeFromTrunk(application, "name");
         if (appNameChunk == null) {
-            addNameAttribute(application, parser, "wo ca shenmgoushi.com.cn");
+            addNameAttribute(application, parser, "wo.ca.shenmgoushi.com.cn");
         }
         XmlWriter.write2NewXml(fileHostout, parser);
         XmlParser parse1 = XmlParser.parse(new FileInputStream(fileHostout));
@@ -58,24 +59,51 @@ public class MergeAndMestFile {
         StringBlock block = parser.getStringBlock();
         String schmas = "http://schemas.android.com/apk/res/android";
         int nameSpaceUriIndex = MergeArsc.getPosFromBlockByString(block, schmas);
-        int nameIndex = MergeArsc.addSingleString2StringBlockTail(block, "name");
+        int nameIndex = findAnameIndexFromExistChunk(parser);
+        if(nameIndex == -1){
+            throw new Exception("nameAttr index is -1 ");
+        }
         int appNameValueIndex = MergeArsc.addSingleString2StringBlockTail(block, appName);
-        int type = 3;
+        int type = 50331656;
         byte[] attributeAppName = new byte[20];
         Utils.ByteUtils.replaceInt(attributeAppName, 0, nameSpaceUriIndex);
         Utils.ByteUtils.replaceInt(attributeAppName, 4, nameIndex);
         Utils.ByteUtils.replaceInt(attributeAppName, 8, appNameValueIndex);
         Utils.ByteUtils.replaceInt(attributeAppName, 12, type);
         Utils.ByteUtils.replaceInt(attributeAppName, 16, appNameValueIndex);
-        Attribute newAtr = new Attribute(schmas, "name", appNameValueIndex, type, appNameValueIndex + "");
+        Attribute newAtr = new Attribute(schmas, "name", appNameValueIndex, type, appName);
         newAtr.setRawBytes(attributeAppName);
         List<Attribute> list = application.getAttributeList();
         application.setAtCount(application.getAtCount() + 1);
+        application.setChunkSize(application.getChunkSize()+20);
         if (list == null) {
             list = new ArrayList<>();
             application.setAttributeList(list);
         }
+
         list.add(newAtr);
+    }
+
+    private static int findAnameIndexFromExistChunk(XmlParser parser) {
+        ArrayList<Chunk> list = (ArrayList<Chunk>) parser.getChunkList();
+        for(int i=0;i<list.size();i++){
+            Chunk chunk = list.get(i);
+            if(chunk instanceof StartTagChunk){
+                StartTagChunk startTagChunk = (StartTagChunk) chunk;
+                int count = startTagChunk.getAtCount();
+                if(count > 0){
+                    List<Attribute> attributeList = startTagChunk.getAttributeList();
+                    for(int j=0;j<count;j++){
+                        Attribute attribute = attributeList.get(j);
+                        if(attribute.getName().equals("name")){
+                            return Utils.ByteUtils.getInt(attribute.getRawBytes(),4);
+                        }
+                    }
+                }
+
+            }
+        }
+        return -1;
     }
 
     private static void testParseNew() throws IOException {
@@ -272,5 +300,16 @@ public class MergeAndMestFile {
             }
         }
         return null;
+    }
+
+    public static void updateAppNameAttribute(Attribute application, XmlParser hostParser, String appName) throws Exception {
+        StringBlock block = hostParser.getStringBlock();
+
+        byte[] attributeAppName = application.getRawBytes();
+
+        int appNameValueIndex = MergeArsc.addSingleString2StringBlockTail(block, appName);
+
+        application.setData(appName);
+        Utils.ByteUtils.replaceInt(attributeAppName, 16, appNameValueIndex);
     }
 }

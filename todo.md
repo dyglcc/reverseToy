@@ -19,5 +19,8 @@
 
 merge -ousc com.adhoc -exclude abc /Users/dongyuangui/Desktop/apk-blue/lingdandaren-release.apk /Users/dongyuangui/Desktop/aar-1/abtest-release.aar /Users/dongyuangui/Desktop/apk-blue/reverse_init_code.txt 
 merge -ousc com.adhoc -exclude abc /Users/dongyuangui/Desktop/apk-blue/lingdandaren-release.apk /Users/dongyuangui/Desktop/aar-1/riskmanager-release.aar /Users/dongyuangui/Desktop/apk-blue/reverse_init_code.txt 
-java -jar ~/work/apktool_2.4.1.jar d -f -only-main-classes signed1584858989429.apk 
+java -jar ~/work/apktool_2.4.1.jar d -f -only-main-classes signed1584858989429.apk
+
+
+empty app 莫名其妙找不到id0x7f0b001d 
 
