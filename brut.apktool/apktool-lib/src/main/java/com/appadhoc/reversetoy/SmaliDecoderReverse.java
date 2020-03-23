@@ -32,17 +32,17 @@ public class SmaliDecoderReverse {
     private final static Logger LOGGER = Logger.getLogger(AarManager.class.getName());
 
     public static void main(String[] args) throws IOException, BrutException {
-        File srcApkfile = new File("/Users/dongyuangui/Desktop/toy/meishe001.apk");
-//        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
-        File apkOutFile = new File(srcApkfile.getParentFile(), Utils.getNameRemovedSuffix(srcApkfile.getName()));
-        Main.unZipHostApk(srcApkfile, apkOutFile);
-        XmlParser parser = new XmlParser(new FileInputStream(new File(apkOutFile, "AndroidManifest.xml")));
-
-        SmaliDecoderReverse smaliDecoderReverse = new SmaliDecoderReverse(srcApkfile, apkOutFile, parser);
-        smaliDecoderReverse.decodeSmali();
-
-        smaliDecoderReverse.buildSources(apkOutFile);
-        smaliDecoderReverse.buildNonDefaultSources(new ExtFile(apkOutFile));
+//        File srcApkfile = new File("/Users/dongyuangui/Desktop/toy/meishe001.apk");
+////        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
+//        File apkOutFile = new File(srcApkfile.getParentFile(), Utils.getNameRemovedSuffix(srcApkfile.getName()));
+//        Main.unZipHostApk(srcApkfile, apkOutFile);
+//        XmlParser parser = new XmlParser(new FileInputStream(new File(apkOutFile, "AndroidManifest.xml")));
+//
+//        SmaliDecoderReverse smaliDecoderReverse = new SmaliDecoderReverse(srcApkfile, apkOutFile, parser);
+//        smaliDecoderReverse.decodeSmali();
+//
+//        smaliDecoderReverse.buildSources(apkOutFile);
+//        smaliDecoderReverse.buildNonDefaultSources(new ExtFile(apkOutFile));
     }
 
     public void buildSources(File appDir)
