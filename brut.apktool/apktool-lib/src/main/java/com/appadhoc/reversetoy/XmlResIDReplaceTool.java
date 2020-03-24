@@ -11,6 +11,7 @@ import luyao.parser.xml.bean.chunk.*;
 
 import java.io.*;
 import java.util.List;
+import java.util.Objects;
 
 public class XmlResIDReplaceTool {
 
@@ -29,7 +30,7 @@ public class XmlResIDReplaceTool {
     }
 
     public static void decodeDirAndReplace(File resDir) throws IOException, AndrolibException {
-        for (File file : resDir.listFiles()) {
+        for (File file : Objects.requireNonNull(resDir.listFiles())) {
             if (file.isFile()) {
                 decodeSingleFileAndReplacIds(file);
             } else if (file.isDirectory()) {

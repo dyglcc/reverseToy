@@ -26,15 +26,15 @@ public class Main {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) throws Exception {
-//        try {
-//            HashMap map = new HashMap();
-//            map.put("cfu","asdfahttp://asdf");
-//            map.put("ousc","com.adhoc");
-//            map.put("hello","com.adhoc");
-//            test_reverse(map);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        try {
+            HashMap map = new HashMap();
+            map.put("cfu","asdfahttp://asdf");
+            map.put("ousc","com.adhoc");
+            map.put("hello","com.adhoc");
+            test_reverse(map);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 //        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
 //        File apkOutFile = new File(srcApkfile.getParentFile(), Utils.getNameRemovedSuffix(srcApkfile.getName()));
 //        unZipHostApk(srcApkfile,apkOutFile);
@@ -43,21 +43,22 @@ public class Main {
 //        File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
 //        buildApk(apkOutFile);
 
-        File fileRaw = new File("/Users/dongyuangui/Desktop/apk-blue/signed1584869817798");
-        File outApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/output_abc0000.apk");
-        ZipUtils.zipFolders(fileRaw,outApkfile, null, null);
-        SignTool.sign(outApkfile, new File("/Users/dongyuangui/Desktop/apk-blue/output_lingdan-sign.apk"));
+//        File fileRaw = new File("/Users/dongyuangui/Desktop/apk-blue/signed1584869817798");
+//        File outApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/output_abc0000.apk");
+//        ZipUtils.zipFolders(fileRaw,outApkfile, null, null);
+//        SignTool.sign(outApkfile, new File("/Users/dongyuangui/Desktop/apk-blue/output_lingdan-sign.apk"));
     }
 
     public static void test_reverse(HashMap map) throws Exception {
         AndrolibResources resources = new AndrolibResources();
-        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
+//        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
 //        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/com.xunmeng.pinduoduo_47101.apk");
 //        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/com.jingdong.app.mall_69021.apk");
 //        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/meishe.apk");
 //        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/com.xingin.xhs_6370100.apk");
-//        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/com.qiyi.video_81350.apk");
-        String filePath = "/Users/dongyuangui/Desktop/aar-1/abtest-release.aar";
+        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/com.qiyi.video_81350.apk");
+//        String filePath = "/Users/dongyuangui/Desktop/aar-1/abtest-release.aar";
+        String filePath = "/Users/dongyuangui/Desktop/aar-1/libs";
 //        File file = new File("/Users/dongyuangui/Desktop/apk-blue/fiexd9patch.apk");
 //        File file = new File("/Users/dongyuangui/Desktop/toy/apks/meishe.apk");
         File apkOutFile = new File(srcApkfile.getParentFile(), Utils.getNameRemovedSuffix(srcApkfile.getName()));
