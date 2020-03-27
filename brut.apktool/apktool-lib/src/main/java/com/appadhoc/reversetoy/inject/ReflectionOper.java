@@ -32,13 +32,16 @@ public class ReflectionOper {
         }
 //        deleteOldSdkSmaliFile(SDK_DIR, hostDir, newSmaliFolder, exclue);
 //        String appName = Utils.XmlUtils.setApplicationName(hostDir, appNameStub_Eguan);
-        String appName = Utils.XmlUtils.setBinaryManifestApplicationName(hostAndmanifestData, appNameStub);
-        File lastFolder = newSmaliFolder.get(newSmaliFolder.size() - 1);
-        if (appName.equals(appNameStub)) {
-            copyStubSmali2HostDir(stubDir, lastFolder);
-        } else {
-            modifyExistAppSmali(hostDir, appName, lastFolder);
+        String appHostFullName = Utils.XmlUtils.setBinaryManifestApplicationName(hostAndmanifestData, appNameStub);
 
+        File lastFolder = newSmaliFolder.get(newSmaliFolder.size() - 1);
+
+        if (appHostFullName.equals(appNameStub)) {
+
+            copyStubSmali2HostDir(stubDir, lastFolder);
+
+        } else {
+            modifyExistAppSmali(hostDir, appHostFullName, lastFolder,hostAndmanifestData.getManifestPackageName());
         }
         copyJSON2HostAssets(hostDir);
         copyUtilsSmaliFile(stubDir, lastFolder);
@@ -117,14 +120,14 @@ public class ReflectionOper {
         Utils.FileUtils.writeString2File(saveApplicationFile, code);
     }
 
-    private void modifyExistAppSmali(File hostdir, String hostAppName, File lastFolder) throws Exception {
+    private void modifyExistAppSmali(File hostdir, String hostAppName, File lastFolder,String packageName) throws Exception {
         if (!hostdir.exists()) {
             throw new Exception("host dir not exist");
         }
         if (hostAppName == null || hostAppName.equals("")) {
             throw new Exception("hostAppName must be not  null");
         }
-        String hostAppNameFileName = hostAppName.replaceAll("\\.", File.separator) + ".smali";
+
 //            invoke-direct {p0}, Lcom/reverse/stub/App;->initReverseSDK()V
 //        String callMethodCode = "invoke-direct {p0}, L" + hostAppName.replaceAll("\\.", "/") + ";->initReverseSDK()V";
         String callMethodCode = "invoke-static {p0}, Lcom/reverse/stub/Utils;->initReverseSDK(Landroid/content/Context;)V";
@@ -137,7 +140,7 @@ public class ReflectionOper {
 //            methodCodeReplaceMent = Matcher.quoteReplacement(methodCode);
 //        }
 //        LOGGER.info("change result is " + methodCodeReplaceMent);
-        File needModiFile = getApplicationFile(hostdir, hostAppNameFileName);
+        File needModiFile = getApplicationFile(hostdir, hostAppName,packageName);
         if (needModiFile == null) {
             throw new Exception("can not find src Application smali file ,file name path " + hostAppName);
         }
@@ -169,11 +172,16 @@ public class ReflectionOper {
 //        }
     }
 
-    private File getApplicationFile(File hostdir, String hostAppNameFileName) {
+    private File getApplicationFile(File hostdir, String appNameRaw, String packageName) {
+        if (appNameRaw.startsWith(".")) {
+            appNameRaw = packageName + appNameRaw;
+        }
+        appNameRaw = appNameRaw.replaceAll("\\.", File.separator) + ".smali";
+
         File needModiFile = null;
         for (File subSmaiFolder : hostdir.listFiles()) {
             if (subSmaiFolder.isDirectory() && subSmaiFolder.getName().startsWith("smali")) {
-                File file = new File(subSmaiFolder, hostAppNameFileName);
+                File file = new File(subSmaiFolder, appNameRaw);
                 if (file.exists()) {
                     needModiFile = file;
                     break;

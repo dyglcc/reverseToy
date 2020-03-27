@@ -6,6 +6,7 @@ import luyao.parser.xml.bean.chunk.Chunk;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * Created by luyao
@@ -23,7 +24,7 @@ public class Xml {
     public StringBlock stringChunkList;
     public List<String> tagNameList;
     public List<Chunk> chunkList;
-    public static Map<String, String> nameSpaceMap = new HashMap<>();
+    public static Map<String, String> nameSpaceMap = new ConcurrentHashMap<>();
     public static StringBuilder BLANK = new StringBuilder("    ");
     public static String blank = "    ";
 

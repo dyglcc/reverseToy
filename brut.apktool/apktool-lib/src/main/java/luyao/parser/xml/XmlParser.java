@@ -5,6 +5,7 @@ import brut.androlib.res.decoder.StringBlock;
 import brut.common.BrutException;
 import brut.util.ExtDataInput;
 import com.appadhoc.reversetoy.Main;
+import com.appadhoc.reversetoy.MergeAndMestFile;
 import com.appadhoc.reversetoy.utils.RecordCountingInputStream;
 import com.appadhoc.reversetoy.utils.Utils;
 import com.google.common.io.LittleEndianDataInputStream;
@@ -66,10 +67,20 @@ public class XmlParser {
     }
 
     public static void testParse(int count) throws IOException {
-        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/aar_tmp_raw/AndroidManifest.xml");
-//        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/aar_tmp-1/AndroidManifest.xml");
+        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton/AndroidManifest.xml");
+//        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/com.xunmeng.pinduoduo_47101/AndroidManifest.xml");
+//        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/com.jingdong.app.mall_69021/AndroidManifest.xml");
+//        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/meishe/AndroidManifest.xml");
+//        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/com.xingin.xhs_6370100/AndroidManifest.xml");
+//        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/fail/com.tencent.mobileqq_90026/AndroidManifest.xml");
+
+//        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/com.qiyi.video_81350/AndroidManifest.xml");
+//        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/1863521/AndroidManifest.xml");
+
         XmlParser xmlParser = XmlParser.parse(new FileInputStream(dir));
-        System.out.println("hello");
+        StartTagChunk application = (StartTagChunk) MergeAndMestFile.getStartChunk(xmlParser.getChunkList(), "application");
+        Attribute appNameChunk = MergeAndMestFile.getAttributeFromTrunk(application, "debuggable");
+        System.out.println(appNameChunk == null ? "debuggable is null " :"debuggable is not null");
     }
 
     public StringBlock getStringBlock() {
@@ -443,6 +454,27 @@ public class XmlParser {
             }
         }
         return defaultApi;
+    }
+    public String getManifestPackageName() {
+        for (int i = 0; i < chunkList.size(); i++) {
+            Chunk chunk = chunkList.get(i);
+            if (chunk instanceof StartTagChunk) {
+                StartTagChunk startTagChunk = (StartTagChunk) chunk;
+                if (startTagChunk.getName().equals("manifest")) {
+                    List attributs = ((StartTagChunk) chunk).getAttributeList();
+                    for (int j = 0; j < attributs.size(); j++) {
+                        Attribute attribute = (Attribute) attributs.get(j);
+                        if (attribute.getName().equals("package")) {
+                            if (attribute.getType() == TYPE_STRING) {
+                                return attribute.getData();
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     public String getAppName() {

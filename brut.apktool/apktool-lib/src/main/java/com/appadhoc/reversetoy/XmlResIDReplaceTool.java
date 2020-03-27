@@ -30,6 +30,9 @@ public class XmlResIDReplaceTool {
     }
 
     public static void decodeDirAndReplace(File resDir) throws IOException, AndrolibException {
+        if(resDir == null || !resDir.exists()){
+            return;
+        }
         for (File file : Objects.requireNonNull(resDir.listFiles())) {
             if (file.isFile()) {
                 decodeSingleFileAndReplacIds(file);

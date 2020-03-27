@@ -17,7 +17,6 @@
 
 package com.tencent.mm.androlib.res.decoder;
 
-import com.appadhoc.reversetoy.aar.ArscWriter;
 import com.tencent.mm.androlib.AndrolibException;
 import com.tencent.mm.util.ExtDataInput;
 import com.tencent.mm.util.ExtDataOutput;
@@ -213,7 +212,7 @@ public class StringBlock {
   }
 
   public static int writeTableNameStringBlock(
-          ExtDataInput reader, ExtDataOutput out, Map<Integer, String> tableProguardMap, ArscWriter.ARSCData aarData)
+          ExtDataInput reader, ExtDataOutput out, Map<Integer, String> tableProguardMap)
       throws IOException, AndrolibException {
     int type = reader.readInt();
     int chunkSize = reader.readInt();

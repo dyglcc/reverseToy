@@ -56,7 +56,8 @@ public class Main {
 //        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/com.jingdong.app.mall_69021.apk");
 //        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/meishe.apk");
 //        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/com.xingin.xhs_6370100.apk");
-        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/com.qiyi.video_81350.apk");
+//        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/com.qiyi.video_81350.apk");
+        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/1863521.apk");
 //        String filePath = "/Users/dongyuangui/Desktop/aar-1/abtest-release.aar";
         String filePath = "/Users/dongyuangui/Desktop/aar-1/libs";
 //        File file = new File("/Users/dongyuangui/Desktop/apk-blue/fiexd9patch.apk");
@@ -131,13 +132,11 @@ public class Main {
         oper.deleteOldSdkSmaliFile(apkOutFile, multi.getSmaliFolder(),hostParse);
 //        oper.addOrModifyApplicationSmali();
         logger.info("添加或者修改Application smali代码[完成]");
+        logger.info("重新构建Dex文件并压缩Apk文件...");
         File unsignfile = buildApk(apkOutFile,smaliDecoderReverse);
         logger.info("打包合并后的文件生成未签名文件[完成]");
         File signFile = SignTool.sign(unsignfile, apkOutFile);
         logger.info("签名apk文件[完成]");
-        logger.info("#############################################");
-        logger.info("合并后文件" + signFile.getAbsolutePath());
-        logger.info("#############################################");
     }
 
     public static File buildApk(File hostdir, SmaliDecoderReverse smaliDecoderReverse) throws BrutException, IOException {

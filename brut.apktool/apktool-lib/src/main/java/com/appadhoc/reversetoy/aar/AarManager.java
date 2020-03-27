@@ -419,22 +419,6 @@ public class AarManager extends AbstractManager {
 
     private void copyFiles(File hostdir) throws  BrutException {
 //        File unzipFile = new File(tmpDir, getAarFileName());
-//        File valuesFile = new File(unzipFile, "/res/values");
-        // rename values files
-//        if (valuesFile.exists()) {
-//            for (File xmlFile : valuesFile.listFiles()) {
-//                if (xmlFile.getName().endsWith(".xml")) {
-//                    String fileName = xmlFile.getName();
-//                    fileName = fileName.substring(0, fileName.lastIndexOf(".xml"));
-//                    String newName = fileName + System.currentTimeMillis() + "_sdk.xml";
-//                    File rename = new File(valuesFile, newName);
-//                    boolean success = Utils.FileUtils.reNameFile(xmlFile.getAbsolutePath(), rename.getAbsolutePath());
-//                    LOGGER.info("change file " + fileName + " 2 " + newName + " success " + success);
-//                }
-//            }
-//        } else {
-//            LOGGER.info("res/values/ file not exist");
-//        }
         // copy res
         File resHost = new File(hostdir, "res");
         File resAar = new File(compiledAarApkDir, "res");
@@ -447,14 +431,13 @@ public class AarManager extends AbstractManager {
         }
         // copy assets
         File assetsHost = new File(hostdir, "assets");
-        File assetsAar = new File(compiledAarApkDir, "assets");
+        File unzipFile = new File(tmpDir, getAarFileName());
+        File assetsAar = new File(unzipFile, "assets");
         if (assetsAar.exists()) {
             OS.cpdir(assetsAar, assetsHost);
             LOGGER.info("拷贝assets文件到host文件");
         }
-
         // copy jni
-
         File jniHost = new File(hostdir, "lib");
         File jniAar = getAArJNIDir();
         if (jniAar!=null) {

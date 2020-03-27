@@ -21,6 +21,7 @@ public class StartTagChunk extends Chunk {
     private int offset;
     private int atCount;
     private int classAttribute;
+
     public int getClassAttribute() {
         return classAttribute;
     }
@@ -28,6 +29,7 @@ public class StartTagChunk extends Chunk {
     public void setClassAttribute(int classAttribute) {
         this.classAttribute = classAttribute;
     }
+
     public int getChunkSize() {
         return chunkSize;
     }
@@ -35,6 +37,7 @@ public class StartTagChunk extends Chunk {
     public void setChunkSize(int chunkSize) {
         this.chunkSize = chunkSize;
     }
+
     public int getUnknown() {
         return unknown;
     }
@@ -42,6 +45,7 @@ public class StartTagChunk extends Chunk {
     public void setUnknown(int unknown) {
         this.unknown = unknown;
     }
+
     public int getLineNumber() {
         return lineNumber;
     }
@@ -73,7 +77,6 @@ public class StartTagChunk extends Chunk {
     public void setAtCount(int atCount) {
         this.atCount = atCount;
     }
-
 
 
     private String name;
@@ -130,7 +133,8 @@ public class StartTagChunk extends Chunk {
         for (int i = 0; i < attributeList.size(); i++) {
             Attribute attribute = attributeList.get(i);
 
-            String prefix = XmlParser.getNamespacePrefix(Xml.nameSpaceMap.get(attribute.getNamespaceUri()));
+            String nameSpaceUri = attribute.getNamespaceUri();
+            String prefix = nameSpaceUri == null ? "NULL" : XmlParser.getNamespacePrefix(Xml.nameSpaceMap.get(nameSpaceUri));
             builder.append(XmlParser.format("\n%s%s%s=\"%s\"", Xml.BLANK.toString(), prefix, attribute.getName(), attribute.getData()));
 
             if (i == attributeList.size() - 1) builder.append(">");

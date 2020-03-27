@@ -219,7 +219,7 @@ public class ARSCDecoder {
     int packageCount = mIn.readInt();
     mOut.writeInt(packageCount);
 
-    mTableLenghtChange += StringBlock.writeTableNameStringBlock(mIn, mOut, mTableStringsResguard, null);
+    mTableLenghtChange += StringBlock.writeTableNameStringBlock(mIn, mOut, mTableStringsResguard);
     writeNextChunk(0);
     if (packageCount != mPkgs.length) {
       throw new AndrolibException(String.format("writeTable package count is different before %d, now %d",

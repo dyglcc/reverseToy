@@ -267,7 +267,7 @@ public class MergeAndMestFile {
         List<Attribute> attributes = application.getAttributeList();
         for (int i = 0; i < attributes.size(); i++) {
             Attribute attribute = attributes.get(i);
-            if (attribute.getName().equals("name")) {
+            if (attribute.getName().equals(name)) {
                 return attribute;
             }
         }

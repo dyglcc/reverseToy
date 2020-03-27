@@ -23,3 +23,8 @@ java -jar ~/work/apktool_2.4.1.jar d -f -only-main-classes signed1584858989429.a
 
 merge -ousc com.android.reyunsdk -exclude abc /Users/dongyuangui/Desktop/apk-blue/lingdan-fixed.apk /Users/dongyuangui/Desktop/aar-1/riskmanager-release.aar /Users/dongyuangui/Desktop/apk-blue/reverse_init_code.txt  
 
+
+mapping 作为一个成员变量 注：暂时没有问题，先不修改
+2。debugable
+3。mobileqq旧版R.raw ,暂时找不到问题原因，可以通过分析android studio的arsc报错原因找到相应代码错误的地方，推测问题。
+
