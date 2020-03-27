@@ -6,6 +6,7 @@ import brut.common.BrutException;
 import brut.util.Jar;
 import brut.util.OS;
 import brut.util.OSDetection;
+import com.appadhoc.reversetoy.AndroidManifestTool;
 import com.appadhoc.reversetoy.MergeAndMestFile;
 import com.appadhoc.reversetoy.MergeArsc;
 import com.appadhoc.reversetoy.aar.AarManager;
@@ -593,7 +594,7 @@ public class Utils {
                 return oldAppName;
             } else {
                 // 把appname 添加到二进制文件当中。
-                MergeAndMestFile.addNameAttribute(application, hostParser, appname);
+                AndroidManifestTool.addNameAttribute(application, hostParser, appname);
                 return appname;
             }
         }

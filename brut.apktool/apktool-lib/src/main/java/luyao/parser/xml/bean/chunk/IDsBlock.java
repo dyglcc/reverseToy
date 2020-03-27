@@ -12,12 +12,12 @@ public class IDsBlock {
     }
 
     public int getSize() {
-        return size;
+        return ids == null ? 0:ids.length;
     }
 
-    public void setSize(int size) {
-        this.size = size;
-    }
+//    public void setSize(int size) {
+//        this.size = size;
+//    }
 
     public int[] getIds() {
         return ids;
@@ -27,7 +27,7 @@ public class IDsBlock {
         this.ids = ids;
     }
 
-    private int size;
+//    private int size;
     private int[] ids;
 
 //    public int getOldLen() {

@@ -47,36 +47,14 @@ public class MergeAndMestFile {
         StartTagChunk application = (StartTagChunk) MergeAndMestFile.getStartChunk(parser.getChunkList(), "application");
         Attribute appNameChunk = MergeAndMestFile.getAttributeFromTrunk(application, "name");
         if (appNameChunk == null) {
-            addNameAttribute(application, parser, "wo ca shenmgoushi.com.cn");
+            AndroidManifestTool.addNameAttribute(application, parser, "wo ca shenmgoushi.com.cn");
         }
         XmlWriter.write2NewXml(fileHostout, parser);
         XmlParser parse1 = XmlParser.parse(new FileInputStream(fileHostout));
         System.out.println("hello");
     }
 
-    public static void addNameAttribute(StartTagChunk application, XmlParser parser, String appName) throws Exception {
-        StringBlock block = parser.getStringBlock();
-        String schmas = "http://schemas.android.com/apk/res/android";
-        int nameSpaceUriIndex = MergeArsc.getPosFromBlockByString(block, schmas);
-        int nameIndex = MergeArsc.addSingleString2StringBlockTail(block, "name");
-        int appNameValueIndex = MergeArsc.addSingleString2StringBlockTail(block, appName);
-        int type = 3;
-        byte[] attributeAppName = new byte[20];
-        Utils.ByteUtils.replaceInt(attributeAppName, 0, nameSpaceUriIndex);
-        Utils.ByteUtils.replaceInt(attributeAppName, 4, nameIndex);
-        Utils.ByteUtils.replaceInt(attributeAppName, 8, appNameValueIndex);
-        Utils.ByteUtils.replaceInt(attributeAppName, 12, type);
-        Utils.ByteUtils.replaceInt(attributeAppName, 16, appNameValueIndex);
-        Attribute newAtr = new Attribute(schmas, "name", appNameValueIndex, type, appNameValueIndex + "");
-        newAtr.setRawBytes(attributeAppName);
-        List<Attribute> list = application.getAttributeList();
-        application.setAtCount(application.getAtCount() + 1);
-        if (list == null) {
-            list = new ArrayList<>();
-            application.setAttributeList(list);
-        }
-        list.add(newAtr);
-    }
+
 
     private static void testParseNew() throws IOException {
         XmlParser parser = XmlParser.parse(new FileInputStream("/Users/dongyuangui/Desktop/apk-blue/abcxmltest/AndroidManifest-aaa.xml"));

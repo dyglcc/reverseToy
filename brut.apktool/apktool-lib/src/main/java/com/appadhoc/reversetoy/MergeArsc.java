@@ -645,13 +645,5 @@ public class MergeArsc {
         }
     }
 
-    public static int getPosFromBlockByString(StringBlock block, String schmas) {
-        int len = block.getM_stringOffsets().length;
-        for (int i = 0; i < len; i++) {
-            if (schmas.equals(block.get(i))) {
-                return i;
-            }
-        }
-        return -1;
-    }
+
 }

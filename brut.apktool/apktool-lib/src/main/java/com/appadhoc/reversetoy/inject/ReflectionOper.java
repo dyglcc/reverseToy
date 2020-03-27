@@ -2,9 +2,11 @@ package com.appadhoc.reversetoy.inject;
 
 import brut.common.BrutException;
 import brut.util.OS;
+import com.appadhoc.reversetoy.AndroidManifestTool;
 import com.appadhoc.reversetoy.utils.Resource;
 import com.appadhoc.reversetoy.utils.Utils;
 import luyao.parser.xml.XmlParser;
+import luyao.parser.xml.XmlWriter;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,10 +43,16 @@ public class ReflectionOper {
             copyStubSmali2HostDir(stubDir, lastFolder);
 
         } else {
-            modifyExistAppSmali(hostDir, appHostFullName, lastFolder,hostAndmanifestData.getManifestPackageName());
+            modifyExistAppSmali(hostDir, appHostFullName, lastFolder, hostAndmanifestData.getManifestPackageName());
         }
         copyJSON2HostAssets(hostDir);
         copyUtilsSmaliFile(stubDir, lastFolder);
+        if (options != null && options.containsKey("sde")) {
+            AndroidManifestTool.setDebuggableTrue(hostAndmanifestData);
+        }
+        if (hostAndmanifestData.isNeedReWrite()) {
+            XmlWriter.write2NewXml(new File(hostDir, "AndroidManifest.xml"), hostAndmanifestData);
+        }
     }
 
     private void copyJSON2HostAssets(File hostDir) throws IOException {
@@ -120,7 +128,7 @@ public class ReflectionOper {
         Utils.FileUtils.writeString2File(saveApplicationFile, code);
     }
 
-    private void modifyExistAppSmali(File hostdir, String hostAppName, File lastFolder,String packageName) throws Exception {
+    private void modifyExistAppSmali(File hostdir, String hostAppName, File lastFolder, String packageName) throws Exception {
         if (!hostdir.exists()) {
             throw new Exception("host dir not exist");
         }
@@ -140,7 +148,7 @@ public class ReflectionOper {
 //            methodCodeReplaceMent = Matcher.quoteReplacement(methodCode);
 //        }
 //        LOGGER.info("change result is " + methodCodeReplaceMent);
-        File needModiFile = getApplicationFile(hostdir, hostAppName,packageName);
+        File needModiFile = getApplicationFile(hostdir, hostAppName, packageName);
         if (needModiFile == null) {
             throw new Exception("can not find src Application smali file ,file name path " + hostAppName);
         }

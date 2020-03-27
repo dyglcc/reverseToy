@@ -4,6 +4,7 @@ import android.util.TypedValue;
 import brut.androlib.res.decoder.StringBlock;
 import brut.common.BrutException;
 import brut.util.ExtDataInput;
+import com.appadhoc.reversetoy.AndroidManifestTool;
 import com.appadhoc.reversetoy.Main;
 import com.appadhoc.reversetoy.MergeAndMestFile;
 import com.appadhoc.reversetoy.utils.RecordCountingInputStream;
@@ -66,10 +67,10 @@ public class XmlParser {
         System.out.println("abc");
     }
 
-    public static void testParse(int count) throws IOException {
-        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton/AndroidManifest.xml");
+    public static void testParse(int count) throws Exception {
+//        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton/AndroidManifest.xml");
 //        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/com.xunmeng.pinduoduo_47101/AndroidManifest.xml");
-//        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/com.jingdong.app.mall_69021/AndroidManifest.xml");
+        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/com.jingdong.app.mall_69021/AndroidManifest.xml");
 //        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/meishe/AndroidManifest.xml");
 //        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/com.xingin.xhs_6370100/AndroidManifest.xml");
 //        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/fail/com.tencent.mobileqq_90026/AndroidManifest.xml");
@@ -80,7 +81,11 @@ public class XmlParser {
         XmlParser xmlParser = XmlParser.parse(new FileInputStream(dir));
         StartTagChunk application = (StartTagChunk) MergeAndMestFile.getStartChunk(xmlParser.getChunkList(), "application");
         Attribute appNameChunk = MergeAndMestFile.getAttributeFromTrunk(application, "debuggable");
-        System.out.println(appNameChunk == null ? "debuggable is null " :"debuggable is not null");
+        AndroidManifestTool.setDebuggableTrue(xmlParser);
+        File out = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton/AndroidManifest-out.xml");
+        XmlWriter.write2NewXml(out,xmlParser);
+        XmlParser result = XmlParser.parse(new FileInputStream(out));
+        System.out.println("abc");
     }
 
     public StringBlock getStringBlock() {
@@ -101,6 +106,15 @@ public class XmlParser {
         this.chunkList = chunkList;
     }
 
+    public boolean isNeedReWrite() {
+        return needReWrite;
+    }
+
+    public void setNeedReWrite(boolean needReWrite) {
+        this.needReWrite = needReWrite;
+    }
+
+    private boolean needReWrite;
     private List<Chunk> chunkList = new ArrayList<>();
     private RecordCountingInputStream mCountIn;
     private ExtDataInput reader;
@@ -137,16 +151,16 @@ public class XmlParser {
         this.idsType = idsType;
     }
 
-    public int getIdsSize() {
-        return idsSize;
-    }
+//    public int getIdsSize() {
+//        return idsSize;
+//    }
 
-    public void setIdsSize(int idsSize) {
-        this.idsSize = idsSize;
-    }
+//    public void setIdsSize(int idsSize) {
+//        this.idsSize = idsSize;
+//    }
 
     private int idsType;
-    private int idsSize;
+//    private int idsSize;
 
     private void parseHeader() {
         try {
@@ -181,9 +195,9 @@ public class XmlParser {
             throw new IOException("Invalid resource ids size (" + chunkSize + ").");
         }
         this.setIdsType(chunkType);
-        this.setIdsSize(chunkSize);
+//        this.setIdsSize(chunkSize);
         idTrunk.setType(chunkType);
-        idTrunk.setSize(chunkSize);
+//        idTrunk.setSize(chunkSize);
         idTrunk.setIds(reader.readIntArray(chunkSize / 4 - 2));
 
     }

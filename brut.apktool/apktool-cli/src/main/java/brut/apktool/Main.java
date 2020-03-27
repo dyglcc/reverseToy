@@ -194,9 +194,9 @@ public class Main {
 //            operOptions.put("atc",true);
 //        }
 ////        boolean enableException = true;
-//        if (cli.hasOption("ene") || cli.hasOption("enableException")) {
-//            operOptions.put("ene",false);
-//        }
+        if (cli.hasOption("sde") || cli.hasOption("set-debug-enable")) {
+            operOptions.put("sde",true);
+        }
 ////        String uploadUrl = "https://arkpaastest.analysys.cn:4089";
         if (cli.hasOption("ousc") || cli.hasOption("only-update-source-code")) {
             String upuV = cli.getOptionValue("ousc");
@@ -664,11 +664,10 @@ public class Main {
 //                .longOpt("autoTrackClick")
 //                .desc("设置autoTrackClick true 默认:false")
 //                .build();
-////        boolean enableException = true;
-//        Option enableExceptionOption = Option.builder("ene")
-//                .longOpt("enableException")
-//                .desc("设置enableException false 默认:true")
-//                .build();
+        Option debuggaleEnable = Option.builder("sde")
+                .longOpt("set-debug-enable")
+                .desc("设置debuggable true 默认:false")
+                .build();
 //
 ////        String uploadUrl = "https://arkpaastest.analysys.cn:4089";
         Option uploadUrlOption = Option.builder("ousc")
@@ -784,7 +783,7 @@ public class Main {
 //        mergeOptions.addOption(autoTrackPageViewOption);
 //        mergeOptions.addOption(autoTrackFragmentPageViewOption);
 //        mergeOptions.addOption(autoTrackClickOption);
-//        mergeOptions.addOption(enableExceptionOption);
+        mergeOptions.addOption(debuggaleEnable);
         mergeOptions.addOption(uploadUrlOption);
         mergeOptions.addOption(upgradeExcepDir);
 //        mergeOptions.addOption(debugUrlOption);
