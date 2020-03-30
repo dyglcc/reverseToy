@@ -15,7 +15,7 @@ public class SignTool {
         if(!file.exists()){
             throw new Exception("unsign file not exist");
         }
-        if(!hostdir.exists()){
+        if(hostdir == null || !hostdir.exists()){
             hostdir = file.getParentFile().getAbsoluteFile();
         }
         List<String> cmd = new ArrayList<>();
@@ -38,13 +38,13 @@ public class SignTool {
         cmd.add("--ks");
         cmd.add(passfile.getAbsolutePath());
         cmd.add("--ks-key-alias");
-        cmd.add("reverse");
+        cmd.add("androiddebugkey");
 
         cmd.add("--ks-pass");
-        cmd.add("pass:123456");
+        cmd.add("pass:android");
 
         cmd.add("--key-pass");
-        cmd.add("pass:123456");
+        cmd.add("pass:android");
 
         cmd.add("--out");
         File apk = new File(hostdir,"signed"+System.currentTimeMillis()+".apk");
@@ -60,13 +60,13 @@ public class SignTool {
 //            throw new AndrolibException(ex);
 //        }
 //        File newSignfile = new File("signed---.apk");
-        LOGGER.info("##########签名APK完成##################");
-        LOGGER.info("##########文件地址："+apk.getAbsolutePath()+"##################");
+        LOGGER.info("签名APK完成");
+        LOGGER.info("文件地址："+apk.getAbsolutePath());
         return apk;
     }
 
     public static void main(String[] args){
-        File fileapk = new File("/Users/jiaozhengxiang/adhoc_android/emptyapplication/build/outputs/apk/debug/emptyapplication-debug.apk");
+        File fileapk = new File("/Users/dongyuangui/Desktop/apk-blue/com.qiyi.video_81350/signed1585307434239.apk");
         File file = null;
         try {
             file = SignTool.sign(fileapk,null);

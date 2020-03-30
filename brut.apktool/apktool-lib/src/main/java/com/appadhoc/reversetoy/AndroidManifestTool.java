@@ -31,6 +31,7 @@ public class AndroidManifestTool {
         } else {
             // add debuggable attribute.
             addDebuggableTrunk(application,parser);
+            parser.setNeedReWrite(true);
         }
 
     }
@@ -60,11 +61,10 @@ public class AndroidManifestTool {
         int gapLen = stringBlockLen -idArrayLen;
         int[] gapArray = new int[gapLen];
         int[] newIds = new int[stringBlockLen];
-        newIds[newIds.length-1] = 16842767;// 0x0101000f
         System.arraycopy(iDsBlock.getIds(),0,newIds,0,idArrayLen);
         System.arraycopy(gapArray,0,newIds,idArrayLen,gapLen);
+        newIds[newIds.length-1] = 16842767;// 0x0101000f
         iDsBlock.setIds(newIds);
-        parser.setNeedReWrite(true);
 
     }
 

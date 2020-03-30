@@ -755,7 +755,8 @@ public class Utils {
         }
 
         public static File getSignatureFile(Class clazz) throws IOException, BrutException {
-            File file = Jar.getResourceAsFile("/brut/androlib/reversetoy.jks", clazz);
+//            File file = Jar.getResourceAsFile("/brut/androlib/reversetoy.jks", clazz);
+            File file = Jar.getResourceAsFile("/brut/androlib/debug.keystore", clazz);
             file.setReadable(true);
             return file;
         }

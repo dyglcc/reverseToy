@@ -70,17 +70,15 @@ public class XmlParser {
     public static void testParse(int count) throws Exception {
 //        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton/AndroidManifest.xml");
 //        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/com.xunmeng.pinduoduo_47101/AndroidManifest.xml");
-        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/com.jingdong.app.mall_69021/AndroidManifest.xml");
+//        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/com.jingdong.app.mall_69021/AndroidManifest.xml");
 //        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/meishe/AndroidManifest.xml");
 //        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/com.xingin.xhs_6370100/AndroidManifest.xml");
 //        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/fail/com.tencent.mobileqq_90026/AndroidManifest.xml");
 
-//        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/com.qiyi.video_81350/AndroidManifest.xml");
+        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/app-release/signed1585438687477/AndroidManifest.xml");
 //        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/1863521/AndroidManifest.xml");
 
         XmlParser xmlParser = XmlParser.parse(new FileInputStream(dir));
-        StartTagChunk application = (StartTagChunk) MergeAndMestFile.getStartChunk(xmlParser.getChunkList(), "application");
-        Attribute appNameChunk = MergeAndMestFile.getAttributeFromTrunk(application, "debuggable");
         AndroidManifestTool.setDebuggableTrue(xmlParser);
         File out = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton/AndroidManifest-out.xml");
         XmlWriter.write2NewXml(out,xmlParser);
