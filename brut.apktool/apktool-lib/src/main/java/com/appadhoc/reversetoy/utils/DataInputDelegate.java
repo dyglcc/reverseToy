@@ -12,7 +12,7 @@
  * limitations under the License.
  */
 
-package com.tencent.mm.util;
+package com.appadhoc.reversetoy.utils;
 
 import java.io.DataInput;
 import java.io.IOException;

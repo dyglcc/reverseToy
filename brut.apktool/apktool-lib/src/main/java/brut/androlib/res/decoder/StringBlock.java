@@ -17,8 +17,7 @@
 package brut.androlib.res.decoder;
 
 import brut.androlib.res.xml.ResXmlEncoders;
-import com.appadhoc.reversetoy.aar.WriterNp;
-import com.tencent.mm.util.ExtDataInput;
+import com.appadhoc.reversetoy.utils.ExtDataInput;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.charset.*;

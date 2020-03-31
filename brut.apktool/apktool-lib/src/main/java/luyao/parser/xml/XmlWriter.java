@@ -8,7 +8,7 @@ import com.appadhoc.reversetoy.aar.WriterNp;
 import com.appadhoc.reversetoy.aar.XmlHeadCalc;
 import com.google.common.io.CountingOutputStream;
 import com.mindprod.ledatastream.LEDataOutputStream;
-import com.tencent.mm.util.ExtDataOutput;
+import com.appadhoc.reversetoy.utils.ExtDataOutput;
 import luyao.parser.xml.bean.Attribute;
 import luyao.parser.xml.bean.Xml;
 import luyao.parser.xml.bean.chunk.*;

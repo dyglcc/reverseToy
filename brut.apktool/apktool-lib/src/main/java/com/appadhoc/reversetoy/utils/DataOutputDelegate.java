@@ -1,4 +1,4 @@
-package com.tencent.mm.util;
+package com.appadhoc.reversetoy.utils;
 
 import java.io.DataOutput;
 import java.io.IOException;

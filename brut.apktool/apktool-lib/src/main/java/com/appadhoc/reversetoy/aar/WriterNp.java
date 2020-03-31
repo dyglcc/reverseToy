@@ -6,7 +6,7 @@ import brut.androlib.res.decoder.StringBlock;
 import com.appadhoc.reversetoy.utils.Utils;
 import com.google.common.io.CountingOutputStream;
 import com.mindprod.ledatastream.LEDataOutputStream;
-import com.tencent.mm.util.ExtDataOutput;
+import com.appadhoc.reversetoy.utils.ExtDataOutput;
 
 import java.io.*;
 import java.util.LinkedHashMap;

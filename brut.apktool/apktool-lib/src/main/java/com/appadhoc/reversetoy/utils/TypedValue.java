@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.tencent.mm.util;
+package com.appadhoc.reversetoy.utils;
 
 import java.util.zip.ZipEntry;
 
