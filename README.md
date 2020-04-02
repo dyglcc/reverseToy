@@ -3,10 +3,16 @@
 >###### Apktool 使用说明请参考[这里](APKTOOL.md)<br/>
 <pre>java -jar apktool-reverseToy.jar m abc.apk libs reverse_code_json_default-adhoc.txt</pre>
 
->libs是文件夹路径，路径下面是SDK的jar<br/>
+>参数说明：libs是文件夹路径，路径下面是SDK的jar<br/>
 注意：包缺少包可能引起app崩溃启动 <br/>
 abtest_core_*.jar<br/>
 abtest_visual.jar
+
+abc.apk是被合并的宿主apk文件，加固apk未测试，是否支持未知
+
+reverse_code_json_default-adhoc.txt是初始化代码描述文件，该描述文件默认是Appadhoc 吆喝科技的初始化代码描述文件，想使用用户可以参考模版，设置自己的描述文件初始化描述文件。
+
+
 
 
 # 设置参数
