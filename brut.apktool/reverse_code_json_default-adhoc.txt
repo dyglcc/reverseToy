@@ -1,0 +1,48 @@
+{
+    "classname": "com.adhoc.adhocsdk.AdhocTracker",
+    "staticfield": "",
+    "staticMethods": [
+        {
+            "methodName": "init",
+            "para": [{
+                    "paratype": "object",
+                    "paravalue": {
+                        "classname": "com.adhoc.config.AdhocConfig$Builder",
+                        "instanceMethods": [
+                            {
+                                "methodName": "context",
+                                "para": [
+                                    {
+                                        "paratype": "this",
+                                        "paravalue": "this"
+                                    }
+                                ]
+                            },
+                            {
+                                "methodName": "appKey",
+                                "para": [
+                                    {
+                                        "paratype": "string",
+                                        "paravalue": "ADHOC_cbccd53c-d4ac-4d5e-b468-d2ae8f119052"
+                                    }
+                                ]
+                            },
+                            {
+                                "methodName": "enableDebugAssist",
+                                "para": [
+                                    {
+                                        "paratype": "boolean",
+                                        "paravalue": true
+                                    }
+                                ]
+                            },{
+                                 "methodName":"build",
+                                 "para":[]
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}
