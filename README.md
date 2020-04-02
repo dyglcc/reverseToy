@@ -10,10 +10,10 @@ abtest_visual.jar
 
 
 # 设置参数
-<pre> java -jar apktool-reverseToy*.jar m  host.apk abc.jar|libs/|sdk.aar reverse_code_json_default-adhoc.txt</pre>
+<pre> java -jar apktool-reverseToy*.jar m  -sde  host.apk abc.jar|libs/|sdk.aar reverse_code_json_default-adhoc.txt</pre>
 
 # 合并aar文件
-<pre>reverse m abc.apk abtest-v1.2.2.aar</br></pre>
+<pre>reverse m abc.apk abtest-v1.2.2.aar reverse_code_json_default-adhoc.txt</br></pre>
 
 # 参数查看<br/>
 
