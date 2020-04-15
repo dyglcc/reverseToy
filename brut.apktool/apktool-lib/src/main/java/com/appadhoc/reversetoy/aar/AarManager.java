@@ -192,7 +192,11 @@ public class AarManager extends AbstractManager {
     @Override
     public void mergeArscFile() throws Exception {
         AndrolibResources resources = new AndrolibResources();
-        ResTable aarTableTable = resources.getResTable(new ExtFile(getTmpApkFile()));
+        File apkFile = getTmpApkFile();
+        if(!Utils.findArsc(apkFile)){
+            return;
+        }
+        ResTable aarTableTable = resources.getResTable(new ExtFile(apkFile));
         MergeArsc.mergeAarTable2HostTable(mHostTable,aarTableTable);
         WriterNp.write(new File(hostDir,"resources.arsc"),mHostTable);
     }

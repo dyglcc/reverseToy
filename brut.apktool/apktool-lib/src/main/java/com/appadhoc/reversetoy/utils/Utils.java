@@ -43,6 +43,10 @@ public class Utils {
 
     }
 
+    public static boolean findArsc(File apkFile) throws IOException {
+        return Utils.FileUtils.getZipEntryFile("resource.arsc", apkFile) != null;
+    }
+
     public static class OSCMD {
         private final static Logger LOGGER = Logger.getLogger(AarManager.class.getName());
 

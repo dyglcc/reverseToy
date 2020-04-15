@@ -23,7 +23,8 @@ public class ReflectionOper {
     private final static Logger LOGGER = Logger.getLogger(ReflectionOper.class.getName());
     private HashMap<String, Object> options;
     String stubDir = "com.reverse.stub";
-    private String SDK_DIR = "com.analysys";//代码路径
+//    private String SDK_DIR = "com.analysys";//代码路径
+    private String SDK_DIR = null;//代码路径 比如吆喝科技的A/BTest代码路径是com.adhoc
     private String exclue = "track";//路径路径下面有子项目不能删除
     private static final String appNameStub = "com.reverse.stub.ReverseApp";
 //    private File jsonFile;
@@ -248,44 +249,41 @@ public class ReflectionOper {
 
     // 删除旧sdk 的smali文件 // upgrade sdk may be useful
     public void deleteOldSdkSmaliFile(File hostdir, List<File> aarSmaliFolder, XmlParser hostAndmanifestData) throws Exception {
-        String path = SDK_DIR;
+        String path = null;
         String excludeSDKdir = exclue;
-        if (options != null) {
-            if (options.get("exclude") != null) {
-                excludeSDKdir = (String) options.get("exclude");
-            }
-            if (options.get("ousc") != null) {
-                path = (String) options.get("ousc");
-            }
+        if (options.get("keepDir") != null) {
+            excludeSDKdir = (String) options.get("exclude");
+        }
+        if (options.get("codePath") != null) {
+            path = (String) options.get("codePath");
         }
 
-        if (path == null || path.equals("")) {
-            throw new Exception("旧的SDK路径不存在");
-        }
-        if (!hostdir.exists()) {
-            throw new Exception("host dir 不存在");
-        }
-        path = path.replaceAll("\\.", File.separator);
-        for (File file : Objects.requireNonNull(hostdir.listFiles())) {
-            String fileName = file.getName();
-            if (fileName.startsWith("smali") && !fileNameInList(fileName, aarSmaliFolder)) { // 新生成的sdk smali不删除
-                File existOldSdkdir = new File(file, path);
-                if (existOldSdkdir.exists()) {
-                    for (File fileYiguan : Objects.requireNonNull(existOldSdkdir.listFiles())) {
-                        if (!fileYiguan.getName().equals(excludeSDKdir)) {
-                            LOGGER.info("删除旧的SDK目录" + existOldSdkdir.getAbsolutePath());
-                            if (fileYiguan.isFile()) {
-                                OS.rmfile(fileYiguan.getAbsolutePath());
-                            } else {
-                                OS.rmdir(fileYiguan);
+        if (path != null) { // code path 不未空就删除就代码，否则不做删除旧代码操作。
+            if (!hostdir.exists()) {
+                throw new Exception("host dir 不存在");
+            }
+            path = path.replaceAll("\\.", File.separator);
+            for (File file : Objects.requireNonNull(hostdir.listFiles())) {
+                String fileName = file.getName();
+                if (fileName.startsWith("smali") && !fileNameInList(fileName, aarSmaliFolder)) { // 新生成的sdk smali不删除
+                    File existOldSdkdir = new File(file, path);
+                    if (existOldSdkdir.exists()) {
+                        for (File fileYiguan : Objects.requireNonNull(existOldSdkdir.listFiles())) {
+                            if (!fileYiguan.getName().equals(excludeSDKdir)) {
+                                LOGGER.info("删除旧的SDK目录" + existOldSdkdir.getAbsolutePath());
+                                if (fileYiguan.isFile()) {
+                                    OS.rmfile(fileYiguan.getAbsolutePath());
+                                } else {
+                                    OS.rmdir(fileYiguan);
+                                }
                             }
                         }
-                    }
 
+                    }
                 }
             }
         }
-        if (options == null || options.get("upg") == null) {
+        if (options.get("upg") == null) {
             this.addOrModifyApplicationSmali(hostdir, aarSmaliFolder, hostAndmanifestData);
         }
     }

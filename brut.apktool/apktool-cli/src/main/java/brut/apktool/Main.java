@@ -115,8 +115,8 @@ public class Main {
 
     private static void cmdMerge(CommandLine cli) throws Exception {
         int paraCount = cli.getArgList().size();
-        String aarFileName = cli.getArgList().get(paraCount - 2);
         String apkFile = cli.getArgList().get(paraCount - 3);
+        String aarFileName = cli.getArgList().get(paraCount - 2);
         String initCodeFile = cli.getArgList().get(paraCount - 1);
 
 //        String sdk_type = null;
@@ -198,15 +198,15 @@ public class Main {
             operOptions.put("sde",true);
         }
 ////        String uploadUrl = "https://arkpaastest.analysys.cn:4089";
-        if (cli.hasOption("ousc") || cli.hasOption("only-update-source-code")) {
-            String upuV = cli.getOptionValue("ousc");
-            Utils.ParaUtils.checkCmdliPara("ousc",upuV);
-            operOptions.put("ousc",upuV);
+        if (cli.hasOption("codePath") || cli.hasOption("dir-to-del-before-inject-sdk")) {
+            String codPath = cli.getOptionValue("codePath");
+            Utils.ParaUtils.checkCmdliPara("codePath",codPath);
+            operOptions.put("codePath",codPath);
         }
-        if (cli.hasOption("exclude") || cli.hasOption("excludeDir")) {
-            String except = cli.getOptionValue("exclude");
-            Utils.ParaUtils.checkCmdliPara("excludeDir",except);
-            operOptions.put("exclude",except);
+        if (cli.hasOption("keepDir") || cli.hasOption("del-code-path-keep-dir")) {
+            String except = cli.getOptionValue("keepDir");
+            Utils.ParaUtils.checkCmdliPara("keepDir",except);
+            operOptions.put("keepDir",except);
         }
 ////        String debugUrl ="wss://arkpaastest.analysys.cn:4091";
 //        if (cli.hasOption("deu") || cli.hasOption("debugUrl")) {
@@ -670,15 +670,15 @@ public class Main {
                 .build();
 //
 ////        String uploadUrl = "https://arkpaastest.analysys.cn:4089";
-        Option uploadUrlOption = Option.builder("ousc")
-                .longOpt("only-update-source-code")
-                .desc("仅仅更新代码")
+        Option uploadUrlOption = Option.builder("codePath")
+                .longOpt("dir-to-del-before-inject-sdk")
+                .desc("用于代码更新，合并之前要删除指定的路径下的代码文件 例如：com.adhoc")
                 .argName("tag")
                 .hasArg(true)
                 .build();
-        Option upgradeExcepDir = Option.builder("exclude")
-                .longOpt("excludeDir")
-                .desc("升级sdk删除旧目录但不包含目录")
+        Option upgradeExcepDir = Option.builder("keepDir")
+                .longOpt("del-code-path-keep-dir")
+                .desc("用于代码更新，删除旧代码，但是想保留的子目录 例如：visual（将会保留com.adhoc下面的visual目录）")
                 .argName("tag")
                 .hasArg(true)
                 .build();
