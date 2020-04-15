@@ -23,7 +23,8 @@ public class ReflectionOper {
     private final static Logger LOGGER = Logger.getLogger(ReflectionOper.class.getName());
     private HashMap<String, Object> options;
     String stubDir = "com.reverse.stub";
-    private String SDK_DIR = "com.analysys";//代码路径
+//    private String SDK_DIR = "com.analysys";//代码路径
+    private String SDK_DIR = null;//代码路径 比如吆喝科技的A/BTest代码路径是com.adhoc
     private String exclue = "track";//路径路径下面有子项目不能删除
     private static final String appNameStub = "com.reverse.stub.ReverseApp";
 //    private File jsonFile;
@@ -248,15 +249,13 @@ public class ReflectionOper {
 
     // 删除旧sdk 的smali文件 // upgrade sdk may be useful
     public void deleteOldSdkSmaliFile(File hostdir, List<File> aarSmaliFolder, XmlParser hostAndmanifestData) throws Exception {
-        String path = SDK_DIR;
+        String path = options.get("code")
         String excludeSDKdir = exclue;
-        if (options != null) {
-            if (options.get("exclude") != null) {
-                excludeSDKdir = (String) options.get("exclude");
-            }
-            if (options.get("ousc") != null) {
-                path = (String) options.get("ousc");
-            }
+        if (options.get("exclude") != null) {
+            excludeSDKdir = (String) options.get("exclude");
+        }
+        if (options.get("ousc") != null) {
+            path = (String) options.get("ousc");
         }
 
         if (path == null || path.equals("")) {
@@ -285,7 +284,7 @@ public class ReflectionOper {
                 }
             }
         }
-        if (options == null || options.get("upg") == null) {
+        if (options.get("upg") == null) {
             this.addOrModifyApplicationSmali(hostdir, aarSmaliFolder, hostAndmanifestData);
         }
     }

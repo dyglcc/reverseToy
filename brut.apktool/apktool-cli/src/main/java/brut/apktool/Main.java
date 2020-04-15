@@ -672,13 +672,13 @@ public class Main {
 ////        String uploadUrl = "https://arkpaastest.analysys.cn:4089";
         Option uploadUrlOption = Option.builder("ousc")
                 .longOpt("only-update-source-code")
-                .desc("仅仅更新代码")
+                .desc("仅更新SDK代码,不向Application插入初始化代码，适用场景：apk已经有初始化代码")
                 .argName("tag")
                 .hasArg(true)
                 .build();
         Option upgradeExcepDir = Option.builder("exclude")
                 .longOpt("excludeDir")
-                .desc("升级sdk删除旧目录但不包含目录")
+                .desc("升级sdk删除旧目录但不包含子目录")
                 .argName("tag")
                 .hasArg(true)
                 .build();
