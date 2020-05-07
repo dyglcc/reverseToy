@@ -37,6 +37,16 @@ public class Utils {
         return builder;
     }
 
+    public static void initReverseSDK(Context applicationContext) throws IOException, JSONException {
+        InputStream inputStream = applicationContext.getAssets().open("reverse_code_json_default" +
+                ".txt");
+        String codeString = Utils.readStringFromStream(inputStream).toString();
+
+        Utils.CodeBean codeBean = Utils.JSONparse.getCodeBeanByJSonString(codeString);
+
+        Utils.Reflection.callMethod(codeBean,applicationContext);
+    }
+
     public static class JSONparse {
 
 
@@ -81,7 +91,7 @@ public class Utils {
 
         public static CodeBean getCodeBeanByJSonString(String textJson) throws JSONException {
             JSONObject object = new JSONObject(textJson);
-            Utils.CodeBean cb = new Utils.CodeBean();
+            CodeBean cb = new CodeBean();
             String className = object.optString("classname");
             cb.setClassName(className);
 //            cb.setInstanceMethods(new ArrayList<>());
@@ -226,26 +236,21 @@ public class Utils {
 
         private static void callStaticMethod(CodeBean cb, Context application) {
             String className_codebean1 = cb.getClassName();
+            Object obj = null;
             try {
                 Class clazz_instance = Class.forName(className_codebean1);
                 ArrayList<CodeBean.Method_> staticMethods = cb.getMethods();
                 for (int i = 0; i < staticMethods.size(); i++) {
                     CodeBean.Method_ method_ = staticMethods.get(i);
-                    execudeMethod(method_, clazz_instance, null, application);
+                    execudeMethod(method_, clazz_instance, null, application, true);
                 }
-
             } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        private static Object getStaticField(CodeBean cb) throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException {
+        private static Object getStaticField(CodeBean cb) throws ClassNotFoundException,
+                NoSuchFieldException, IllegalAccessException {
             CodeBean.StaticField field = cb.getStaticFields();
             String fieldName = field.getFieldName();
             String className = cb.getClassName();
@@ -277,9 +282,11 @@ public class Utils {
                 ArrayList<CodeBean.Method_> instanceMethod = cb.getInstanceMethods();
                 for (int i = 0; i < instanceMethod.size(); i++) {
                     CodeBean.Method_ method_ = instanceMethod.get(i);
-                    execudeMethod(method_, clazz_instance, obj, application);
+                    Object result = execudeMethod(method_, clazz_instance, obj, application, false);
+                    if (result != null) {
+                        obj = result;
+                    }
                 }
-
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             } catch (IllegalAccessException e) {
@@ -292,9 +299,11 @@ public class Utils {
             return obj;
         }
 
-        private static void execudeMethod(CodeBean.Method_ method_, Class clazz, Object obj, Context application) throws Exception {
+        private static Object execudeMethod(CodeBean.Method_ method_, Class clazz, Object obj,
+                                            Context application, boolean isStatic) {
             String methodName = method_.getMethodName();
-            ArrayList<CodeBean.Method_.Para> paras = (ArrayList<CodeBean.Method_.Para>) method_.getParas();
+            ArrayList<CodeBean.Method_.Para> paras =
+                    (ArrayList<CodeBean.Method_.Para>) method_.getParas();
             Class[] classes_ = new Class[paras.size()];
             Object[] values = new Object[paras.size()];
             for (int i = 0; i < paras.size(); i++) {
@@ -317,14 +326,34 @@ public class Utils {
                     classes_[i] = Context.class;
                     values[i] = application;
                 } else if (type.equals("object")) {
-                    Class clazz_obj = getClassByValue(object);
-                    classes_[i] = clazz_obj;
+                    Class clazz_obj = null;
+                    try {
+                        clazz_obj = getClassByValue(object);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     values[i] = callMethod((CodeBean) object, application);
+                    String resultClassName = values[i].getClass().getName();
+                    if (resultClassName.equals(clazz_obj.getName())) {
+                        classes_[i] = clazz_obj;
+                    } else {
+                        classes_[i] = values[i].getClass();
+                    }
                 }
             }
-            Method method = clazz.getDeclaredMethod(methodName, classes_);
-
-            method.invoke(obj, values);
+            Method method = null;
+            try {
+                method = clazz.getDeclaredMethod(methodName, classes_);
+            } catch (NoSuchMethodException e) {
+                e.printStackTrace();
+            }
+            Object result = null;
+            try {
+                result = method.invoke(obj, values);
+            } catch (Exception et) {
+                et.printStackTrace();
+            }
+            return result;
 
 
         }
@@ -355,6 +384,7 @@ public class Utils {
             return null;
         }
     }
+
     private static void makeAccessible(Field field) {
         if (!Modifier.isPublic(field.getModifiers()) ||
                 !Modifier.isPublic(field.getDeclaringClass().getModifiers())) {
