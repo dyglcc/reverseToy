@@ -1,4 +1,6 @@
 # 安卓reverseToy使用说明<br/>
+打包成功之后使用高版本设备9.0安装apk，暂时发现7.0以下手机会出现classNotfoundException
+
 # 简单使用<br/>
 >###### Apktool 使用说明请参考[这里](APKTOOL.md)<br/>
 <pre>java -jar apktool-reverseToy.jar m abc.apk libs reverse_code_json_default-adhoc.txt</pre>
