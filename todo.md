@@ -29,10 +29,8 @@ merge -ousc com.android.reyunsdk -exclude abc /Users/dongyuangui/Desktop/apk-blu
 
 
 bug:
-1.msa文件找不到，arsc文件问题修复。
-2。更新sdk问题
-3。bugly注入成功却运行不起来。
-
+1.当把Application对象更换到了非classes.dex下面之后，可能会出现classnotfoundExcepiton ，拼多多注入时候报错。
+修复方法（未尝试）：将classes.dex和classes4.dex（放applicaiton类的dex）名字互换,
 
 
 
