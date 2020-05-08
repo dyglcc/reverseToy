@@ -71,10 +71,10 @@
         }
     .end annotation
 
-    .line 56
+    .line 53
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    .line 57
+    .line 54
     new-instance v0, Ljava/lang/StringBuilder;
 
     invoke-direct {v0}, Ljava/lang/StringBuilder;-><init>()V
@@ -111,27 +111,27 @@
 
     invoke-static {v1, v0}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
 
-    .line 58
+    .line 55
     iput-object p1, p0, Lcom/reverse/stub/MultiDexExtractor;->sourceApk:Ljava/io/File;
 
-    .line 59
+    .line 56
     iput-object p2, p0, Lcom/reverse/stub/MultiDexExtractor;->dexDir:Ljava/io/File;
 
-    .line 60
+    .line 57
     invoke-static {p1}, Lcom/reverse/stub/MultiDexExtractor;->getZipCrc(Ljava/io/File;)J
 
     move-result-wide v2
 
     iput-wide v2, p0, Lcom/reverse/stub/MultiDexExtractor;->sourceCrc:J
 
-    .line 61
+    .line 58
     new-instance v0, Ljava/io/File;
 
     const-string v2, "MultiDex.lock"
 
     invoke-direct {v0, p2, v2}, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
 
-    .line 62
+    .line 59
     .local v0, "lockFile":Ljava/io/File;
     new-instance v2, Ljava/io/RandomAccessFile;
 
@@ -141,7 +141,7 @@
 
     iput-object v2, p0, Lcom/reverse/stub/MultiDexExtractor;->lockRaf:Ljava/io/RandomAccessFile;
 
-    .line 65
+    .line 62
     :try_start_0
     iget-object v2, p0, Lcom/reverse/stub/MultiDexExtractor;->lockRaf:Ljava/io/RandomAccessFile;
 
@@ -155,7 +155,7 @@
     .catch Ljava/lang/Error; {:try_start_0 .. :try_end_0} :catch_4
     .catch Ljava/io/IOException; {:try_start_0 .. :try_end_0} :catch_3
 
-    .line 68
+    .line 65
     :try_start_1
     new-instance v2, Ljava/lang/StringBuilder;
 
@@ -177,7 +177,7 @@
 
     invoke-static {v1, v2}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
 
-    .line 69
+    .line 66
     iget-object v2, p0, Lcom/reverse/stub/MultiDexExtractor;->lockChannel:Ljava/nio/channels/FileChannel;
 
     invoke-virtual {v2}, Ljava/nio/channels/FileChannel;->lock()Ljava/nio/channels/FileLock;
@@ -190,10 +190,10 @@
     .catch Ljava/lang/Error; {:try_start_1 .. :try_end_1} :catch_1
     .catch Ljava/io/IOException; {:try_start_1 .. :try_end_1} :catch_0
 
-    .line 73
+    .line 70
     nop
 
-    .line 75
+    .line 72
     :try_start_2
     new-instance v2, Ljava/lang/StringBuilder;
 
@@ -215,13 +215,13 @@
 
     invoke-static {v1, v2}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
 
-    .line 79
+    .line 76
     nop
 
-    .line 80
+    .line 77
     return-void
 
-    .line 70
+    .line 67
     :catch_0
     move-exception v1
 
@@ -235,14 +235,14 @@
     :catch_2
     move-exception v1
 
-    .line 71
+    .line 68
     .local v1, "var5":Ljava/lang/Throwable;
     :goto_0
     iget-object v2, p0, Lcom/reverse/stub/MultiDexExtractor;->lockChannel:Ljava/nio/channels/FileChannel;
 
     invoke-static {v2}, Lcom/reverse/stub/MultiDexExtractor;->closeQuietly(Ljava/io/Closeable;)V
 
-    .line 72
+    .line 69
     nop
 
     .end local v0    # "lockFile":Ljava/io/File;
@@ -254,7 +254,7 @@
     .catch Ljava/lang/Error; {:try_start_2 .. :try_end_2} :catch_4
     .catch Ljava/io/IOException; {:try_start_2 .. :try_end_2} :catch_3
 
-    .line 76
+    .line 73
     .end local v1    # "var5":Ljava/lang/Throwable;
     .restart local v0    # "lockFile":Ljava/io/File;
     .restart local p1    # "sourceApk":Ljava/io/File;
@@ -272,21 +272,21 @@
     :catch_5
     move-exception v1
 
-    .line 77
+    .line 74
     .local v1, "var6":Ljava/lang/Throwable;
     :goto_1
     iget-object v2, p0, Lcom/reverse/stub/MultiDexExtractor;->lockRaf:Ljava/io/RandomAccessFile;
 
     invoke-static {v2}, Lcom/reverse/stub/MultiDexExtractor;->closeQuietly(Ljava/io/Closeable;)V
 
-    .line 78
+    .line 75
     throw v1
 .end method
 
 .method private clearDexDir()V
     .locals 9
 
-    .line 247
+    .line 244
     iget-object v0, p0, Lcom/reverse/stub/MultiDexExtractor;->dexDir:Ljava/io/File;
 
     new-instance v1, Lcom/reverse/stub/MultiDexExtractor$1;
@@ -297,13 +297,13 @@
 
     move-result-object v0
 
-    .line 252
+    .line 249
     .local v0, "files":[Ljava/io/File;
     const-string v1, "MultiDex"
 
     if-nez v0, :cond_0
 
-    .line 253
+    .line 250
     new-instance v2, Ljava/lang/StringBuilder;
 
     invoke-direct {v2}, Ljava/lang/StringBuilder;-><init>()V
@@ -332,15 +332,15 @@
 
     goto :goto_2
 
-    .line 255
+    .line 252
     :cond_0
     move-object v2, v0
 
-    .line 256
+    .line 253
     .local v2, "var2":[Ljava/io/File;
     array-length v3, v0
 
-    .line 258
+    .line 255
     .local v3, "var3":I
     const/4 v4, 0x0
 
@@ -348,10 +348,10 @@
     :goto_0
     if-ge v4, v3, :cond_2
 
-    .line 259
+    .line 256
     aget-object v5, v2, v4
 
-    .line 260
+    .line 257
     .local v5, "oldFile":Ljava/io/File;
     new-instance v6, Ljava/lang/StringBuilder;
 
@@ -383,14 +383,14 @@
 
     invoke-static {v1, v6}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
 
-    .line 261
+    .line 258
     invoke-virtual {v5}, Ljava/io/File;->delete()Z
 
     move-result v6
 
     if-nez v6, :cond_1
 
-    .line 262
+    .line 259
     new-instance v6, Ljava/lang/StringBuilder;
 
     invoke-direct {v6}, Ljava/lang/StringBuilder;-><init>()V
@@ -413,7 +413,7 @@
 
     goto :goto_1
 
-    .line 264
+    .line 261
     :cond_1
     new-instance v6, Ljava/lang/StringBuilder;
 
@@ -435,14 +435,14 @@
 
     invoke-static {v1, v6}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
 
-    .line 258
+    .line 255
     .end local v5    # "oldFile":Ljava/io/File;
     :goto_1
     add-int/lit8 v4, v4, 0x1
 
     goto :goto_0
 
-    .line 269
+    .line 266
     .end local v2    # "var2":[Ljava/io/File;
     .end local v3    # "var3":I
     .end local v4    # "var4":I
@@ -455,20 +455,20 @@
     .locals 3
     .param p0, "closeable"    # Ljava/io/Closeable;
 
-    .line 312
+    .line 309
     :try_start_0
     invoke-interface {p0}, Ljava/io/Closeable;->close()V
     :try_end_0
     .catch Ljava/io/IOException; {:try_start_0 .. :try_end_0} :catch_0
 
-    .line 315
+    .line 312
     goto :goto_0
 
-    .line 313
+    .line 310
     :catch_0
     move-exception v0
 
-    .line 314
+    .line 311
     .local v0, "var2":Ljava/io/IOException;
     const-string v1, "MultiDex"
 
@@ -476,7 +476,7 @@
 
     invoke-static {v1, v2, v0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
-    .line 317
+    .line 314
     .end local v0    # "var2":Ljava/io/IOException;
     :goto_0
     return-void
@@ -495,16 +495,16 @@
         }
     .end annotation
 
-    .line 272
+    .line 269
     invoke-virtual {p0, p1}, Ljava/util/zip/ZipFile;->getInputStream(Ljava/util/zip/ZipEntry;)Ljava/io/InputStream;
 
     move-result-object v0
 
-    .line 273
+    .line 270
     .local v0, "in":Ljava/io/InputStream;
     const/4 v1, 0x0
 
-    .line 274
+    .line 271
     .local v1, "out":Ljava/util/zip/ZipOutputStream;
     new-instance v2, Ljava/lang/StringBuilder;
 
@@ -530,7 +530,7 @@
 
     move-result-object v2
 
-    .line 275
+    .line 272
     .local v2, "tmp":Ljava/io/File;
     new-instance v3, Ljava/lang/StringBuilder;
 
@@ -554,7 +554,7 @@
 
     invoke-static {v4, v3}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
 
-    .line 278
+    .line 275
     :try_start_0
     new-instance v3, Ljava/util/zip/ZipOutputStream;
 
@@ -572,7 +572,7 @@
 
     move-object v1, v3
 
-    .line 281
+    .line 278
     :try_start_1
     new-instance v3, Ljava/util/zip/ZipEntry;
 
@@ -580,7 +580,7 @@
 
     invoke-direct {v3, v5}, Ljava/util/zip/ZipEntry;-><init>(Ljava/lang/String;)V
 
-    .line 282
+    .line 279
     .local v3, "classesDex":Ljava/util/zip/ZipEntry;
     invoke-virtual {p1}, Ljava/util/zip/ZipEntry;->getTime()J
 
@@ -588,15 +588,15 @@
 
     invoke-virtual {v3, v5, v6}, Ljava/util/zip/ZipEntry;->setTime(J)V
 
-    .line 283
+    .line 280
     invoke-virtual {v1, v3}, Ljava/util/zip/ZipOutputStream;->putNextEntry(Ljava/util/zip/ZipEntry;)V
 
-    .line 284
+    .line 281
     const/16 v5, 0x4000
 
     new-array v5, v5, [B
 
-    .line 286
+    .line 283
     .local v5, "buffer":[B
     invoke-virtual {v0, v5}, Ljava/io/InputStream;->read([B)I
 
@@ -608,12 +608,12 @@
 
     if-eq v6, v7, :cond_0
 
-    .line 287
+    .line 284
     const/4 v7, 0x0
 
     invoke-virtual {v1, v5, v7, v6}, Ljava/util/zip/ZipOutputStream;->write([BII)V
 
-    .line 286
+    .line 283
     invoke-virtual {v0, v5}, Ljava/io/InputStream;->read([B)I
 
     move-result v7
@@ -622,30 +622,30 @@
 
     goto :goto_0
 
-    .line 290
+    .line 287
     .end local v6    # "length":I
     :cond_0
     invoke-virtual {v1}, Ljava/util/zip/ZipOutputStream;->closeEntry()V
     :try_end_1
     .catchall {:try_start_1 .. :try_end_1} :catchall_0
 
-    .line 292
+    .line 289
     .end local v3    # "classesDex":Ljava/util/zip/ZipEntry;
     .end local v5    # "buffer":[B
     :try_start_2
     invoke-virtual {v1}, Ljava/util/zip/ZipOutputStream;->close()V
 
-    .line 293
+    .line 290
     nop
 
-    .line 295
+    .line 292
     invoke-virtual {v2}, Ljava/io/File;->setReadOnly()Z
 
     move-result v3
 
     if-eqz v3, :cond_2
 
-    .line 299
+    .line 296
     new-instance v3, Ljava/lang/StringBuilder;
 
     invoke-direct {v3}, Ljava/lang/StringBuilder;-><init>()V
@@ -666,7 +666,7 @@
 
     invoke-static {v4, v3}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
 
-    .line 300
+    .line 297
     invoke-virtual {v2, p2}, Ljava/io/File;->renameTo(Ljava/io/File;)Z
 
     move-result v3
@@ -675,19 +675,19 @@
 
     if-eqz v3, :cond_1
 
-    .line 304
+    .line 301
     invoke-static {v0}, Lcom/reverse/stub/MultiDexExtractor;->closeQuietly(Ljava/io/Closeable;)V
 
-    .line 305
+    .line 302
     invoke-virtual {v2}, Ljava/io/File;->delete()Z
 
-    .line 306
+    .line 303
     nop
 
-    .line 308
+    .line 305
     return-void
 
-    .line 301
+    .line 298
     :cond_1
     :try_start_3
     new-instance v3, Ljava/io/IOException;
@@ -735,7 +735,7 @@
     .end local p3    # "extractedFilePrefix":Ljava/lang/String;
     throw v3
 
-    .line 296
+    .line 293
     .restart local v0    # "in":Ljava/io/InputStream;
     .restart local v1    # "out":Ljava/util/zip/ZipOutputStream;
     .restart local v2    # "tmp":Ljava/io/File;
@@ -789,7 +789,7 @@
     .end local p3    # "extractedFilePrefix":Ljava/lang/String;
     throw v3
 
-    .line 292
+    .line 289
     .restart local v0    # "in":Ljava/io/InputStream;
     .restart local v1    # "out":Ljava/util/zip/ZipOutputStream;
     .restart local v2    # "tmp":Ljava/io/File;
@@ -802,6 +802,9 @@
 
     invoke-virtual {v1}, Ljava/util/zip/ZipOutputStream;->close()V
 
+    .line 290
+    nop
+
     .end local v0    # "in":Ljava/io/InputStream;
     .end local v1    # "out":Ljava/util/zip/ZipOutputStream;
     .end local v2    # "tmp":Ljava/io/File;
@@ -813,7 +816,7 @@
     :try_end_3
     .catchall {:try_start_3 .. :try_end_3} :catchall_1
 
-    .line 304
+    .line 301
     .restart local v0    # "in":Ljava/io/InputStream;
     .restart local v1    # "out":Ljava/util/zip/ZipOutputStream;
     .restart local v2    # "tmp":Ljava/io/File;
@@ -826,9 +829,10 @@
 
     invoke-static {v0}, Lcom/reverse/stub/MultiDexExtractor;->closeQuietly(Ljava/io/Closeable;)V
 
-    .line 305
+    .line 302
     invoke-virtual {v2}, Ljava/io/File;->delete()Z
 
+    .line 303
     goto :goto_2
 
     :goto_1
@@ -842,7 +846,7 @@
     .locals 2
     .param p0, "context"    # Landroid/content/Context;
 
-    .line 243
+    .line 240
     sget v0, Landroid/os/Build$VERSION;->SDK_INT:I
 
     const/16 v1, 0xb
@@ -870,12 +874,12 @@
     .locals 5
     .param p0, "archive"    # Ljava/io/File;
 
-    .line 152
+    .line 149
     invoke-virtual {p0}, Ljava/io/File;->lastModified()J
 
     move-result-wide v0
 
-    .line 153
+    .line 150
     .local v0, "timeStamp":J
     const-wide/16 v2, -0x1
 
@@ -883,12 +887,12 @@
 
     if-nez v4, :cond_0
 
-    .line 154
+    .line 151
     const-wide/16 v2, 0x1
 
     sub-long/2addr v0, v2
 
-    .line 157
+    .line 154
     :cond_0
     return-wide v0
 .end method
@@ -902,12 +906,12 @@
         }
     .end annotation
 
-    .line 161
+    .line 158
     invoke-static {p0}, Lcom/reverse/stub/ZipUtil;->getZipCrc(Ljava/io/File;)J
 
     move-result-wide v0
 
-    .line 162
+    .line 159
     .local v0, "computedValue":J
     const-wide/16 v2, -0x1
 
@@ -915,12 +919,12 @@
 
     if-nez v4, :cond_0
 
-    .line 163
+    .line 160
     const-wide/16 v2, 0x1
 
     sub-long/2addr v0, v2
 
-    .line 166
+    .line 163
     :cond_0
     return-wide v0
 .end method
@@ -932,12 +936,12 @@
     .param p2, "currentCrc"    # J
     .param p4, "prefsKeyPrefix"    # Ljava/lang/String;
 
-    .line 147
+    .line 144
     invoke-static {p0}, Lcom/reverse/stub/MultiDexExtractor;->getMultiDexPreferences(Landroid/content/Context;)Landroid/content/SharedPreferences;
 
     move-result-object v0
 
-    .line 148
+    .line 145
     .local v0, "prefs":Landroid/content/SharedPreferences;
     new-instance v1, Ljava/lang/StringBuilder;
 
@@ -1026,7 +1030,7 @@
         }
     .end annotation
 
-    .line 119
+    .line 116
     move-object/from16 v0, p0
 
     move-object/from16 v1, p2
@@ -1037,7 +1041,7 @@
 
     invoke-static {v2, v3}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
 
-    .line 120
+    .line 117
     new-instance v2, Ljava/lang/StringBuilder;
 
     invoke-direct {v2}, Ljava/lang/StringBuilder;-><init>()V
@@ -1058,13 +1062,13 @@
 
     move-result-object v2
 
-    .line 121
+    .line 118
     .local v2, "extractedFilePrefix":Ljava/lang/String;
     invoke-static/range {p1 .. p1}, Lcom/reverse/stub/MultiDexExtractor;->getMultiDexPreferences(Landroid/content/Context;)Landroid/content/SharedPreferences;
 
     move-result-object v3
 
-    .line 122
+    .line 119
     .local v3, "multiDexPreferences":Landroid/content/SharedPreferences;
     new-instance v4, Ljava/lang/StringBuilder;
 
@@ -1086,7 +1090,7 @@
 
     move-result v4
 
-    .line 123
+    .line 120
     .local v4, "totalDexNumber":I
     new-instance v5, Ljava/util/ArrayList;
 
@@ -1094,7 +1098,7 @@
 
     invoke-direct {v5, v6}, Ljava/util/ArrayList;-><init>(I)V
 
-    .line 125
+    .line 122
     .local v5, "files":Ljava/util/List;, "Ljava/util/List<Lcom/reverse/stub/MultiDexExtractor$ExtractedDex;>;"
     const/4 v6, 0x2
 
@@ -1102,7 +1106,7 @@
     :goto_0
     if-gt v6, v4, :cond_3
 
-    .line 126
+    .line 123
     new-instance v7, Ljava/lang/StringBuilder;
 
     invoke-direct {v7}, Ljava/lang/StringBuilder;-><init>()V
@@ -1119,7 +1123,7 @@
 
     move-result-object v7
 
-    .line 127
+    .line 124
     .local v7, "fileName":Ljava/lang/String;
     new-instance v8, Lcom/reverse/stub/MultiDexExtractor$ExtractedDex;
 
@@ -1127,7 +1131,7 @@
 
     invoke-direct {v8, v9, v7}, Lcom/reverse/stub/MultiDexExtractor$ExtractedDex;-><init>(Ljava/io/File;Ljava/lang/String;)V
 
-    .line 128
+    .line 125
     .local v8, "extractedFile":Lcom/reverse/stub/MultiDexExtractor$ExtractedDex;
     invoke-virtual {v8}, Lcom/reverse/stub/MultiDexExtractor$ExtractedDex;->isFile()Z
 
@@ -1135,14 +1139,14 @@
 
     if-eqz v9, :cond_2
 
-    .line 132
+    .line 129
     invoke-static {v8}, Lcom/reverse/stub/MultiDexExtractor;->getZipCrc(Ljava/io/File;)J
 
     move-result-wide v9
 
     iput-wide v9, v8, Lcom/reverse/stub/MultiDexExtractor$ExtractedDex;->crc:J
 
-    .line 133
+    .line 130
     new-instance v9, Ljava/lang/StringBuilder;
 
     invoke-direct {v9}, Ljava/lang/StringBuilder;-><init>()V
@@ -1165,7 +1169,7 @@
 
     move-result-wide v12
 
-    .line 134
+    .line 131
     .local v12, "expectedCrc":J
     new-instance v9, Ljava/lang/StringBuilder;
 
@@ -1187,13 +1191,13 @@
 
     move-result-wide v9
 
-    .line 135
+    .line 132
     .local v9, "expectedModTime":J
     invoke-virtual {v8}, Lcom/reverse/stub/MultiDexExtractor$ExtractedDex;->lastModified()J
 
     move-result-wide v14
 
-    .line 136
+    .line 133
     .local v14, "lastModified":J
     cmp-long v11, v9, v14
 
@@ -1213,10 +1217,10 @@
 
     if-nez v17, :cond_1
 
-    .line 140
+    .line 137
     invoke-interface {v5, v8}, Ljava/util/List;->add(Ljava/lang/Object;)Z
 
-    .line 125
+    .line 122
     .end local v7    # "fileName":Ljava/lang/String;
     .end local v8    # "extractedFile":Lcom/reverse/stub/MultiDexExtractor$ExtractedDex;
     .end local v9    # "expectedModTime":J
@@ -1230,7 +1234,7 @@
 
     goto :goto_0
 
-    .line 136
+    .line 133
     .end local v11    # "extractedFilePrefix":Ljava/lang/String;
     .end local v16    # "multiDexPreferences":Landroid/content/SharedPreferences;
     .restart local v2    # "extractedFilePrefix":Ljava/lang/String;
@@ -1245,7 +1249,7 @@
 
     move-object/from16 v16, v3
 
-    .line 137
+    .line 134
     .end local v2    # "extractedFilePrefix":Ljava/lang/String;
     .end local v3    # "multiDexPreferences":Landroid/content/SharedPreferences;
     .restart local v11    # "extractedFilePrefix":Ljava/lang/String;
@@ -1303,7 +1307,7 @@
 
     throw v2
 
-    .line 129
+    .line 126
     .end local v9    # "expectedModTime":J
     .end local v11    # "extractedFilePrefix":Ljava/lang/String;
     .end local v12    # "expectedCrc":J
@@ -1344,7 +1348,7 @@
 
     throw v0
 
-    .line 143
+    .line 140
     .end local v6    # "secondaryNumber":I
     .end local v7    # "fileName":Ljava/lang/String;
     .end local v8    # "extractedFile":Lcom/reverse/stub/MultiDexExtractor$ExtractedDex;
@@ -1371,7 +1375,7 @@
         }
     .end annotation
 
-    .line 170
+    .line 167
     move-object/from16 v1, p0
 
     const-string v2, ".dex"
@@ -1402,18 +1406,18 @@
 
     move-result-object v6
 
-    .line 171
+    .line 168
     .local v6, "extractedFilePrefix":Ljava/lang/String;
     invoke-direct/range {p0 .. p0}, Lcom/reverse/stub/MultiDexExtractor;->clearDexDir()V
 
-    .line 172
+    .line 169
     new-instance v0, Ljava/util/ArrayList;
 
     invoke-direct {v0}, Ljava/util/ArrayList;-><init>()V
 
     move-object v7, v0
 
-    .line 173
+    .line 170
     .local v7, "files":Ljava/util/List;, "Ljava/util/List<Lcom/reverse/stub/MultiDexExtractor$ExtractedDex;>;"
     new-instance v0, Ljava/util/zip/ZipFile;
 
@@ -1423,11 +1427,11 @@
 
     move-object v8, v0
 
-    .line 176
+    .line 173
     .local v8, "apk":Ljava/util/zip/ZipFile;
     const/4 v0, 0x2
 
-    .line 178
+    .line 175
     .local v0, "secondaryNumber":I
     :try_start_0
     new-instance v9, Ljava/lang/StringBuilder;
@@ -1456,7 +1460,7 @@
     :goto_0
     if-eqz v9, :cond_4
 
-    .line 179
+    .line 176
     new-instance v0, Ljava/lang/StringBuilder;
 
     invoke-direct {v0}, Ljava/lang/StringBuilder;-><init>()V
@@ -1475,7 +1479,7 @@
 
     move-object v11, v0
 
-    .line 180
+    .line 177
     .local v11, "fileName":Ljava/lang/String;
     new-instance v0, Lcom/reverse/stub/MultiDexExtractor$ExtractedDex;
 
@@ -1485,11 +1489,11 @@
 
     move-object v12, v0
 
-    .line 181
+    .line 178
     .local v12, "extractedFile":Lcom/reverse/stub/MultiDexExtractor$ExtractedDex;
     invoke-interface {v7, v12}, Ljava/util/List;->add(Ljava/lang/Object;)Z
 
-    .line 182
+    .line 179
     new-instance v0, Ljava/lang/StringBuilder;
 
     invoke-direct {v0}, Ljava/lang/StringBuilder;-><init>()V
@@ -1506,14 +1510,14 @@
 
     invoke-static {v5, v0}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
 
-    .line 183
+    .line 180
     const/4 v0, 0x0
 
-    .line 184
+    .line 181
     .local v0, "numAttempts":I
     const/4 v13, 0x0
 
-    .line 186
+    .line 183
     .local v13, "isExtractionSuccessful":Z
     :goto_1
     const/4 v14, 0x3
@@ -1522,17 +1526,17 @@
 
     if-nez v13, :cond_2
 
-    .line 187
+    .line 184
     add-int/lit8 v14, v0, 0x1
 
-    .line 188
+    .line 185
     .end local v0    # "numAttempts":I
     .local v14, "numAttempts":I
     invoke-static {v8, v9, v12, v6}, Lcom/reverse/stub/MultiDexExtractor;->extract(Ljava/util/zip/ZipFile;Ljava/util/zip/ZipEntry;Ljava/io/File;Ljava/lang/String;)V
     :try_end_0
     .catchall {:try_start_0 .. :try_end_0} :catchall_0
 
-    .line 191
+    .line 188
     :try_start_1
     invoke-static {v12}, Lcom/reverse/stub/MultiDexExtractor;->getZipCrc(Ljava/io/File;)J
 
@@ -1543,27 +1547,27 @@
     .catch Ljava/io/IOException; {:try_start_1 .. :try_end_1} :catch_0
     .catchall {:try_start_1 .. :try_end_1} :catchall_0
 
-    .line 192
+    .line 189
     const/4 v0, 0x1
 
-    .line 196
+    .line 193
     .end local v13    # "isExtractionSuccessful":Z
     .local v0, "isExtractionSuccessful":Z
     move v13, v0
 
     goto :goto_2
 
-    .line 193
+    .line 190
     .end local v0    # "isExtractionSuccessful":Z
     .restart local v13    # "isExtractionSuccessful":Z
     :catch_0
     move-exception v0
 
-    .line 194
+    .line 191
     .local v0, "var18":Ljava/io/IOException;
     const/4 v1, 0x0
 
-    .line 195
+    .line 192
     .end local v13    # "isExtractionSuccessful":Z
     .local v1, "isExtractionSuccessful":Z
     :try_start_2
@@ -1589,7 +1593,7 @@
 
     move v13, v1
 
-    .line 198
+    .line 195
     .end local v0    # "var18":Ljava/io/IOException;
     .end local v1    # "isExtractionSuccessful":Z
     .restart local v13    # "isExtractionSuccessful":Z
@@ -1652,20 +1656,20 @@
 
     invoke-static {v5, v0}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
 
-    .line 199
+    .line 196
     if-nez v13, :cond_1
 
-    .line 200
+    .line 197
     invoke-virtual {v12}, Lcom/reverse/stub/MultiDexExtractor$ExtractedDex;->delete()Z
 
-    .line 201
+    .line 198
     invoke-virtual {v12}, Lcom/reverse/stub/MultiDexExtractor$ExtractedDex;->exists()Z
 
     move-result v0
 
     if-eqz v0, :cond_1
 
-    .line 202
+    .line 199
     new-instance v0, Ljava/lang/StringBuilder;
 
     invoke-direct {v0}, Ljava/lang/StringBuilder;-><init>()V
@@ -1690,7 +1694,7 @@
 
     invoke-static {v5, v0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;)I
 
-    .line 186
+    .line 183
     :cond_1
     move v0, v1
 
@@ -1698,13 +1702,13 @@
 
     goto/16 :goto_1
 
-    .line 207
+    .line 204
     .end local v1    # "numAttempts":I
     .local v0, "numAttempts":I
     :cond_2
     if-eqz v13, :cond_3
 
-    .line 211
+    .line 208
     nop
 
     .end local v0    # "numAttempts":I
@@ -1713,7 +1717,7 @@
     .end local v13    # "isExtractionSuccessful":Z
     add-int/lit8 v10, v10, 0x1
 
-    .line 178
+    .line 175
     new-instance v0, Ljava/lang/StringBuilder;
 
     invoke-direct {v0}, Ljava/lang/StringBuilder;-><init>()V
@@ -1738,7 +1742,7 @@
 
     goto/16 :goto_0
 
-    .line 208
+    .line 205
     .restart local v0    # "numAttempts":I
     .restart local v11    # "fileName":Ljava/lang/String;
     .restart local v12    # "extractedFile":Lcom/reverse/stub/MultiDexExtractor$ExtractedDex;
@@ -1783,7 +1787,7 @@
     :try_end_2
     .catchall {:try_start_2 .. :try_end_2} :catchall_0
 
-    .line 215
+    .line 212
     .end local v0    # "numAttempts":I
     .end local v9    # "dexFile":Ljava/util/zip/ZipEntry;
     .end local v10    # "secondaryNumber":I
@@ -1799,10 +1803,10 @@
     :try_end_3
     .catch Ljava/io/IOException; {:try_start_3 .. :try_end_3} :catch_1
 
-    .line 218
+    .line 215
     goto :goto_4
 
-    .line 216
+    .line 213
     :catch_1
     move-exception v0
 
@@ -1810,34 +1814,34 @@
 
     move-object v0, v1
 
-    .line 217
+    .line 214
     .local v0, "var17":Ljava/io/IOException;
     invoke-static {v5, v3, v0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
-    .line 220
+    .line 217
     .end local v0    # "var17":Ljava/io/IOException;
     nop
 
-    .line 222
+    .line 219
     :goto_4
     return-object v7
 
-    .line 214
+    .line 211
     :catchall_0
     move-exception v0
 
     move-object v1, v0
 
-    .line 215
+    .line 212
     :try_start_4
     invoke-virtual {v8}, Ljava/util/zip/ZipFile;->close()V
     :try_end_4
     .catch Ljava/io/IOException; {:try_start_4 .. :try_end_4} :catch_2
 
-    .line 218
+    .line 215
     goto :goto_5
 
-    .line 216
+    .line 213
     :catch_2
     move-exception v0
 
@@ -1845,11 +1849,11 @@
 
     move-object v0, v2
 
-    .line 217
+    .line 214
     .restart local v0    # "var17":Ljava/io/IOException;
     invoke-static {v5, v3, v0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
-    .line 218
+    .line 217
     .end local v0    # "var17":Ljava/io/IOException;
     :goto_5
     goto :goto_7
@@ -1879,19 +1883,19 @@
         }
     .end annotation
 
-    .line 226
+    .line 223
     .local p6, "extractedDexes":Ljava/util/List;, "Ljava/util/List<Lcom/reverse/stub/MultiDexExtractor$ExtractedDex;>;"
     invoke-static {p0}, Lcom/reverse/stub/MultiDexExtractor;->getMultiDexPreferences(Landroid/content/Context;)Landroid/content/SharedPreferences;
 
     move-result-object v0
 
-    .line 227
+    .line 224
     .local v0, "prefs":Landroid/content/SharedPreferences;
     invoke-interface {v0}, Landroid/content/SharedPreferences;->edit()Landroid/content/SharedPreferences$Editor;
 
     move-result-object v1
 
-    .line 228
+    .line 225
     .local v1, "edit":Landroid/content/SharedPreferences$Editor;
     new-instance v2, Ljava/lang/StringBuilder;
 
@@ -1909,7 +1913,7 @@
 
     invoke-interface {v1, v2, p2, p3}, Landroid/content/SharedPreferences$Editor;->putLong(Ljava/lang/String;J)Landroid/content/SharedPreferences$Editor;
 
-    .line 229
+    .line 226
     new-instance v2, Ljava/lang/StringBuilder;
 
     invoke-direct {v2}, Ljava/lang/StringBuilder;-><init>()V
@@ -1926,7 +1930,7 @@
 
     invoke-interface {v1, v2, p4, p5}, Landroid/content/SharedPreferences$Editor;->putLong(Ljava/lang/String;J)Landroid/content/SharedPreferences$Editor;
 
-    .line 230
+    .line 227
     new-instance v2, Ljava/lang/StringBuilder;
 
     invoke-direct {v2}, Ljava/lang/StringBuilder;-><init>()V
@@ -1949,10 +1953,10 @@
 
     invoke-interface {v1, v2, v3}, Landroid/content/SharedPreferences$Editor;->putInt(Ljava/lang/String;I)Landroid/content/SharedPreferences$Editor;
 
-    .line 231
+    .line 228
     const/4 v2, 0x2
 
-    .line 233
+    .line 230
     .local v2, "extractedDexId":I
     invoke-interface {p6}, Ljava/util/List;->iterator()Ljava/util/Iterator;
 
@@ -1966,14 +1970,14 @@
 
     if-eqz v4, :cond_0
 
-    .line 234
+    .line 231
     invoke-interface {v3}, Ljava/util/Iterator;->next()Ljava/lang/Object;
 
     move-result-object v4
 
     check-cast v4, Lcom/reverse/stub/MultiDexExtractor$ExtractedDex;
 
-    .line 235
+    .line 232
     .local v4, "dex":Lcom/reverse/stub/MultiDexExtractor$ExtractedDex;
     new-instance v5, Ljava/lang/StringBuilder;
 
@@ -1995,7 +1999,7 @@
 
     invoke-interface {v1, v5, v6, v7}, Landroid/content/SharedPreferences$Editor;->putLong(Ljava/lang/String;J)Landroid/content/SharedPreferences$Editor;
 
-    .line 236
+    .line 233
     new-instance v5, Ljava/lang/StringBuilder;
 
     invoke-direct {v5}, Ljava/lang/StringBuilder;-><init>()V
@@ -2018,18 +2022,18 @@
 
     invoke-interface {v1, v5, v6, v7}, Landroid/content/SharedPreferences$Editor;->putLong(Ljava/lang/String;J)Landroid/content/SharedPreferences$Editor;
 
-    .line 233
+    .line 230
     .end local v4    # "dex":Lcom/reverse/stub/MultiDexExtractor$ExtractedDex;
     add-int/lit8 v2, v2, 0x1
 
     goto :goto_0
 
-    .line 239
+    .line 236
     .end local v3    # "var10":Ljava/util/Iterator;
     :cond_0
     invoke-interface {v1}, Landroid/content/SharedPreferences$Editor;->commit()Z
 
-    .line 240
+    .line 237
     return-void
 .end method
 
@@ -2043,22 +2047,22 @@
         }
     .end annotation
 
-    .line 113
+    .line 110
     iget-object v0, p0, Lcom/reverse/stub/MultiDexExtractor;->cacheLock:Ljava/nio/channels/FileLock;
 
     invoke-virtual {v0}, Ljava/nio/channels/FileLock;->release()V
 
-    .line 114
+    .line 111
     iget-object v0, p0, Lcom/reverse/stub/MultiDexExtractor;->lockChannel:Ljava/nio/channels/FileChannel;
 
     invoke-virtual {v0}, Ljava/nio/channels/FileChannel;->close()V
 
-    .line 115
+    .line 112
     iget-object v0, p0, Lcom/reverse/stub/MultiDexExtractor;->lockRaf:Ljava/io/RandomAccessFile;
 
     invoke-virtual {v0}, Ljava/io/RandomAccessFile;->close()V
 
-    .line 116
+    .line 113
     return-void
 .end method
 
@@ -2086,7 +2090,7 @@
         }
     .end annotation
 
-    .line 83
+    .line 80
     new-instance v0, Ljava/lang/StringBuilder;
 
     invoke-direct {v0}, Ljava/lang/StringBuilder;-><init>()V
@@ -2125,7 +2129,7 @@
 
     invoke-static {v1, v0}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
 
-    .line 84
+    .line 81
     iget-object v0, p0, Lcom/reverse/stub/MultiDexExtractor;->cacheLock:Ljava/nio/channels/FileLock;
 
     invoke-virtual {v0}, Ljava/nio/channels/FileLock;->isValid()Z
@@ -2134,7 +2138,7 @@
 
     if-eqz v0, :cond_2
 
-    .line 88
+    .line 85
     if-nez p3, :cond_0
 
     iget-object v0, p0, Lcom/reverse/stub/MultiDexExtractor;->sourceApk:Ljava/io/File;
@@ -2147,7 +2151,7 @@
 
     if-nez v0, :cond_0
 
-    .line 90
+    .line 87
     :try_start_0
     invoke-direct {p0, p1, p2}, Lcom/reverse/stub/MultiDexExtractor;->loadExistingExtractions(Landroid/content/Context;Ljava/lang/String;)Ljava/util/List;
 
@@ -2155,27 +2159,27 @@
     :try_end_0
     .catch Ljava/io/IOException; {:try_start_0 .. :try_end_0} :catch_0
 
-    .line 95
+    .line 92
     .local v0, "files":Ljava/util/List;
     goto :goto_1
 
-    .line 91
+    .line 88
     .end local v0    # "files":Ljava/util/List;
     :catch_0
     move-exception v0
 
-    .line 92
+    .line 89
     .local v0, "var6":Ljava/io/IOException;
     const-string v2, "Failed to reload existing extracted secondary dex files, falling back to fresh extraction"
 
     invoke-static {v1, v2, v0}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
-    .line 93
+    .line 90
     invoke-direct {p0}, Lcom/reverse/stub/MultiDexExtractor;->performExtractions()Ljava/util/List;
 
     move-result-object v2
 
-    .line 94
+    .line 91
     .local v2, "files":Ljava/util/List;
     iget-object v3, p0, Lcom/reverse/stub/MultiDexExtractor;->sourceApk:Ljava/io/File;
 
@@ -2193,37 +2197,37 @@
 
     invoke-static/range {v3 .. v9}, Lcom/reverse/stub/MultiDexExtractor;->putStoredApkInfo(Landroid/content/Context;Ljava/lang/String;JJLjava/util/List;)V
 
-    .line 95
+    .line 92
     .end local v0    # "var6":Ljava/io/IOException;
     move-object v0, v2
 
     goto :goto_1
 
-    .line 97
+    .line 94
     .end local v2    # "files":Ljava/util/List;
     :cond_0
     if-eqz p3, :cond_1
 
-    .line 98
+    .line 95
     const-string v0, "Forced extraction must be performed."
 
     invoke-static {v1, v0}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
 
     goto :goto_0
 
-    .line 100
+    .line 97
     :cond_1
     const-string v0, "Detected that extraction must be performed."
 
     invoke-static {v1, v0}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
 
-    .line 103
+    .line 100
     :goto_0
     invoke-direct {p0}, Lcom/reverse/stub/MultiDexExtractor;->performExtractions()Ljava/util/List;
 
     move-result-object v0
 
-    .line 104
+    .line 101
     .local v0, "files":Ljava/util/List;
     iget-object v2, p0, Lcom/reverse/stub/MultiDexExtractor;->sourceApk:Ljava/io/File;
 
@@ -2241,7 +2245,7 @@
 
     invoke-static/range {v2 .. v8}, Lcom/reverse/stub/MultiDexExtractor;->putStoredApkInfo(Landroid/content/Context;Ljava/lang/String;JJLjava/util/List;)V
 
-    .line 107
+    .line 104
     :goto_1
     new-instance v2, Ljava/lang/StringBuilder;
 
@@ -2267,10 +2271,10 @@
 
     invoke-static {v1, v2}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
 
-    .line 108
+    .line 105
     return-object v0
 
-    .line 85
+    .line 82
     .end local v0    # "files":Ljava/util/List;
     :cond_2
     new-instance v0, Ljava/lang/IllegalStateException;

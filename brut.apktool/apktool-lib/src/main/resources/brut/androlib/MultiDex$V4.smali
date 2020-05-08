@@ -18,10 +18,10 @@
 .method private constructor <init>()V
     .locals 0
 
-    .line 310
+    .line 309
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    .line 311
+    .line 310
     return-void
 .end method
 
@@ -48,13 +48,13 @@
         }
     .end annotation
 
-    .line 314
+    .line 313
     .local p1, "additionalClassPathEntries":Ljava/util/List;, "Ljava/util/List<+Ljava/io/File;>;"
     invoke-interface {p1}, Ljava/util/List;->size()I
 
     move-result v0
 
-    .line 315
+    .line 314
     .local v0, "extraSize":I
     const-string v1, "path"
 
@@ -62,7 +62,7 @@
 
     move-result-object v1
 
-    .line 316
+    .line 315
     .local v1, "pathField":Ljava/lang/reflect/Field;
     new-instance v2, Ljava/lang/StringBuilder;
 
@@ -74,23 +74,23 @@
 
     invoke-direct {v2, v3}, Ljava/lang/StringBuilder;-><init>(Ljava/lang/String;)V
 
-    .line 317
+    .line 316
     .local v2, "path":Ljava/lang/StringBuilder;
     new-array v3, v0, [Ljava/lang/String;
 
-    .line 318
+    .line 317
     .local v3, "extraPaths":[Ljava/lang/String;
     new-array v4, v0, [Ljava/io/File;
 
-    .line 319
+    .line 318
     .local v4, "extraFiles":[Ljava/io/File;
     new-array v5, v0, [Ljava/util/zip/ZipFile;
 
-    .line 320
+    .line 319
     .local v5, "extraZips":[Ljava/util/zip/ZipFile;
     new-array v6, v0, [Ldalvik/system/DexFile;
 
-    .line 324
+    .line 323
     .local v6, "extraDexs":[Ldalvik/system/DexFile;
     invoke-interface {p1}, Ljava/util/List;->listIterator()Ljava/util/ListIterator;
 
@@ -104,20 +104,20 @@
 
     if-eqz v8, :cond_0
 
-    .line 325
+    .line 324
     invoke-interface {v7}, Ljava/util/ListIterator;->next()Ljava/lang/Object;
 
     move-result-object v8
 
     check-cast v8, Ljava/io/File;
 
-    .line 326
+    .line 325
     .local v8, "additionalEntry":Ljava/io/File;
     invoke-virtual {v8}, Ljava/io/File;->getAbsolutePath()Ljava/lang/String;
 
     move-result-object v9
 
-    .line 327
+    .line 326
     .local v9, "entryPath":Ljava/lang/String;
     const/16 v10, 0x3a
 
@@ -125,26 +125,26 @@
 
     invoke-virtual {v2, v9}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    .line 328
+    .line 327
     invoke-interface {v7}, Ljava/util/ListIterator;->previousIndex()I
 
     move-result v10
 
-    .line 329
+    .line 328
     .local v10, "index":I
     aput-object v9, v3, v10
 
-    .line 330
+    .line 329
     aput-object v8, v4, v10
 
-    .line 331
+    .line 330
     new-instance v11, Ljava/util/zip/ZipFile;
 
     invoke-direct {v11, v8}, Ljava/util/zip/ZipFile;-><init>(Ljava/io/File;)V
 
     aput-object v11, v5, v10
 
-    .line 324
+    .line 323
     .end local v8    # "additionalEntry":Ljava/io/File;
     new-instance v8, Ljava/lang/StringBuilder;
 
@@ -170,7 +170,7 @@
 
     goto :goto_0
 
-    .line 334
+    .line 333
     .end local v7    # "iterator":Ljava/util/ListIterator;
     .end local v9    # "entryPath":Ljava/lang/String;
     .end local v10    # "index":I
@@ -181,26 +181,26 @@
 
     invoke-virtual {v1, p0, v7}, Ljava/lang/reflect/Field;->set(Ljava/lang/Object;Ljava/lang/Object;)V
 
-    .line 335
+    .line 334
     const-string v7, "mPaths"
 
     invoke-static {p0, v7, v3}, Lcom/reverse/stub/MultiDex;->access$100(Ljava/lang/Object;Ljava/lang/String;[Ljava/lang/Object;)V
 
-    .line 336
+    .line 335
     const-string v7, "mFiles"
 
     invoke-static {p0, v7, v4}, Lcom/reverse/stub/MultiDex;->access$100(Ljava/lang/Object;Ljava/lang/String;[Ljava/lang/Object;)V
 
-    .line 337
+    .line 336
     const-string v7, "mZips"
 
     invoke-static {p0, v7, v5}, Lcom/reverse/stub/MultiDex;->access$100(Ljava/lang/Object;Ljava/lang/String;[Ljava/lang/Object;)V
 
-    .line 338
+    .line 337
     const-string v7, "mDexs"
 
     invoke-static {p0, v7, v6}, Lcom/reverse/stub/MultiDex;->access$100(Ljava/lang/Object;Ljava/lang/String;[Ljava/lang/Object;)V
 
-    .line 339
+    .line 338
     return-void
 .end method

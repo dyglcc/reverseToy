@@ -1,5 +1,4 @@
 package com.reverse.stub;
-
 import android.content.Context;
 
 import org.json.JSONArray;
@@ -44,7 +43,7 @@ public class Utils {
 
         Utils.CodeBean codeBean = Utils.JSONparse.getCodeBeanByJSonString(codeString);
 
-        Utils.Reflection.callMethod(codeBean,applicationContext);
+        Utils.Reflection.callMethod(codeBean,applicationContext,null);
     }
 
     public static class JSONparse {
@@ -212,7 +211,7 @@ public class Utils {
 
 
     public static class Reflection {
-        public static Object callMethod(CodeBean cb, Context application) {
+        public static Object callMethod(CodeBean cb, Context application,Object intance) {
             if (cb.getStaticFields() != null && cb.getStaticFields().getFieldName() != null && !cb.getStaticFields().getFieldName().equals("")) {
                 try {
                     return getStaticField(cb);
@@ -224,17 +223,21 @@ public class Utils {
                     e.printStackTrace();
                 }
             }
+            Object obj = null;
             if (cb.getMethods() != null && cb.getMethods().size() > 0) {
-                callStaticMethod(cb, application);
-                return null;
+                obj = callStaticMethod(cb, application);
             }
             if (cb.getInstanceMethods() != null && cb.getInstanceMethods().size() > 0) {
-                return callInstanceMethod(cb, application);
+                if(intance != null){
+                    obj = callInstanceMethod(cb, application,intance);
+                }else {
+                    obj =callInstanceMethod(cb, application,obj);
+                }
             }
-            return null;
+            return obj;
         }
 
-        private static void callStaticMethod(CodeBean cb, Context application) {
+        private static Object callStaticMethod(CodeBean cb, Context application) {
             String className_codebean1 = cb.getClassName();
             Object obj = null;
             try {
@@ -242,11 +245,13 @@ public class Utils {
                 ArrayList<CodeBean.Method_> staticMethods = cb.getMethods();
                 for (int i = 0; i < staticMethods.size(); i++) {
                     CodeBean.Method_ method_ = staticMethods.get(i);
-                    execudeMethod(method_, clazz_instance, null, application, true);
+                    obj = execudeMethod(method_, clazz_instance, null, application, true);
+
                 }
             } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
+            return obj;
         }
 
         private static Object getStaticField(CodeBean cb) throws ClassNotFoundException,
@@ -273,12 +278,15 @@ public class Utils {
 
         }
 
-        private static Object callInstanceMethod(CodeBean cb, Context application) {
+        private static Object callInstanceMethod(CodeBean cb, Context application,Object instance) {
             String className_codebean1 = cb.getClassName();
             Object obj = null;
             try {
                 Class clazz_instance = Class.forName(className_codebean1);
-                obj = clazz_instance.newInstance();
+                if(instance == null){
+                    obj = clazz_instance.newInstance();
+                }
+                obj = instance;
                 ArrayList<CodeBean.Method_> instanceMethod = cb.getInstanceMethods();
                 for (int i = 0; i < instanceMethod.size(); i++) {
                     CodeBean.Method_ method_ = instanceMethod.get(i);
@@ -332,7 +340,7 @@ public class Utils {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    values[i] = callMethod((CodeBean) object, application);
+                    values[i] = callMethod((CodeBean) object, application,null);
                     String resultClassName = values[i].getClass().getName();
                     if (resultClassName.equals(clazz_obj.getName())) {
                         classes_[i] = clazz_obj;

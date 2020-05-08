@@ -24,14 +24,14 @@
     .param p1, "dexDir"    # Ljava/io/File;
     .param p2, "fileName"    # Ljava/lang/String;
 
-    .line 323
+    .line 320
     invoke-direct {p0, p1, p2}, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
 
-    .line 320
+    .line 317
     const-wide/16 v0, -0x1
 
     iput-wide v0, p0, Lcom/reverse/stub/MultiDexExtractor$ExtractedDex;->crc:J
 
-    .line 324
+    .line 321
     return-void
 .end method

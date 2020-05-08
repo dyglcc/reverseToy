@@ -35,7 +35,7 @@
 .method static constructor <clinit>()V
     .locals 1
 
-    .line 343
+    .line 342
     const-string v0, ".zip"
 
     invoke-virtual {v0}, Ljava/lang/String;->length()I
@@ -57,17 +57,17 @@
         }
     .end annotation
 
-    .line 360
+    .line 359
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    .line 361
+    .line 360
     const-string v0, "dalvik.system.DexPathList$Element"
 
     invoke-static {v0}, Ljava/lang/Class;->forName(Ljava/lang/String;)Ljava/lang/Class;
 
     move-result-object v0
 
-    .line 365
+    .line 364
     .local v0, "elementClass":Ljava/lang/Class;
     :try_start_0
     new-instance v1, Lcom/reverse/stub/MultiDex$V14$ICSElementConstructor;
@@ -76,16 +76,16 @@
     :try_end_0
     .catch Ljava/lang/NoSuchMethodException; {:try_start_0 .. :try_end_0} :catch_0
 
-    .line 372
+    .line 371
     .local v1, "constructor":Ljava/lang/Object;
     goto :goto_0
 
-    .line 366
+    .line 365
     .end local v1    # "constructor":Ljava/lang/Object;
     :catch_0
     move-exception v1
 
-    .line 368
+    .line 367
     .local v1, "var6":Ljava/lang/NoSuchMethodException;
     :try_start_1
     new-instance v2, Lcom/reverse/stub/MultiDex$V14$JBMR11ElementConstructor;
@@ -94,18 +94,18 @@
     :try_end_1
     .catch Ljava/lang/NoSuchMethodException; {:try_start_1 .. :try_end_1} :catch_1
 
-    .line 371
+    .line 370
     .local v2, "constructor":Ljava/lang/Object;
     move-object v1, v2
 
     goto :goto_0
 
-    .line 369
+    .line 368
     .end local v2    # "constructor":Ljava/lang/Object;
     :catch_1
     move-exception v2
 
-    .line 370
+    .line 369
     .local v2, "var5":Ljava/lang/NoSuchMethodException;
     new-instance v3, Lcom/reverse/stub/MultiDex$V14$JBMR2ElementConstructor;
 
@@ -113,7 +113,7 @@
 
     move-object v1, v3
 
-    .line 374
+    .line 373
     .end local v2    # "var5":Ljava/lang/NoSuchMethodException;
     .local v1, "constructor":Ljava/lang/Object;
     :goto_0
@@ -123,7 +123,7 @@
 
     iput-object v2, p0, Lcom/reverse/stub/MultiDex$V14;->elementConstructor:Lcom/reverse/stub/MultiDex$V14$ElementConstructor;
 
-    .line 375
+    .line 374
     return-void
 .end method
 
@@ -155,7 +155,7 @@
         }
     .end annotation
 
-    .line 347
+    .line 346
     .local p1, "additionalClassPathEntries":Ljava/util/List;, "Ljava/util/List<+Ljava/io/File;>;"
     const-string v0, "pathList"
 
@@ -163,13 +163,13 @@
 
     move-result-object v0
 
-    .line 348
+    .line 347
     .local v0, "pathListField":Ljava/lang/reflect/Field;
     invoke-virtual {v0, p0}, Ljava/lang/reflect/Field;->get(Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object v1
 
-    .line 349
+    .line 348
     .local v1, "dexPathList":Ljava/lang/Object;
     new-instance v2, Lcom/reverse/stub/MultiDex$V14;
 
@@ -179,7 +179,7 @@
 
     move-result-object v2
 
-    .line 352
+    .line 351
     .local v2, "elements":[Ljava/lang/Object;
     :try_start_0
     const-string v3, "dexElements"
@@ -188,14 +188,14 @@
     :try_end_0
     .catch Ljava/lang/NoSuchFieldException; {:try_start_0 .. :try_end_0} :catch_0
 
-    .line 356
+    .line 355
     goto :goto_0
 
-    .line 353
+    .line 352
     :catch_0
     move-exception v3
 
-    .line 354
+    .line 353
     .local v3, "var6":Ljava/lang/NoSuchFieldException;
     const-string v4, "MultiDex"
 
@@ -203,12 +203,12 @@
 
     invoke-static {v4, v5, v3}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
-    .line 355
+    .line 354
     const-string v4, "pathElements"
 
     invoke-static {v1, v4, v2}, Lcom/reverse/stub/MultiDex;->access$100(Ljava/lang/Object;Ljava/lang/String;[Ljava/lang/Object;)V
 
-    .line 358
+    .line 357
     .end local v3    # "var6":Ljava/lang/NoSuchFieldException;
     :goto_0
     return-void
@@ -238,7 +238,7 @@
         }
     .end annotation
 
-    .line 378
+    .line 377
     .local p1, "files":Ljava/util/List;, "Ljava/util/List<+Ljava/io/File;>;"
     invoke-interface {p1}, Ljava/util/List;->size()I
 
@@ -246,7 +246,7 @@
 
     new-array v0, v0, [Ljava/lang/Object;
 
-    .line 380
+    .line 379
     .local v0, "elements":[Ljava/lang/Object;
     const/4 v1, 0x0
 
@@ -256,14 +256,14 @@
 
     if-ge v1, v2, :cond_0
 
-    .line 381
+    .line 380
     invoke-interface {p1, v1}, Ljava/util/List;->get(I)Ljava/lang/Object;
 
     move-result-object v2
 
     check-cast v2, Ljava/io/File;
 
-    .line 382
+    .line 381
     .local v2, "file":Ljava/io/File;
     iget-object v3, p0, Lcom/reverse/stub/MultiDex$V14;->elementConstructor:Lcom/reverse/stub/MultiDex$V14$ElementConstructor;
 
@@ -287,13 +287,13 @@
 
     aput-object v3, v0, v1
 
-    .line 380
+    .line 379
     .end local v2    # "file":Ljava/io/File;
     add-int/lit8 v1, v1, 0x1
 
     goto :goto_0
 
-    .line 385
+    .line 384
     .end local v1    # "i":I
     :cond_0
     return-object v0
@@ -303,18 +303,18 @@
     .locals 5
     .param p0, "path"    # Ljava/io/File;
 
-    .line 389
+    .line 388
     invoke-virtual {p0}, Ljava/io/File;->getParentFile()Ljava/io/File;
 
     move-result-object v0
 
-    .line 390
+    .line 389
     .local v0, "optimizedDirectory":Ljava/io/File;
     invoke-virtual {p0}, Ljava/io/File;->getName()Ljava/lang/String;
 
     move-result-object v1
 
-    .line 391
+    .line 390
     .local v1, "fileName":Ljava/lang/String;
     new-instance v2, Ljava/lang/StringBuilder;
 
@@ -344,13 +344,13 @@
 
     move-result-object v2
 
-    .line 392
+    .line 391
     .local v2, "optimizedFileName":Ljava/lang/String;
     new-instance v3, Ljava/io/File;
 
     invoke-direct {v3, v0, v2}, Ljava/io/File;-><init>(Ljava/io/File;Ljava/lang/String;)V
 
-    .line 393
+    .line 392
     .local v3, "result":Ljava/io/File;
     invoke-virtual {v3}, Ljava/io/File;->getPath()Ljava/lang/String;
 

@@ -18,10 +18,10 @@
 .method private constructor <init>()V
     .locals 0
 
-    .line 441
+    .line 440
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    .line 442
+    .line 441
     return-void
 .end method
 
@@ -53,7 +53,7 @@
         }
     .end annotation
 
-    .line 445
+    .line 444
     .local p1, "additionalClassPathEntries":Ljava/util/List;, "Ljava/util/List<+Ljava/io/File;>;"
     const-string v0, "pathList"
 
@@ -61,19 +61,19 @@
 
     move-result-object v0
 
-    .line 446
+    .line 445
     .local v0, "pathListField":Ljava/lang/reflect/Field;
     invoke-virtual {v0, p0}, Ljava/lang/reflect/Field;->get(Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object v1
 
-    .line 447
+    .line 446
     .local v1, "dexPathList":Ljava/lang/Object;
     new-instance v2, Ljava/util/ArrayList;
 
     invoke-direct {v2}, Ljava/util/ArrayList;-><init>()V
 
-    .line 448
+    .line 447
     .local v2, "suppressedExceptions":Ljava/util/ArrayList;, "Ljava/util/ArrayList<Ljava/io/IOException;>;"
     new-instance v3, Ljava/util/ArrayList;
 
@@ -87,19 +87,19 @@
 
     invoke-static {v1, v4, v3}, Lcom/reverse/stub/MultiDex;->access$100(Ljava/lang/Object;Ljava/lang/String;[Ljava/lang/Object;)V
 
-    .line 449
+    .line 448
     invoke-virtual {v2}, Ljava/util/ArrayList;->size()I
 
     move-result v3
 
     if-lez v3, :cond_2
 
-    .line 450
+    .line 449
     invoke-virtual {v2}, Ljava/util/ArrayList;->iterator()Ljava/util/Iterator;
 
     move-result-object v3
 
-    .line 452
+    .line 451
     .local v3, "var6":Ljava/util/Iterator;
     :goto_0
     invoke-interface {v3}, Ljava/util/Iterator;->hasNext()Z
@@ -108,14 +108,14 @@
 
     if-eqz v4, :cond_0
 
-    .line 453
+    .line 452
     invoke-interface {v3}, Ljava/util/Iterator;->next()Ljava/lang/Object;
 
     move-result-object v4
 
     check-cast v4, Ljava/io/IOException;
 
-    .line 454
+    .line 453
     .local v4, "e":Ljava/io/IOException;
     const-string v5, "MultiDex"
 
@@ -123,11 +123,11 @@
 
     invoke-static {v5, v6, v4}, Landroid/util/Log;->w(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I
 
-    .line 455
+    .line 454
     .end local v4    # "e":Ljava/io/IOException;
     goto :goto_0
 
-    .line 457
+    .line 456
     :cond_0
     const-string v4, "dexElementsSuppressedExceptions"
 
@@ -135,7 +135,7 @@
 
     move-result-object v4
 
-    .line 458
+    .line 457
     .local v4, "suppressedExceptionsField":Ljava/lang/reflect/Field;
     invoke-virtual {v4, v1}, Ljava/lang/reflect/Field;->get(Ljava/lang/Object;)Ljava/lang/Object;
 
@@ -147,13 +147,13 @@
 
     check-cast v5, [Ljava/io/IOException;
 
-    .line 459
+    .line 458
     .local v5, "dexElementsSuppressedExceptions":[Ljava/io/IOException;
     const/4 v6, 0x0
 
     if-nez v5, :cond_1
 
-    .line 460
+    .line 459
     invoke-virtual {v2}, Ljava/util/ArrayList;->size()I
 
     move-result v7
@@ -172,7 +172,7 @@
 
     goto :goto_1
 
-    .line 462
+    .line 461
     :cond_1
     invoke-virtual {v2}, Ljava/util/ArrayList;->size()I
 
@@ -184,11 +184,11 @@
 
     new-array v7, v7, [Ljava/io/IOException;
 
-    .line 463
+    .line 462
     .local v7, "combined":[Ljava/io/IOException;
     invoke-virtual {v2, v7}, Ljava/util/ArrayList;->toArray([Ljava/lang/Object;)[Ljava/lang/Object;
 
-    .line 464
+    .line 463
     invoke-virtual {v2}, Ljava/util/ArrayList;->size()I
 
     move-result v8
@@ -197,22 +197,22 @@
 
     invoke-static {v5, v6, v7, v8, v9}, Ljava/lang/System;->arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V
 
-    .line 465
+    .line 464
     move-object v5, v7
 
-    .line 468
+    .line 467
     .end local v7    # "combined":[Ljava/io/IOException;
     :goto_1
     invoke-virtual {v4, v1, v5}, Ljava/lang/reflect/Field;->set(Ljava/lang/Object;Ljava/lang/Object;)V
 
-    .line 469
+    .line 468
     new-instance v7, Ljava/io/IOException;
 
     const-string v8, "I/O exception during makeDexElement"
 
     invoke-direct {v7, v8}, Ljava/io/IOException;-><init>(Ljava/lang/String;)V
 
-    .line 470
+    .line 469
     .local v7, "exception":Ljava/io/IOException;
     invoke-virtual {v2, v6}, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
 
@@ -222,10 +222,10 @@
 
     invoke-virtual {v7, v6}, Ljava/io/IOException;->initCause(Ljava/lang/Throwable;)Ljava/lang/Throwable;
 
-    .line 471
+    .line 470
     throw v7
 
-    .line 473
+    .line 472
     .end local v3    # "var6":Ljava/util/Iterator;
     .end local v4    # "suppressedExceptionsField":Ljava/lang/reflect/Field;
     .end local v5    # "dexElementsSuppressedExceptions":[Ljava/io/IOException;
@@ -261,7 +261,7 @@
         }
     .end annotation
 
-    .line 476
+    .line 475
     .local p1, "files":Ljava/util/ArrayList;, "Ljava/util/ArrayList<Ljava/io/File;>;"
     .local p3, "suppressedExceptions":Ljava/util/ArrayList;, "Ljava/util/ArrayList<Ljava/io/IOException;>;"
     const/4 v0, 0x3
@@ -292,7 +292,7 @@
 
     move-result-object v1
 
-    .line 477
+    .line 476
     .local v1, "makeDexElements":Ljava/lang/reflect/Method;
     new-array v0, v0, [Ljava/lang/Object;
 

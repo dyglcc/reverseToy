@@ -1,5 +1,4 @@
 package com.reverse.stub;
-
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.os.Build.VERSION;

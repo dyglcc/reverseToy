@@ -46,11 +46,11 @@
         }
     .end annotation
 
-    .line 399
+    .line 398
     .local p1, "elementClass":Ljava/lang/Class;, "Ljava/lang/Class<*>;"
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
-    .line 400
+    .line 399
     const/4 v0, 0x4
 
     new-array v0, v0, [Ljava/lang/Class;
@@ -85,12 +85,12 @@
 
     iput-object v0, p0, Lcom/reverse/stub/MultiDex$V14$JBMR2ElementConstructor;->elementConstructor:Ljava/lang/reflect/Constructor;
 
-    .line 401
+    .line 400
     iget-object v0, p0, Lcom/reverse/stub/MultiDex$V14$JBMR2ElementConstructor;->elementConstructor:Ljava/lang/reflect/Constructor;
 
     invoke-virtual {v0, v2}, Ljava/lang/reflect/Constructor;->setAccessible(Z)V
 
-    .line 402
+    .line 401
     return-void
 .end method
 
@@ -109,7 +109,7 @@
         }
     .end annotation
 
-    .line 405
+    .line 404
     iget-object v0, p0, Lcom/reverse/stub/MultiDex$V14$JBMR2ElementConstructor;->elementConstructor:Ljava/lang/reflect/Constructor;
 
     const/4 v1, 0x4

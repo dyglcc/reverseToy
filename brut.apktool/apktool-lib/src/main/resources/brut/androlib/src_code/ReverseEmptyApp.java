@@ -1,8 +1,9 @@
 package com.reverse.stub;
-
 import android.app.Application;
 import android.content.Context;
 import android.util.Log;
+
+import com.reverse.stub.MultiDex;
 
 import org.json.JSONException;
 

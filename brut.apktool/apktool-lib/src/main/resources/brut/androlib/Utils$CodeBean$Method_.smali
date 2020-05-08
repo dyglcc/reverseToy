@@ -38,7 +38,7 @@
 .method public constructor <init>()V
     .locals 0
 
-    .line 168
+    .line 167
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     return-void
@@ -49,7 +49,7 @@
 .method public getMethodName()Ljava/lang/String;
     .locals 1
 
-    .line 172
+    .line 171
     iget-object v0, p0, Lcom/reverse/stub/Utils$CodeBean$Method_;->methodName:Ljava/lang/String;
 
     return-object v0
@@ -66,7 +66,7 @@
         }
     .end annotation
 
-    .line 180
+    .line 179
     iget-object v0, p0, Lcom/reverse/stub/Utils$CodeBean$Method_;->paras:Ljava/util/List;
 
     return-object v0
@@ -76,10 +76,10 @@
     .locals 0
     .param p1, "methodName"    # Ljava/lang/String;
 
-    .line 176
+    .line 175
     iput-object p1, p0, Lcom/reverse/stub/Utils$CodeBean$Method_;->methodName:Ljava/lang/String;
 
-    .line 177
+    .line 176
     return-void
 .end method
 
@@ -94,10 +94,10 @@
         }
     .end annotation
 
-    .line 184
+    .line 183
     .local p1, "paras":Ljava/util/List;, "Ljava/util/List<Lcom/reverse/stub/Utils$CodeBean$Method_$Para;>;"
     iput-object p1, p0, Lcom/reverse/stub/Utils$CodeBean$Method_;->paras:Ljava/util/List;
 
-    .line 185
+    .line 184
     return-void
 .end method

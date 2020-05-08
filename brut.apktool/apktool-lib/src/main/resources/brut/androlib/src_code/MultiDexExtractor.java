@@ -1,16 +1,13 @@
-package com.reverse.stub;//
 // Source code recreated from a .class file by IntelliJ IDEA
 // (powered by Fernflower decompiler)
 //
-
+package com.reverse.stub;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.os.Build.VERSION;
 import android.util.Log;
-
-import com.reverse.stub.ZipUtil;
 
 import java.io.BufferedOutputStream;
 import java.io.Closeable;

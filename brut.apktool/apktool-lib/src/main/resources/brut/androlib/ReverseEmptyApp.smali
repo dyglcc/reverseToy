@@ -7,7 +7,7 @@
 .method public constructor <init>()V
     .locals 0
 
-    .line 11
+    .line 12
     invoke-direct {p0}, Landroid/app/Application;-><init>()V
 
     return-void
@@ -19,23 +19,23 @@
     .locals 0
     .param p1, "base"    # Landroid/content/Context;
 
-    .line 27
+    .line 28
     invoke-super {p0, p1}, Landroid/app/Application;->attachBaseContext(Landroid/content/Context;)V
 
-    .line 28
+    .line 29
     invoke-static {p1}, Lcom/reverse/stub/MultiDex;->install(Landroid/content/Context;)V
 
-    .line 29
+    .line 30
     return-void
 .end method
 
 .method public onCreate()V
     .locals 2
 
-    .line 14
+    .line 15
     invoke-super {p0}, Landroid/app/Application;->onCreate()V
 
-    .line 16
+    .line 17
     :try_start_0
     invoke-virtual {p0}, Lcom/reverse/stub/ReverseEmptyApp;->getApplicationContext()Landroid/content/Context;
 
@@ -48,31 +48,31 @@
 
     goto :goto_0
 
-    .line 19
+    .line 20
     :catch_0
     move-exception v0
 
-    .line 20
+    .line 21
     .local v0, "e":Lorg/json/JSONException;
     invoke-virtual {v0}, Lorg/json/JSONException;->printStackTrace()V
 
     goto :goto_1
 
-    .line 17
+    .line 18
     .end local v0    # "e":Lorg/json/JSONException;
     :catch_1
     move-exception v0
 
-    .line 18
+    .line 19
     .local v0, "e":Ljava/io/IOException;
     invoke-virtual {v0}, Ljava/io/IOException;->printStackTrace()V
 
-    .line 21
+    .line 22
     .end local v0    # "e":Ljava/io/IOException;
     :goto_0
     nop
 
-    .line 22
+    .line 23
     :goto_1
     const-string v0, "reverse"
 
@@ -80,6 +80,6 @@
 
     invoke-static {v0, v1}, Landroid/util/Log;->i(Ljava/lang/String;Ljava/lang/String;)I
 
-    .line 23
+    .line 24
     return-void
 .end method

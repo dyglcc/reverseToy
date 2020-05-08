@@ -22,7 +22,7 @@
 .method private constructor <init>()V
     .locals 0
 
-    .line 154
+    .line 153
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     return-void
@@ -32,7 +32,7 @@
     .locals 0
     .param p1, "x0"    # Lcom/reverse/stub/Utils$1;
 
-    .line 154
+    .line 153
     invoke-direct {p0}, Lcom/reverse/stub/Utils$CodeBean$StaticField;-><init>()V
 
     return-void
@@ -43,7 +43,7 @@
 .method public getFieldName()Ljava/lang/String;
     .locals 1
 
-    .line 160
+    .line 159
     iget-object v0, p0, Lcom/reverse/stub/Utils$CodeBean$StaticField;->fieldName:Ljava/lang/String;
 
     return-object v0
@@ -53,9 +53,9 @@
     .locals 0
     .param p1, "fieldName"    # Ljava/lang/String;
 
-    .line 164
+    .line 163
     iput-object p1, p0, Lcom/reverse/stub/Utils$CodeBean$StaticField;->fieldName:Ljava/lang/String;
 
-    .line 165
+    .line 164
     return-void
 .end method

@@ -26,7 +26,7 @@
     .locals 0
     .param p1, "this$0"    # Lcom/reverse/stub/MultiDexExtractor;
 
-    .line 247
+    .line 244
     iput-object p1, p0, Lcom/reverse/stub/MultiDexExtractor$1;->this$0:Lcom/reverse/stub/MultiDexExtractor;
 
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
@@ -40,7 +40,7 @@
     .locals 2
     .param p1, "pathname"    # Ljava/io/File;
 
-    .line 249
+    .line 246
     invoke-virtual {p1}, Ljava/io/File;->getName()Ljava/lang/String;
 
     move-result-object v0
