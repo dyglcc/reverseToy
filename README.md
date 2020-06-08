@@ -25,10 +25,10 @@ reverse_code_json_default-adhoc.txt是初始化代码描述文件，该描述文
 
 # 参数查看<br/>
 
-<pre>usage: apktool m[erge] [options] <file_apk> <[AAR]_file>|<[LIB]_dir> <init_code_file>
-      -exclude,--excludeDir <tag>             升级sdk删除旧目录但不包含目录
-      -ousc,--only-update-source-code <tag>   仅仅更新代码
-      -sde,--set-debug-enable                 设置debuggable true 默认:false</pre>
+<pre>usage: usage: apktool m[erge] [options] <file_apk> <[AAR]_file>|<[LIB]_dir> <init_code_file>
+             -codePath,--dir-to-del-before-inject-sdk <tag>   用于代码更新，合并之前要删除指定的路径下的代码文件 例如：com.adhoc
+             -keepDir,--del-code-path-keep-dir <tag>          用于代码更新，删除旧代码，但是想保留的子目录 例如：visual（将会保留com.adhoc下面的visual目录）
+             -sde,--set-debug-enable                          设置debuggable true 默认:false</pre>
 
 
 # 配置全局变量(MacOS)

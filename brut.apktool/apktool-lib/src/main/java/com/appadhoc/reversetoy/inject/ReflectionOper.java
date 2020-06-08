@@ -137,32 +137,25 @@ public class ReflectionOper {
             throw new Exception("hostAppName must be not  null");
         }
 
-//            invoke-direct {p0}, Lcom/reverse/stub/App;->initReverseSDK()V
-//        String callMethodCode = "invoke-direct {p0}, L" + hostAppName.replaceAll("\\.", "/") + ";->initReverseSDK()V";
-        String callMethodCode = "invoke-static {p0}, Lcom/reverse/stub/Utils;->initReverseSDK(Landroid/content/Context;)V";
-//        InputStream codePieceFileIputSream = getAssetsCodeMethodInit();
-
-//        String methodCode = Utils.FileUtils.readStringFromStream(codePieceFileIputSream).toString();
-
-//        String methodCodeReplaceMent = null;
-//        if (methodCode != null) {
-//            methodCodeReplaceMent = Matcher.quoteReplacement(methodCode);
-//        }
-//        LOGGER.info("change result is " + methodCodeReplaceMent);
         File needModiFile = getApplicationFile(hostdir, hostAppName, packageName);
         if (needModiFile == null) {
             throw new Exception("can not find src Application smali file ,file name path " + hostAppName);
         }
         System.out.println(needModiFile.getAbsolutePath());
         String srcStr = Utils.FileUtils.readStringFromFile(needModiFile).toString();
-//        srcStr = srcStr.replaceFirst(".method\\s+public\\s+constructor\\s+<init>\\(\\)V(.*\\n)+?.end\\s+method", "$0\n\n" + methodCodeReplaceMent);
+
+        // first step  delete old init code
+//todo
+//            invoke-direct {p0}, Lcom/reverse/stub/App;->initReverseSDK()V
+//        String callMethodCode = "invoke-direct {p0}, L" + hostAppName.replaceAll("\\.", "/") + ";->initReverseSDK()V";
+        String callMethodCode = "invoke-static {p0}, Lcom/reverse/stub/Utils;->initReverseSDK(Landroid/content/Context;)V";
 
         if (!haveOncreate(srcStr)) {
             srcStr = insertOnCreateMethod(srcStr);
         }
+
         srcStr = srcStr.replaceFirst(".method\\s+public\\s+(final\\s+)?onCreate\\(\\)V(.*\\n)+?\\s*.locals\\s+\\d+", "$0\n\n" + callMethodCode);
 
-//        srcStr = srcStr.replaceFirst(".method\\s+public\\s+constructor\\s+<init>\\(\\)V(.*\\n)+?\\s*.locals\\s+\\d+", "$0\n\n" + callMethodCode);
         // add copy lastFolder avoid 65536 error
         File newLocationAppFile = createNewApplicationFileinLastFolder(hostAppName, lastFolder);
 
@@ -174,11 +167,6 @@ public class ReflectionOper {
         if (!replaceCallSuccess) {
             throw new Exception("modify " + hostAppName + " smali modify failed");
         }
-//        boolean replaceSuccess = srcStr.contains("method private initReverseSDK");
-//        boolean replaceCallSuccess = srcStr.contains("->initReverseSDK()V");
-//        if (!replaceCallSuccess || !replaceSuccess) {
-//            throw new Exception("modify " + hostAppName + " smali modify failed");
-//        }
     }
 
     private File getApplicationFile(File hostdir, String appNameRaw, String packageName) {
@@ -256,34 +244,39 @@ public class ReflectionOper {
         }
         if (options.get("codePath") != null) {
             path = (String) options.get("codePath");
-        }
+            if (path != null) { // code path 不未空就删除就代码，否则不做删除旧代码操作。
 
-        if (path != null) { // code path 不未空就删除就代码，否则不做删除旧代码操作。
-            if (!hostdir.exists()) {
-                throw new Exception("host dir 不存在");
-            }
-            path = path.replaceAll("\\.", File.separator);
-            for (File file : Objects.requireNonNull(hostdir.listFiles())) {
-                String fileName = file.getName();
-                if (fileName.startsWith("smali") && !fileNameInList(fileName, aarSmaliFolder)) { // 新生成的sdk smali不删除
-                    File existOldSdkdir = new File(file, path);
-                    if (existOldSdkdir.exists()) {
-                        for (File fileYiguan : Objects.requireNonNull(existOldSdkdir.listFiles())) {
-                            if (!fileYiguan.getName().equals(excludeSDKdir)) {
-                                LOGGER.info("删除旧的SDK目录" + existOldSdkdir.getAbsolutePath());
-                                if (fileYiguan.isFile()) {
-                                    OS.rmfile(fileYiguan.getAbsolutePath());
-                                } else {
-                                    OS.rmdir(fileYiguan);
+                if (!hostdir.exists()) {
+                    throw new Exception("host dir 不存在");
+                }
+
+                path = path.replaceAll("\\.", File.separator);
+
+                for (File file : Objects.requireNonNull(hostdir.listFiles())) {
+                    String fileName = file.getName();
+                    if (fileName.startsWith("smali") && !fileNameInList(fileName, aarSmaliFolder)) { // 新生成的sdk smali不删除
+                        File existOldSdkdir = new File(file, path);
+                        if (existOldSdkdir.exists()) {
+                            for (File fileRemove : Objects.requireNonNull(existOldSdkdir.listFiles())) {
+                                if (!fileRemove.getName().equals(excludeSDKdir)) {
+                                    LOGGER.info("删除旧的SDK目录" + existOldSdkdir.getAbsolutePath());
+                                    if (fileRemove.isFile()) {
+                                        OS.rmfile(fileRemove.getAbsolutePath());
+                                    } else {
+                                        OS.rmdir(fileRemove);
+                                    }
                                 }
                             }
-                        }
 
+                        }
                     }
                 }
             }
         }
+
+
         if (options.get("upg") == null) {
+            //
             this.addOrModifyApplicationSmali(hostdir, aarSmaliFolder, hostAndmanifestData);
         }
     }

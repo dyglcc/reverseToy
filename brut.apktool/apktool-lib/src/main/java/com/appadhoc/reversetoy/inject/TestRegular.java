@@ -10,17 +10,23 @@ import java.util.regex.Matcher;
 public class TestRegular {
     public static void main(String[] args) throws IOException, BrutException {
 
-//        String hostAppName = "com.group.module.App";
+        String hostAppName = "com.group.module.App";
 ////            invoke-direct {p0}, Lcom/reverse/stub/App;->initReverseSDK()V
 //        String callMethodCode = "invoke-direct {p0}, L"+hostAppName.replaceAll("\\.","/")+";->initReverseSDK()V";
 ////        File codePieceFile = Utils.BuildPackage.getCodeMethodInit(Utils.class,"yaohe");
 //        String methodCode = Utils.FileUtils.readStringFromFile(codePieceFile).toString();
+        String methodCode = "com.adhoc";
+        methodCode = methodCode.replace(".","/");
+        methodCode = "L"+methodCode;
+        System.out.println(methodCode);
 //        String methodCodeReplaceMent = Matcher.quoteReplacement(methodCode);
-//        File needModiFile = new File("/Users/jiaozhengxiang/GITHUB/Apktool/App.smali");
+        File needModiFile = new File("/Users/dongyuangui/GITHUB/reverseToy/ApplyApplication.smali");
 //        System.out.println(needModiFile.getAbsolutePath());
 //
-//        String srcStr = Utils.FileUtils.readStringFromFile(needModiFile).toString();
-//        srcStr = srcStr.replaceFirst(".method\\s+public\\s+constructor\\s+<init>\\(\\)V(.*\\n)+?.end\\s+method","$0\n\n"+methodCodeReplaceMent);
+        String srcStr = Utils.FileUtils.readStringFromFile(needModiFile).toString();
+//        System.out.println("raw str " + srcStr);
+        srcStr = srcStr.replaceAll("\\s+.*"+methodCode+"\\n+\\s+(move-result.*)?\n","");
+        System.out.println("result " + srcStr);
 //        srcStr = srcStr.replaceFirst(".method\\s+public\\s+(final\\s+)?onCreate\\(\\)V(.*\\n)+?\\s*.locals\\s+\\d+","$0\n\n"+callMethodCode);
 //        Utils.FileUtils.writeString2File(needModiFile, srcStr);
 //        boolean replaceSuccess = srcStr.contains("method private initReverseSDK");
@@ -30,6 +36,7 @@ public class TestRegular {
 //        }else{
 //            System.out.println("change faild");
 //        }
+        System.out.println(srcStr);
 
     }
 }
