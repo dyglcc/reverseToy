@@ -13,23 +13,19 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-public class WriterNp {
+public class WriterArsc {
     ExtDataOutput mOut;
     File arscOutFile;
     ResTable data;
     CountingOutputStream mCount;
 
-    public static void main(String... args) {
-
-        String packageName = "com.abtest.demo";
-    }
 //    public WriterNp(File arscOutFile, ArscWriter.ARSCData data) throws FileNotFoundException {
 //        this.arscOutFile = arscOutFile;
 //        mOut = new ExtDataOutput(new LEDataOutputStream(new FileOutputStream(arscOutFile, false)));
 //        this.data = data;
 //    }
 
-    public WriterNp(File outArsc, ResTable resTable) {
+    public WriterArsc(File outArsc, ResTable resTable) {
         this.arscOutFile = outArsc;
         this.data = resTable;
         try {
@@ -42,14 +38,11 @@ public class WriterNp {
     }
 
     public static void write(File outArsc, ResTable resTable) throws IOException, AndrolibException {
-        WriterNp writerNp = new WriterNp(outArsc,resTable);
+        WriterArsc writerArsc = new WriterArsc(outArsc,resTable);
         // write
-//        long count1 = mCount.getCount();
-        writerNp.writeTableHeader();
-//        long count2 = mCount.getCount();
-//        System.out.println("count is working now " + (count2 - count1));
-        writerNp.writeGlobalStringPool();
-        writerNp.writePackage();
+        writerArsc.writeTableHeader();
+        writerArsc.writeGlobalStringPool();
+        writerArsc.writePackage();
     }
 
     private void writePackage() throws IOException, AndrolibException {
@@ -259,7 +252,6 @@ public class WriterNp {
         ArscHeadCalc calc = new ArscHeadCalc();
         short tableType = Header.TYPE_TABLE;
         Header.writeHeader(mOut, tableType, (short) 12, calc.calcRestableSize(data));
-        System.out.println("abc");
         mOut.writeInt(data.getmMainPackages().size());
     }
 

@@ -11,11 +11,11 @@ public class ArscHeadCalc {
 
     public static int getSingleSpectCount(ResTypeSpec spec) {
 
-        return spec.getEntryCount() * 4 + new WriterNp.ResTable_typeSpec().calcCount();
+        return spec.getEntryCount() * 4 + new WriterArsc.ResTable_typeSpec().calcCount();
     }
 
     public int calcRestableSize(ResTable data) {
-        int size = new WriterNp.ResTableHeader().calcCount();
+        int size = new WriterArsc.ResTableHeader().calcCount();
         int globalStringPoolSize = getGlobalStringPoolSize(data);
 //        System.out.println("globalStringPoolSize is :" + globalStringPoolSize);
         int packageSize = getPackageSize(data);
@@ -42,7 +42,7 @@ public class ArscHeadCalc {
 
     public static int getBytesCountByStringBlock(StringBlock block) {
 
-        WriterNp.ResStringPool_header header = new WriterNp.ResStringPool_header();
+        WriterArsc.ResStringPool_header header = new WriterArsc.ResStringPool_header();
         int count = header.calcCount();
         if (block.getM_styleOffsets() != null) {
             count += block.getM_styleOffsets().length * 4;
@@ -64,7 +64,7 @@ public class ArscHeadCalc {
 
     public static int getSinglePackageSize(ResPackage mResPackage) {
         int count = 0;
-        WriterNp.ResTable_package resTable_package = new WriterNp.ResTable_package();
+        WriterArsc.ResTable_package resTable_package = new WriterArsc.ResTable_package();
         count += resTable_package.calcCount();
         // 资源类型名称字符串池
         int specStringPool = getBytesCountByStringBlock(mResPackage.getmTypeNames());
@@ -85,7 +85,7 @@ public class ArscHeadCalc {
         Map<String, ResTypeSpec> mTypes = mResPackage.getmTypes();
         for (Map.Entry entry : mTypes.entrySet()) {
             ResTypeSpec value = (ResTypeSpec) entry.getValue();
-            WriterNp.ResTable_typeSpec typeSpecHeader = new WriterNp.ResTable_typeSpec();
+            WriterArsc.ResTable_typeSpec typeSpecHeader = new WriterArsc.ResTable_typeSpec();
             count += typeSpecHeader.calcCount();
             count += value.getEntryCount() * 4;
         }
@@ -111,7 +111,7 @@ public class ArscHeadCalc {
 
     public static int getSingleTypeTypeSize(ConfigFlagRaw rawConfig, List<ResResource> listResResource) {
         int type_count = 0;
-        WriterNp.ResTable_type type = new WriterNp.ResTable_type();
+        WriterArsc.ResTable_type type = new WriterArsc.ResTable_type();
         type_count += type.calcCount();
         ResConfigFlags flags = rawConfig.getConfigFlags();
         type_count += flags.getRawConfig().length;

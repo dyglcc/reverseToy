@@ -160,7 +160,7 @@ public class ARSCDecoder {
         int s = mCountIn.getCount();
         mSpecNames = StringBlock.read_apktool(mIn);
         int e = mCountIn.getCount();
-        System.out.println(" s" + (e-s));
+//        System.out.println(" s" + (e-s));
 
 
         mResId = id << 24;

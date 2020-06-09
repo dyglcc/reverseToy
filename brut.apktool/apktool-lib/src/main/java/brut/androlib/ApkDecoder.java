@@ -31,8 +31,6 @@ import brut.common.BrutException;
 import brut.directory.DirectoryException;
 import brut.directory.ExtFile;
 import brut.util.OS;
-import com.appadhoc.reversetoy.AbstractManager;
-import com.appadhoc.reversetoy.aar.WriterNp;
 import com.google.common.base.Strings;
 
 import java.io.File;

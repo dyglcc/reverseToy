@@ -83,11 +83,11 @@ public class Main {
 //        oper.setAppkey(appkey);
         oper.deleteOldSdkSmaliFile(apkOutFile, multi.getSmaliFolder(),parser);
 //        oper.addOrModifyApplicationSmali(apkOutFile, multi.getSmaliFolder(),parser);
-        logger.info("##########添加或者修改Application smali代码[完成]##########");
+        logger.info("##########添加或者修改Application smali代码##########");
         File unsignfile = buildApk(apkOutFile, smaliDecoderReverse);
-        logger.info("##########打包合并后的文件生成未签名文件[完成]##########");
-        File signFile = SignTool.sign(unsignfile, apkOutFile);
-        logger.info("##########签名 apk代码[完成]##########");
+        logger.info("##########打包合并后的文件生成未签名文件##########");
+        File signFile = SignTool.sign(unsignfile, apkOutFile,null);
+        logger.info("##########签名 apk代码##########");
         logger.info("#########################################################");
         logger.info("##########" + signFile.getAbsolutePath() + "##########");
         logger.info("########################################################");
@@ -131,12 +131,11 @@ public class Main {
 //        oper.setJson(json);
         oper.deleteOldSdkSmaliFile(apkOutFile, multi.getSmaliFolder(),hostParse);
 //        oper.addOrModifyApplicationSmali();
-        logger.info("添加或者修改Application smali代码[完成]");
+        logger.info("添加或者修改Application代码...");
         logger.info("重新构建Dex文件并压缩Apk文件...");
         File unsignfile = buildApk(apkOutFile,smaliDecoderReverse);
-        logger.info("打包合并后的文件生成未签名文件[完成]");
-        File signFile = SignTool.sign(unsignfile, apkOutFile);
-        logger.info("签名apk文件[完成]");
+        logger.info("打包合并后的文件生成未签名文件...");
+        File signFile = SignTool.sign(unsignfile, apkOutFile,null);
     }
 
     public static File buildApk(File hostdir, SmaliDecoderReverse smaliDecoderReverse) throws BrutException, IOException {

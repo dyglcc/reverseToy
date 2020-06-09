@@ -74,7 +74,7 @@ public class ReflectionOper {
             }
             code = Utils.FileUtils.readStringFromStream(inputStream).toString();
         }
-        LOGGER.info("copy utils file to folder" + jsonName);
+//        LOGGER.info("copy utils file to folder" + jsonName);
         File saveApplicationFile = new File(assets, jsonName);
         Utils.FileUtils.writeString2File(saveApplicationFile, code);
     }
@@ -146,10 +146,10 @@ public class ReflectionOper {
 
         if (path != null) { // code path 不为空就删除就代码，否则不做删除旧的初始化代码操作。
             // 遍历
-            long t1 = System.currentTimeMillis();
+//            long t1 = System.currentTimeMillis();
             replaceAllFiles(hostdir, newSmaliFolder, path);
-            long t2 = System.currentTimeMillis();
-            System.out.println("耗时：" + (t2 - t1));
+//            long t2 = System.currentTimeMillis();
+//            System.out.println("耗时：" + (t2 - t1));
         }
 
         String callMethodCode = "invoke-static {p0}, Lcom/reverse/stub/Utils;->initReverseSDK(Landroid/content/Context;)V";
@@ -356,7 +356,7 @@ public class ReflectionOper {
                 e.printStackTrace();
             }
             String code = Utils.FileUtils.readStringFromStream(inputStream).toString();
-            LOGGER.info("copy utils file to folder" + fileName_);
+//            LOGGER.info("copy utils file to folder" + fileName_);
             File saveApplicationFile = new File(stubDir, fileName_);
             Utils.FileUtils.writeString2File(saveApplicationFile, code);
 

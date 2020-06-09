@@ -14,10 +14,7 @@ import com.appadhoc.reversetoy.utils.Utils;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Logger;
 import static luyao.parser.utils.Reader.log;
 import static brut.androlib.res.decoder.ARSCDecoder.ENTRY_FLAG_COMPLEX;
@@ -28,12 +25,13 @@ public class MergeArsc {
 
     public static void main(String[] args) throws Exception {
 
-        readOldApk(null);
+//        readOldApk(null);
 //
-//        ResTable hostTableTable = merge2Arsc();
+        ResTable hostTableTable = merge2Arsc();
 //        //        以上合并，并且打包出一个apk
 //////        // ########################################################################################################
-//        File outputFile = createApk(hostTableTable);
+        File outputFile = createApk(hostTableTable);
+        System.out.println("abc");
 //        // code 读取合并后的文件。
 //        // 读取合成后的apk文件看问题出在哪里
 //        readNew(outputFile);
@@ -45,11 +43,11 @@ public class MergeArsc {
         AndrolibResources resources = new AndrolibResources();
 ////            --------------------------
 //////             读取host apk return hostable
-        ResTable hostTableTable = resources.getResTable(new ExtFile("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk"));
+        ResTable hostTableTable = resources.getResTable(new ExtFile("/Users/dongyuangui/Desktop/liepin/android-tongdao-app_liepinpc_dev_4.15.0_20190918161802.apk"));
 //        System.out.println("host table is " + hostTableTable.getmMainPackages().size());
 //
 //            // 读取aar apk return restable
-        ResTable aarTable = resources.getResTable(new ExtFile("/Users/dongyuangui/Desktop/aar-1/aar/tmp19275/aar_tmp.apk"));
+        ResTable aarTable = resources.getResTable(new ExtFile("/Users/dongyuangui/work/aar-520-release/aar/tmpcb3fd/aar_tmp.apk"));
         mergeAarTable2HostTable(hostTableTable, aarTable);
 //        System.out.println("aar table is " + aarTable.getmMainPackages().size());
         return hostTableTable;
@@ -62,13 +60,15 @@ public class MergeArsc {
         if (outArsc.exists()) {
             OS.rmfile(outArsc.getAbsolutePath());
         }
-        WriterNp.write(outArsc, hostTableTable);
+        WriterArsc.write(outArsc, hostTableTable);
         long t0 = System.currentTimeMillis();
 //        System.out.println("write file 耗时" + (t0 - t1));
         // copy 新的arsc文件到abc0000
         File outApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/output_abc0000.apk");
         ZipUtils.zipFolders(new File("/Users/dongyuangui/Desktop/apk-blue/abc0000"), outApkfile, null, null);
-        File outputFile = SignTool.sign(outApkfile, new File("/Users/dongyuangui/Desktop/apk-blue/output_abc0000-sign.apk"));
+        Map<String,String> map = new HashMap<>();
+        map.put("--min-sdk-version","14");
+        File outputFile = SignTool.sign(outApkfile, new File("/Users/dongyuangui/Desktop/apk-blue/output_abc0000-sign.apk"),map);
 
         long t2 = System.currentTimeMillis();
 
@@ -125,7 +125,7 @@ public class MergeArsc {
                     int[] offsets = aarRaw.getEntryOffsets();
                     short id = (short) resID.id;
                     offsets[id] = -1;
-                    LOGGER.info(" remove dup spec name " + keyNameAar + "  " + typeName + " " + aarRaw.getConfigName());
+                    LOGGER.info("remove duplicate spec name " + keyNameAar + "  " + typeName);
                 }
             }
         }
@@ -644,6 +644,5 @@ public class MergeArsc {
             aarStringBlockOffset[i] += length;
         }
     }
-
 
 }

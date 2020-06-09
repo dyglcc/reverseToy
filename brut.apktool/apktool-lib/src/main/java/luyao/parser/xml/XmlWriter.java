@@ -4,7 +4,7 @@ import brut.androlib.AndrolibException;
 import brut.common.BrutException;
 import brut.util.OS;
 import com.appadhoc.reversetoy.MergeAndMestFile;
-import com.appadhoc.reversetoy.aar.WriterNp;
+import com.appadhoc.reversetoy.aar.WriterArsc;
 import com.appadhoc.reversetoy.aar.XmlHeadCalc;
 import com.google.common.io.CountingOutputStream;
 import com.mindprod.ledatastream.LEDataOutputStream;
@@ -80,7 +80,7 @@ public class XmlWriter {
     }
 
     private void writeStringPool() throws IOException, AndrolibException {
-        WriterNp.writeStringPool(data.getStringBlock(), mOut);
+        WriterArsc.writeStringPool(data.getStringBlock(), mOut);
     }
 
     private void writeXmlContentChunk(List<Chunk> chunkList) throws IOException {

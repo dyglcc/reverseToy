@@ -5,17 +5,18 @@ import com.appadhoc.reversetoy.utils.Utils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class SignTool {
     private static final Logger LOGGER = Logger.getLogger(SignTool.class.getName());
 
-    public static File sign(File file,File hostdir) throws Exception {
+    public static File sign(File file, File hostdir, Map<String, String> paras) throws Exception {
 
-        if(!file.exists()){
+        if (!file.exists()) {
             throw new Exception("unsign file not exist");
         }
-        if(hostdir == null || !hostdir.exists()){
+        if (hostdir == null || !hostdir.exists()) {
             hostdir = file.getParentFile().getAbsoluteFile();
         }
         List<String> cmd = new ArrayList<>();
@@ -25,10 +26,10 @@ public class SignTool {
 
         File signfile = Utils.BuildPackage.getSigner(SignTool.class);
         File passfile = Utils.BuildPackage.getSignatureFile(SignTool.class);
-        if(!signfile.exists()){
+        if (!signfile.exists()) {
             throw new Exception("jar package jarsigner not exist");
         }
-        if(!passfile.exists()){
+        if (!passfile.exists()) {
             throw new Exception("Signature File not exist");
         }
         cmd.add("java");
@@ -37,6 +38,15 @@ public class SignTool {
         cmd.add("sign");
         cmd.add("--ks");
         cmd.add(passfile.getAbsolutePath());
+
+        if (paras != null) {
+            for (Map.Entry<String, String> entry : paras.entrySet()) {
+                String key = entry.getKey();
+                String value = entry.getValue();
+                cmd.add(key);
+                cmd.add(value);
+            }
+        }
         cmd.add("--ks-key-alias");
         cmd.add("androiddebugkey");
 
@@ -47,9 +57,10 @@ public class SignTool {
         cmd.add("pass:android");
 
         cmd.add("--out");
-        File apk = new File(hostdir,"signed"+System.currentTimeMillis()+".apk");
+        File apk = new File(hostdir, "signed" + System.currentTimeMillis() + ".apk");
         cmd.add(apk.getAbsolutePath());
         cmd.add(file.getAbsolutePath());
+
 
         Utils.OSCMD.runCMD(cmd);
 //        try {
@@ -60,16 +71,16 @@ public class SignTool {
 //            throw new AndrolibException(ex);
 //        }
 //        File newSignfile = new File("signed---.apk");
-        LOGGER.info("签名APK完成");
-        LOGGER.info("文件地址："+apk.getAbsolutePath());
+        LOGGER.info("[reverseToy]完成合并");
+        LOGGER.info("APK文件地址：" + apk.getAbsolutePath());
         return apk;
     }
 
-    public static void main(String[] args){
+    public static void main(String[] args) {
         File fileapk = new File("/Users/dongyuangui/Desktop/apk-blue/com.qiyi.video_81350/signed1585307434239.apk");
         File file = null;
         try {
-            file = SignTool.sign(fileapk,null);
+            file = SignTool.sign(fileapk, null, null);
         } catch (Exception e) {
             e.printStackTrace();
         }
