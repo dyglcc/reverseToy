@@ -42,7 +42,7 @@ public class ResAttrDecoder {
                 decoded = attr.convertToResXmlFormat(resValue);
             } catch (UndefinedResObject | ClassCastException ex) {
                 // ignored
-                System.out.println("ignored");
+//                System.out.println("ignored");
             }
         }
 

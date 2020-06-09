@@ -27,11 +27,10 @@ public class MergeAndMestFile {
         File out = new File("/Users/dongyuangui/Desktop/apk-blue/app/AndroidManifest.xml-out");
         XmlParser parser = mergeAndroidMestFile(fileHost, fileAar);
         XmlWriter.write2NewXml(out, parser);
-//        todo 能够正常解析，但是安卓的解析却不认。，怎么回事
 
-        System.out.println("bengin merge ");
+//        System.out.println("bengin merge ");
         XmlParser.parse(new FileInputStream(out));
-        System.out.println("after merge");
+//        System.out.println("after merge");
         testParseNew();
 
 
@@ -51,7 +50,7 @@ public class MergeAndMestFile {
         }
         XmlWriter.write2NewXml(fileHostout, parser);
         XmlParser parse1 = XmlParser.parse(new FileInputStream(fileHostout));
-        System.out.println("hello");
+//        System.out.println("hello");
     }
 
 
@@ -111,7 +110,7 @@ public class MergeAndMestFile {
         hostTrunkList.addAll(applicationPos + 1, receivers);
         hostTrunkList.addAll(applicationPos + 1, metaDatas);
 
-        System.out.println(hostTrunkList.size());
+//        System.out.println(hostTrunkList.size());
 
     }
 

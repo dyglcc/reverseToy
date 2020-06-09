@@ -46,12 +46,12 @@ public class MergeArsc {
 ////            --------------------------
 //////             读取host apk return hostable
         ResTable hostTableTable = resources.getResTable(new ExtFile("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk"));
-        System.out.println("host table is " + hostTableTable.getmMainPackages().size());
+//        System.out.println("host table is " + hostTableTable.getmMainPackages().size());
 //
 //            // 读取aar apk return restable
         ResTable aarTable = resources.getResTable(new ExtFile("/Users/dongyuangui/Desktop/aar-1/aar/tmp19275/aar_tmp.apk"));
         mergeAarTable2HostTable(hostTableTable, aarTable);
-        System.out.println("aar table is " + aarTable.getmMainPackages().size());
+//        System.out.println("aar table is " + aarTable.getmMainPackages().size());
         return hostTableTable;
 
     }
@@ -64,7 +64,7 @@ public class MergeArsc {
         }
         WriterNp.write(outArsc, hostTableTable);
         long t0 = System.currentTimeMillis();
-        System.out.println("write file 耗时" + (t0 - t1));
+//        System.out.println("write file 耗时" + (t0 - t1));
         // copy 新的arsc文件到abc0000
         File outApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/output_abc0000.apk");
         ZipUtils.zipFolders(new File("/Users/dongyuangui/Desktop/apk-blue/abc0000"), outApkfile, null, null);
@@ -72,27 +72,27 @@ public class MergeArsc {
 
         long t2 = System.currentTimeMillis();
 
-        System.out.println("zip 签名 耗时d" + (t2 - t0));
+//        System.out.println("zip 签名 耗时d" + (t2 - t0));
         return outputFile;
     }
 
     public static void readNew(File outputFile) throws AndrolibException {
         AndrolibResources resources = new AndrolibResources();
         ResTable mytable = resources.getResTable(new ExtFile(outputFile));
-        System.out.println("host table is " + mytable.getmMainPackages().size());
+//        System.out.println("host table is " + mytable.getmMainPackages().size());
     }
 
     public static void readNewApk(String path) throws AndrolibException {
         AndrolibResources resources = new AndrolibResources();
         ResTable mytable = resources.getResTable(new ExtFile(path));
-        System.out.println("host table is " + mytable.getmMainPackages().size());
+//        System.out.println("host table is " + mytable.getmMainPackages().size());
     }
 
     public static void readOldApk(File outputFile) throws AndrolibException {
         AndrolibResources resources = new AndrolibResources();
         ResTable mytable = resources.getResTable(new ExtFile("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk"));
 //        ResTable mytable = resources.getResTable(new ExtFile(outputFile));
-        System.out.println("host table is " + mytable.getmMainPackages().size());
+//        System.out.println("host table is " + mytable.getmMainPackages().size());
     }
 
     public static ResTable mergeAarTable2HostTable(ResTable hostTableTable, ResTable aarTable) throws Exception {

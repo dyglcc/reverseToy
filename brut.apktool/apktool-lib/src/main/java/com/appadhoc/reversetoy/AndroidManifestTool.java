@@ -14,7 +14,7 @@ import java.util.List;
 public class AndroidManifestTool {
     public static final String schmas = "http://schemas.android.com/apk/res/android";
     public static void main(String[] args) {
-        System.out.println("hello");
+//        System.out.println("hello");
     }
 
     public static void setDebuggableTrue(XmlParser parser) throws Exception {

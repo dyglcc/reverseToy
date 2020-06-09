@@ -672,7 +672,7 @@ public class Main {
 ////        String uploadUrl = "https://arkpaastest.analysys.cn:4089";
         Option uploadUrlOption = Option.builder("codePath")
                 .longOpt("dir-to-del-before-inject-sdk")
-                .desc("用于代码更新，合并之前要删除指定的路径下的代码文件 例如：com.adhoc")
+                .desc("用于代码更新，合并之前要删除指定的路径下的代码文件 例如：com.adhoc;com.adhocsdk 多个目录分号隔开")
                 .argName("tag")
                 .hasArg(true)
                 .build();

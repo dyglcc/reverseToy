@@ -168,7 +168,7 @@ public class XmlParser {
 
             size = reader.readInt();
             log("file size: %d", size);
-            System.out.println("file size " + size);
+//            System.out.println("file size " + size);
         } catch (IOException e) {
             e.printStackTrace();
             log("parse header error!");

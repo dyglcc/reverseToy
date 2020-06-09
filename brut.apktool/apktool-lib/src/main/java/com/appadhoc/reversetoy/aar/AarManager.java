@@ -523,7 +523,7 @@ public class AarManager extends AbstractManager {
         }
         for (File file : Objects.requireNonNull(rSmalidir.listFiles())) {
             if (file.getName().contains("R$")) {
-                System.out.println(file.getName());
+//                System.out.println(file.getName());
                 StringBuilder stringBuilder = Utils.RFileUtils.smaliFileIdReplace(file, MergeArsc.mapping);
                 Utils.FileUtils.writeString2File(new File(file.getAbsolutePath()), stringBuilder.toString());
             }

@@ -11,10 +11,7 @@ import luyao.parser.xml.XmlWriter;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,7 +20,7 @@ public class ReflectionOper {
     private final static Logger LOGGER = Logger.getLogger(ReflectionOper.class.getName());
     private HashMap<String, Object> options;
     String stubDir = "com.reverse.stub";
-//    private String SDK_DIR = "com.analysys";//代码路径
+    //    private String SDK_DIR = "com.analysys";//代码路径
     private String SDK_DIR = null;//代码路径 比如吆喝科技的A/BTest代码路径是com.adhoc
     private String exclue = "track";//路径路径下面有子项目不能删除
     private static final String appNameStub = "com.reverse.stub.ReverseApp";
@@ -44,7 +41,7 @@ public class ReflectionOper {
             copyStubSmali2HostDir(stubDir, lastFolder);
 
         } else {
-            modifyExistAppSmali(hostDir, appHostFullName, lastFolder, hostAndmanifestData.getManifestPackageName());
+            modifyExistAppSmali(hostDir, appHostFullName, lastFolder, hostAndmanifestData.getManifestPackageName(), newSmaliFolder);
         }
         copyJSON2HostAssets(hostDir);
         copyUtilsSmaliFile(stubDir, lastFolder);
@@ -129,7 +126,7 @@ public class ReflectionOper {
         Utils.FileUtils.writeString2File(saveApplicationFile, code);
     }
 
-    private void modifyExistAppSmali(File hostdir, String hostAppName, File lastFolder, String packageName) throws Exception {
+    private void modifyExistAppSmali(File hostdir, String hostAppName, File lastFolder, String packageName, List<File> newSmaliFolder) throws Exception {
         if (!hostdir.exists()) {
             throw new Exception("host dir not exist");
         }
@@ -148,9 +145,11 @@ public class ReflectionOper {
         String path = (String) options.get("codePath");
 
         if (path != null) { // code path 不为空就删除就代码，否则不做删除旧的初始化代码操作。
-            path = path.replaceAll("\\.", File.separator);
-            path = "L" + path;
-            srcStr = srcStr.replaceAll("\\s+.*,.*"+path+".*\\n(\\s+move-result-object\\s+v\\d{1,2})?","");
+            // 遍历
+            long t1 = System.currentTimeMillis();
+            replaceAllFiles(hostdir, newSmaliFolder, path);
+            long t2 = System.currentTimeMillis();
+            System.out.println("耗时：" + (t2 - t1));
         }
 
         String callMethodCode = "invoke-static {p0}, Lcom/reverse/stub/Utils;->initReverseSDK(Landroid/content/Context;)V";
@@ -171,6 +170,55 @@ public class ReflectionOper {
         boolean replaceCallSuccess = srcStr.contains("->initReverseSDK(Landroid/content/Context;)V");
         if (!replaceCallSuccess) {
             throw new Exception("modify " + hostAppName + " smali modify failed");
+        }
+    }
+
+    private void replaceAllFiles(File hostDir, List<File> newSmaliFolder, String path) throws IOException {
+        List<String> list = Arrays.asList("android", "square", "androidx", "bugly", "umeng", "adhoc", "adhocsdk");
+        String[] paths = getCodePath(path);
+        String[] regulars = new String[paths.length];
+        for (int i = 0; i < paths.length; i++) {
+            String one = paths[i].replaceAll("\\.", File.separator);
+            paths[i] = "L" + one;
+            regulars[i] = "\\s+.*,.*" + one + ".*\\n(\\s+move-result-object\\s+v\\d{1,2})?";
+        }
+
+        for (File file : Objects.requireNonNull(hostDir.listFiles())) {
+            if (!newSmaliFolder.contains(file)) {
+                if (file.isDirectory() && file.getName().startsWith("smali")) {
+                    loopReplaceInternal(file, paths, regulars, list);
+                }
+            }
+        }
+    }
+
+    private String[] getCodePath(String path) {
+        return path.split(";");
+    }
+
+    private void loopReplaceInternal(File filedir, String[] paths, String[] regulars, List<String> list) throws IOException {
+        if (filedir == null) {
+            return;
+        }
+        if (!list.contains(filedir.getName())) {
+            if (filedir.listFiles() != null) {
+                for (File child : Objects.requireNonNull(filedir.listFiles())) {
+                    if (child.isFile() && child.getName().endsWith(".smali")) {
+                        String srcStr = Utils.FileUtils.readStringFromFile(child).toString();
+                        for (int i = 0; i < paths.length; i++) {
+                            String one = paths[i];
+                            if (srcStr.contains(one)) {
+                                srcStr = srcStr.replaceAll(regulars[i], "");
+                                LOGGER.info("replace old sdk code file name is " + child.getName());
+                            }
+                        }
+                        Utils.FileUtils.writeString2File(child, srcStr);
+
+                    } else {
+                        loopReplaceInternal(child, paths, regulars, list);
+                    }
+                }
+            }
         }
     }
 
@@ -242,44 +290,45 @@ public class ReflectionOper {
 
     // 删除旧sdk 的smali文件 // upgrade sdk may be useful
     public void deleteOldSdkSmaliFile(File hostdir, List<File> aarSmaliFolder, XmlParser hostAndmanifestData) throws Exception {
-        String path = null;
+        String pathOrigin = null;
         String excludeSDKdir = exclue;
         if (options.get("keepDir") != null) {
             excludeSDKdir = (String) options.get("exclude");
         }
         if (options.get("codePath") != null) {
-            path = (String) options.get("codePath");
-            if (path != null) { // code path 不未空就删除就代码，否则不做删除旧代码操作。
-
+            pathOrigin = (String) options.get("codePath");
+            if (pathOrigin != null) { // code path 不为空就删除就代码，否则不做删除旧代码操作。
+                String[] paths = getCodePath(pathOrigin);
                 if (!hostdir.exists()) {
                     throw new Exception("host dir 不存在");
                 }
-
-                path = path.replaceAll("\\.", File.separator);
-
-                for (File file : Objects.requireNonNull(hostdir.listFiles())) {
-                    String fileName = file.getName();
-                    if (fileName.startsWith("smali") && !fileNameInList(fileName, aarSmaliFolder)) { // 新生成的sdk smali不删除
-                        File existOldSdkdir = new File(file, path);
-                        if (existOldSdkdir.exists()) {
-                            for (File fileRemove : Objects.requireNonNull(existOldSdkdir.listFiles())) {
-                                if (!fileRemove.getName().equals(excludeSDKdir)) {
-                                    LOGGER.info("删除旧的SDK目录" + existOldSdkdir.getAbsolutePath());
-                                    if (fileRemove.isFile()) {
-                                        OS.rmfile(fileRemove.getAbsolutePath());
-                                    } else {
-                                        OS.rmdir(fileRemove);
+                for (int i = 0; i < paths.length; i++) {
+                    String pathOne = paths[i];
+                    pathOne = pathOne.replaceAll("\\.", File.separator);
+                    for (File file : Objects.requireNonNull(hostdir.listFiles())) {
+                        String fileName = file.getName();
+                        if (fileName.startsWith("smali") && !fileNameInList(fileName, aarSmaliFolder)) { // 新生成的sdk smali不删除
+                            File existOldSdkdir = new File(file, pathOne);
+                            if (existOldSdkdir.exists()) {
+                                LOGGER.info("删除旧的SDK目录" + existOldSdkdir.getAbsolutePath());
+                                for (File fileRemove : Objects.requireNonNull(existOldSdkdir.listFiles())) {
+                                    if (!fileRemove.getName().equals(excludeSDKdir)) {
+                                        if (fileRemove.isFile()) {
+                                            OS.rmfile(fileRemove.getAbsolutePath());
+                                        } else {
+                                            OS.rmdir(fileRemove);
+                                        }
+                                    }else{
+                                        LOGGER.info("保留旧的SDK目录" + existOldSdkdir.getAbsolutePath());
                                     }
                                 }
-                            }
 
+                            }
                         }
                     }
                 }
             }
         }
-
-
         if (options.get("upg") == null) {
             //
             this.addOrModifyApplicationSmali(hostdir, aarSmaliFolder, hostAndmanifestData);

@@ -17,23 +17,23 @@ public class ArscHeadCalc {
     public int calcRestableSize(ResTable data) {
         int size = new WriterNp.ResTableHeader().calcCount();
         int globalStringPoolSize = getGlobalStringPoolSize(data);
-        System.out.println("globalStringPoolSize is :" + globalStringPoolSize);
+//        System.out.println("globalStringPoolSize is :" + globalStringPoolSize);
         int packageSize = getPackageSize(data);
         int allCount = size + globalStringPoolSize + packageSize;
-        System.out.println("write count  is :" + allCount);
+//        System.out.println("write count  is :" + allCount);
         return allCount;
     }
 
     private int getPackageSize(ResTable data) {
         int allPackageSize = 0;
         Map<Integer, ResPackage> map = data.getmPackagesById();
-        System.out.println("package size is " + map.size());
+//        System.out.println("package size is " + map.size());
         for (Map.Entry entry : map.entrySet()) {
 
             ResPackage pa = (ResPackage) entry.getValue();
 
             int singlePackageSize = getSinglePackageSize(pa);
-            System.out.println("package string all count " + singlePackageSize);
+//            System.out.println("package string all count " + singlePackageSize);
             allPackageSize += singlePackageSize;
 
         }
@@ -90,7 +90,7 @@ public class ArscHeadCalc {
             count += value.getEntryCount() * 4;
         }
         int countTypes = getAllResTypes(mResPackage);
-        System.out.println("spec count is " + count);
+//        System.out.println("spec count is " + count);
         count += countTypes;
         return count;
     }

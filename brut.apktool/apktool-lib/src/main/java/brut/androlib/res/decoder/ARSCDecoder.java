@@ -44,14 +44,6 @@ public class ARSCDecoder {
 
 
     public static void main(String[] args) {
-        AndrolibResources resources = new AndrolibResources();
-        ResTable hostTableTable = null;
-        try {
-            hostTableTable = resources.getResTable(new ExtFile("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk"));
-        } catch (AndrolibException e) {
-            e.printStackTrace();
-        }
-        System.out.println("host table is " + hostTableTable.getmMainPackages().size());
     }
 
 
@@ -161,10 +153,10 @@ public class ARSCDecoder {
         }
 
 
-        int startString = mCountIn.getCount();
+//        int startString = mCountIn.getCount();
         mTypeNames = StringBlock.read_apktool(mIn);
-        int endString = mCountIn.getCount();
-        System.out.println(endString -startString);
+//        int endString = mCountIn.getCount();
+//        System.out.println(endString -startString);
         int s = mCountIn.getCount();
         mSpecNames = StringBlock.read_apktool(mIn);
         int e = mCountIn.getCount();
