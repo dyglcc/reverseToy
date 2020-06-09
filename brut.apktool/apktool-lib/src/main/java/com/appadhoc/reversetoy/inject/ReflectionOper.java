@@ -145,9 +145,14 @@ public class ReflectionOper {
         String srcStr = Utils.FileUtils.readStringFromFile(needModiFile).toString();
 
         // first step  delete old init code
-//todo
-//            invoke-direct {p0}, Lcom/reverse/stub/App;->initReverseSDK()V
-//        String callMethodCode = "invoke-direct {p0}, L" + hostAppName.replaceAll("\\.", "/") + ";->initReverseSDK()V";
+        String path = (String) options.get("codePath");
+
+        if (path != null) { // code path 不为空就删除就代码，否则不做删除旧的初始化代码操作。
+            path = path.replaceAll("\\.", File.separator);
+            path = "L" + path;
+            srcStr = srcStr.replaceAll("\\s+.*,.*"+path+".*\\n(\\s+move-result-object\\s+v\\d{1,2})?","");
+        }
+
         String callMethodCode = "invoke-static {p0}, Lcom/reverse/stub/Utils;->initReverseSDK(Landroid/content/Context;)V";
 
         if (!haveOncreate(srcStr)) {
