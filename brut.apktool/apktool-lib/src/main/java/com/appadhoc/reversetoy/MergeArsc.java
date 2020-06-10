@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Logger;
+
 import static luyao.parser.utils.Reader.log;
 import static brut.androlib.res.decoder.ARSCDecoder.ENTRY_FLAG_COMPLEX;
 
@@ -41,7 +42,7 @@ public class MergeArsc {
 ////        ResTable hostTableTable = resources.getResTable(new ExtFile("/Users/dongyuangui/GITHUB/adhoc_android/app-debug-message.apk"));
 //        File outputFile =  createApk(aarTable);
 //        readNew(outputFile);
-        readNew(new File("/Users/dongyuangui/Desktop/apk-blue/signed1591786893545.apk"));
+//        readNew(new File("/Users/dongyuangui/Desktop/apk-blue/signed1591786893545.apk"));
     }
 
     public static ResTable merge2Arsc() throws Exception {
@@ -72,9 +73,9 @@ public class MergeArsc {
         // copy 新的arsc文件到abc0000
         File outApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/output_abc0000.apk");
         ZipUtils.zipFolders(new File("/Users/dongyuangui/Desktop/apk-blue/abc0000"), outApkfile, null, null);
-        Map<String,String> map = new HashMap<>();
-        map.put("--min-sdk-version","14");
-        File outputFile = SignTool.sign(outApkfile, new File("/Users/dongyuangui/Desktop/apk-blue/output_abc0000-sign.apk"),map);
+        Map<String, String> map = new HashMap<>();
+        map.put("--min-sdk-version", "14");
+        File outputFile = SignTool.sign(outApkfile, new File("/Users/dongyuangui/Desktop/apk-blue/output_abc0000-sign.apk"), map);
 
         long t2 = System.currentTimeMillis();
 
@@ -131,7 +132,7 @@ public class MergeArsc {
                     int[] offsets = aarRaw.getEntryOffsets();
                     short id = (short) resID.id;
                     offsets[id] = -1;
-                    LOGGER.info("remove duplicate spec name " + keyNameAar + "  " + typeName);
+                    LOGGER.info("remove duplicate spec name use host spec name" + keyNameAar + "  " + typeName);
                 }
             }
         }
@@ -145,12 +146,12 @@ public class MergeArsc {
             List<ResResource> aarList = (List<ResResource>) aarEntry.getValue();
 
             ConfigFlagRaw aarRaw = (ConfigFlagRaw) aarEntry.getKey();
-            String keyName = aarRaw.getConfigName();
+            String configName = aarRaw.getConfigName();
 
-            String[] strings = keyName.split("&&");
+            String[] strings = configName.split("&&");
             String typeName = strings[1];
             // 去重 keyName和host 资源项的keyName相同了。
-            List<ResResource> hostDefaultConfigResList = getListFromHost(typeName, host);
+            List<ResResource> hostDefaultConfigResList = getListFromHost(configName, host);
             removeDuplicateSpec(hostDefaultConfigResList, aarList, aarRaw, typeName);
         }
 
@@ -235,10 +236,10 @@ public class MergeArsc {
         }
     }
 
-    private static List<ResResource> getListFromHost(String typeName, LinkedHashMap<ConfigFlagRaw, List<ResResource>> host) {
+    private static List<ResResource> getListFromHost(String configName, LinkedHashMap<ConfigFlagRaw, List<ResResource>> host) {
         for (Map.Entry entry : host.entrySet()) {
             ConfigFlagRaw flagRaw = (ConfigFlagRaw) entry.getKey();
-            if (flagRaw.getConfigName().equals("[DEFAULT]&&" + typeName)) {
+            if (flagRaw.getConfigName().equals(configName)) {
                 return (List<ResResource>) entry.getValue();
             }
         }
@@ -268,7 +269,7 @@ public class MergeArsc {
                                             List<ResResource> aarList,
                                             int typeId, String configName, String typeName) throws Exception {
         int newType = checkNewType(typeName, host);
-        log("new Type is "+ newType);
+        log("new Type is " + newType);
 
         if (newType == NEW_CONFIGRATION) {
             // 需要需要找到default的ConfigRaw，获取到entryOffsetCount
@@ -303,9 +304,11 @@ public class MergeArsc {
         for (int i = 0; i < aarList.size(); i++) {
             ResResource resResource = aarList.get(i);
             ResID oldId = resResource.getResSpec().getId();
-            // save mapping
-            int newId = 0x7f << 24 | typeId << 16 | i + offset;
-            mapping.put(oldId.id, new Duo_int(oldId.id, newId));
+            if (mapping.get(oldId.id) == null) { // 可能是前面已经去重的
+                // save mapping
+                int newId = 0x7f << 24 | typeId << 16 | i + offset;
+                mapping.put(oldId.id, new Duo_int(oldId.id, newId));
+            }
         }
     }
 
