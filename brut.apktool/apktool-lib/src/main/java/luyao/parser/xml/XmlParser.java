@@ -68,19 +68,19 @@ public class XmlParser {
     }
 
     public static void testParse(int count) throws Exception {
-//        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton/AndroidManifest.xml");
+        File dir = new File("/Users/dongyuangui/GITHUB/adhoc_android/app-debug-remove-statusbutton/signed1591742497228/AndroidManifest.xml");
 //        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/com.xunmeng.pinduoduo_47101/AndroidManifest.xml");
 //        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/com.jingdong.app.mall_69021/AndroidManifest.xml");
 //        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/meishe/AndroidManifest.xml");
 //        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/com.xingin.xhs_6370100/AndroidManifest.xml");
 //        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/fail/com.tencent.mobileqq_90026/AndroidManifest.xml");
 
-        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/app-release/signed1585438687477/AndroidManifest.xml");
+//        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/app-release/signed1585438687477/AndroidManifest.xml");
 //        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/1863521/AndroidManifest.xml");
 
         XmlParser xmlParser = XmlParser.parse(new FileInputStream(dir));
         AndroidManifestTool.setDebuggableTrue(xmlParser);
-        File out = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton/AndroidManifest-out.xml");
+        File out = new File("/Users/dongyuangui/GITHUB/adhoc_android/app-debug-remove-statusbutton/AndroidManifest-out.xml");
         XmlWriter.write2NewXml(out,xmlParser);
         XmlParser result = XmlParser.parse(new FileInputStream(out));
         System.out.println("abc");
