@@ -5,6 +5,7 @@ import brut.androlib.AndrolibException;
 import brut.androlib.res.AndrolibResources;
 import brut.androlib.res.data.*;
 import brut.androlib.res.decoder.StringBlock;
+import brut.common.BrutException;
 import brut.directory.ExtFile;
 import brut.directory.ZipUtils;
 import brut.util.OS;
@@ -13,6 +14,7 @@ import com.appadhoc.reversetoy.sign.SignTool;
 import com.appadhoc.reversetoy.utils.Utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.logging.Logger;
@@ -25,25 +27,29 @@ public class MergeArsc {
 
     public static void main(String[] args) throws Exception {
 
-//        readOldApk(null);
-//
         ResTable hostTableTable = merge2Arsc();
-//        //        以上合并，并且打包出一个apk
-//////        // ########################################################################################################
         File outputFile = createApk(hostTableTable);
-        System.out.println("abc");
-//        // code 读取合并后的文件。
-//        // 读取合成后的apk文件看问题出在哪里
+        readNew(outputFile);
+//        readNew(new File("/Users/dongyuangui/Desktop/apk-blue/signed1591786893545.apk"));
+//        readOldApk(null);
+//        readWriteRead();
+    }
+
+    private static void readWriteRead() throws Exception {
+//        AndrolibResources resources = new AndrolibResources();
+//        ResTable aarTable = resources.getResTable(new ExtFile("/Users/dongyuangui/work/aar-520-release/aar/tmpcb3fd/aar_tmp.apk"));
+////        ResTable hostTableTable = resources.getResTable(new ExtFile("/Users/dongyuangui/GITHUB/adhoc_android/app-debug-message.apk"));
+//        File outputFile =  createApk(aarTable);
 //        readNew(outputFile);
-//        readNewApk("/Users/dongyuangui/Desktop/apk-blue/signed1584228875934.apk");
-        // #########################################################################################################
+        readNew(new File("/Users/dongyuangui/Desktop/apk-blue/signed1591786893545.apk"));
     }
 
     public static ResTable merge2Arsc() throws Exception {
         AndrolibResources resources = new AndrolibResources();
 ////            --------------------------
 //////             读取host apk return hostable
-        ResTable hostTableTable = resources.getResTable(new ExtFile("/Users/dongyuangui/Desktop/liepin/android-tongdao-app_liepinpc_dev_4.15.0_20190918161802.apk"));
+//        ResTable hostTableTable = resources.getResTable(new ExtFile("/Users/dongyuangui/GITHUB/adhoc_android/app-debug-message.apk"));
+        ResTable hostTableTable = resources.getResTable(new ExtFile("/Users/dongyuangui/GITHUB/adhoc_android/android-tongdao-app_liepinpc_dev_4.15.0_20190918161802.apk"));
 //        System.out.println("host table is " + hostTableTable.getmMainPackages().size());
 //
 //            // 读取aar apk return restable
@@ -79,7 +85,7 @@ public class MergeArsc {
     public static void readNew(File outputFile) throws AndrolibException {
         AndrolibResources resources = new AndrolibResources();
         ResTable mytable = resources.getResTable(new ExtFile(outputFile));
-//        System.out.println("host table is " + mytable.getmMainPackages().size());
+        System.out.println("host table is " + mytable.getmMainPackages().size());
     }
 
     public static void readNewApk(String path) throws AndrolibException {
@@ -90,9 +96,9 @@ public class MergeArsc {
 
     public static void readOldApk(File outputFile) throws AndrolibException {
         AndrolibResources resources = new AndrolibResources();
-        ResTable mytable = resources.getResTable(new ExtFile("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk"));
+        ResTable mytable = resources.getResTable(new ExtFile("/Users/dongyuangui/GITHUB/adhoc_android/android-tongdao-app_liepinpc_dev_4.15.0_20190918161802/signed1591785603139.apk"));
 //        ResTable mytable = resources.getResTable(new ExtFile(outputFile));
-//        System.out.println("host table is " + mytable.getmMainPackages().size());
+        System.out.println("old table is " + mytable.getmMainPackages().size());
     }
 
     public static ResTable mergeAarTable2HostTable(ResTable hostTableTable, ResTable aarTable) throws Exception {
@@ -280,6 +286,7 @@ public class MergeArsc {
             System.arraycopy(hostOffset, 0, newOffset, 0, hostCount);
             System.arraycopy(aarOffset, 0, newOffset, hostCount, aarOffset.length);
             aarRaw.setEntryOffsets(newOffset);
+            aarRaw.setEntryCount(newOffset.length);
 
             addMapping(aarList, typeId, hostCount);
 

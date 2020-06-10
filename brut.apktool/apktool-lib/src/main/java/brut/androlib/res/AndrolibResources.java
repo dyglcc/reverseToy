@@ -201,7 +201,6 @@ final public class AndrolibResources {
             out = new FileDirectory(outDir);
             LOGGER.info("Decoding AndroidManifest.xml with resources...");
 
-            // todo decode to AndroidManifest.xml 添加aar的一些权限provider，reciver等资源。
             fileDecoder.decodeManifest(inApk, "AndroidManifest.xml", out, "AndroidManifest.xml");
 
             // Remove versionName / versionCode (aapt API 16)
