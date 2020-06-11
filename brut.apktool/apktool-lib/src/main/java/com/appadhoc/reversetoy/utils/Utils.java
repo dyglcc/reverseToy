@@ -9,6 +9,7 @@ import brut.util.OSDetection;
 import com.appadhoc.reversetoy.AndroidManifestTool;
 import com.appadhoc.reversetoy.MergeAndMestFile;
 import com.appadhoc.reversetoy.MergeArsc;
+import com.appadhoc.reversetoy.StringBlockUtils;
 import com.appadhoc.reversetoy.aar.AarManager;
 import com.appadhoc.reversetoy.aar.Duo_int;
 import com.appadhoc.reversetoy.data.AarID;
@@ -588,20 +589,6 @@ public class Utils {
             return null;
         }
 
-        public static String setBinaryManifestApplicationName(XmlParser hostParser, String appname) throws Exception {
-
-            StringBlock block = hostParser.getStringBlock();
-            StartTagChunk application = (StartTagChunk) MergeAndMestFile.getStartChunk(hostParser.getChunkList(), "application");
-            Attribute appNameChunk = MergeAndMestFile.getAttributeFromTrunk(application, "name");
-            if (appNameChunk != null) {
-                String oldAppName = block.getString(appNameChunk.getValueStr());
-                return oldAppName;
-            } else {
-                // 把appname 添加到二进制文件当中。
-                AndroidManifestTool.addNameAttribute(application, hostParser, appname);
-                return appname;
-            }
-        }
     }
 
     public static boolean isEmpty(String str) {
@@ -845,7 +832,7 @@ public class Utils {
 
         public static void replaceNewName(XmlParser hostParser, String appname, Attribute attribute) throws Exception {
             StringBlock stringBlock = hostParser.getStringBlock();
-            int newIndex = MergeArsc.addSingleString2StringBlockTail(stringBlock, appname);
+            int newIndex = StringBlockUtils.addSingleString2StringBlockTail(stringBlock, appname);
             byte[] rawBytes = attribute.getRawBytes();
             Utils.ByteUtils.replaceInt(rawBytes, 16, newIndex);
         }

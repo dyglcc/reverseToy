@@ -32,7 +32,7 @@ public class ReflectionOper {
         }
 //        deleteOldSdkSmaliFile(SDK_DIR, hostDir, newSmaliFolder, exclue);
 //        String appName = Utils.XmlUtils.setApplicationName(hostDir, appNameStub_Eguan);
-        String appHostFullName = Utils.XmlUtils.setBinaryManifestApplicationName(hostAndmanifestData, appNameStub);
+        String appHostFullName = AndroidManifestTool.setBinaryManifestApplicationName(hostAndmanifestData, appNameStub);
 
         File lastFolder = newSmaliFolder.get(newSmaliFolder.size() - 1);
 

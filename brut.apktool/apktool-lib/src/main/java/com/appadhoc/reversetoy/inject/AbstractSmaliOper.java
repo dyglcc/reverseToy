@@ -144,18 +144,18 @@ public abstract class AbstractSmaliOper {
         }
     }
 
-    public void addOrModifyApplicationSmali(File hostDir, List<File> newSmaliFolder) throws Exception {
-        if (newSmaliFolder == null || newSmaliFolder.size() == 0) {
-            throw new Exception("SDK smali 文件夹不存在");
-        }
-        deleteOldSdkSmaliFile(getSDKdir(), hostDir, newSmaliFolder, getExcludeSDKdir());
-        String appName = Utils.XmlUtils.setPlainTextXmlApplicationName(hostDir, getStubApplicationName());
-        if (appName.equals(getStubApplicationName())) {
-            copyStubSmali2HostDir(stubDir, newSmaliFolder.get(newSmaliFolder.size() - 1));
-        } else {
-            modifyExistAppSmali(hostDir, appName);
-        }
-    }
+//    public void addOrModifyApplicationSmali(File hostDir, List<File> newSmaliFolder) throws Exception {
+//        if (newSmaliFolder == null || newSmaliFolder.size() == 0) {
+//            throw new Exception("SDK smali 文件夹不存在");
+//        }
+//        deleteOldSdkSmaliFile(getSDKdir(), hostDir, newSmaliFolder, getExcludeSDKdir());
+//        String appName = Utils.XmlUtils.setPlainTextXmlApplicationName(hostDir, getStubApplicationName());
+//        if (appName.equals(getStubApplicationName())) {
+//            copyStubSmali2HostDir(stubDir, newSmaliFolder.get(newSmaliFolder.size() - 1));
+//        } else {
+//            modifyExistAppSmali(hostDir, appName);
+//        }
+//    }
 
     protected abstract InputStream getAssetsAppStubSmaliFile();
 

@@ -29,10 +29,10 @@ import static luyao.parser.utils.Reader.log;
 public class XmlParser {
 
     public static void testNew() throws Exception {
-        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton");
-        File fileHost = new File(srcApkfile, "AndroidManifest.xml");
+//        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton");
+        File fileHost = new File("/Users/dongyuangui/Desktop/liepin/reverse/AndroidManifest.xml");
         XmlParser xmlParser = XmlParser.parse(new FileInputStream(fileHost));
-        StringBlock block = xmlParser.getStringBlock();
+        System.out.println("abcx");
 //        int x = MergeArsc.addSingleString2StringBlockTail(block,"hello world");
 //        String str = block.getString(x);
 //        for(int i = 0;i<=x;i++){
@@ -55,9 +55,10 @@ public class XmlParser {
     }
 
     public static void main(String... args) throws Exception {
-//        testNew();
+        testNew();
 //        testParse(123);
-        testParse(12);
+//        testParse(12);
+
     }
 
     public static void testParse() throws IOException {
