@@ -34,7 +34,7 @@ reverse_code_json_default-adhoc.txt是初始化代码描述文件，该描述文
 # 配置全局变量(MacOS)
 <pre>cd /usr/local/bin/
 touch reverse
-echo "#!bin/bash>>reverse"
+echo '#!bin/bash' >> reverse
 echo 'exec java -jar {你自己的apktool-reversetoy jar包路径}.jar "$@"' >> reverse
 chmod +x reverse</pre>
 
