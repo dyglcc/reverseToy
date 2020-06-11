@@ -20,18 +20,13 @@ public class ReflectionOper {
     private final static Logger LOGGER = Logger.getLogger(ReflectionOper.class.getName());
     private HashMap<String, Object> options;
     String stubDir = "com.reverse.stub";
-    //    private String SDK_DIR = "com.analysys";//代码路径
-    private String SDK_DIR = null;//代码路径 比如吆喝科技的A/BTest代码路径是com.adhoc
     private String exclue = "track";//路径路径下面有子项目不能删除
     private static final String appNameStub = "com.reverse.stub.ReverseApp";
-//    private File jsonFile;
 
     private void addOrModifyApplicationSmali(File hostDir, List<File> newSmaliFolder, XmlParser hostAndmanifestData) throws Exception {
         if (newSmaliFolder == null || newSmaliFolder.size() == 0) {
             throw new Exception("SDK smali 文件夹不存在");
         }
-//        deleteOldSdkSmaliFile(SDK_DIR, hostDir, newSmaliFolder, exclue);
-//        String appName = Utils.XmlUtils.setApplicationName(hostDir, appNameStub_Eguan);
         String appHostFullName = Utils.XmlUtils.setBinaryManifestApplicationName(hostAndmanifestData, appNameStub);
 
         File lastFolder = newSmaliFolder.get(newSmaliFolder.size() - 1);
@@ -74,7 +69,6 @@ public class ReflectionOper {
             }
             code = Utils.FileUtils.readStringFromStream(inputStream).toString();
         }
-//        LOGGER.info("copy utils file to folder" + jsonName);
         File saveApplicationFile = new File(assets, jsonName);
         Utils.FileUtils.writeString2File(saveApplicationFile, code);
     }
@@ -144,12 +138,9 @@ public class ReflectionOper {
         // first step  delete old init code
         String path = (String) options.get("codePath");
 
-        if (path != null) { // code path 不为空就删除就代码，否则不做删除旧的初始化代码操作。
+        if (path != null) { // code path 删除旧代码。
             // 遍历
-//            long t1 = System.currentTimeMillis();
             replaceAllFiles(hostdir, newSmaliFolder, path);
-//            long t2 = System.currentTimeMillis();
-//            System.out.println("耗时：" + (t2 - t1));
         }
 
         String callMethodCode = "invoke-static {p0}, Lcom/reverse/stub/Utils;->initReverseSDK(Landroid/content/Context;)V";
