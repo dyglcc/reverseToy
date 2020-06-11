@@ -23,7 +23,3 @@ merge -codePath com.android.reyunsdk -exclude abc /Users/dongyuangui/Desktop/apk
 bug:
 1.当把Application对象更换到了非classes.dex下面之后，可能会出现classnotfoundExcepiton ，拼多多注入时候报错。
 修复方法（未尝试）：将classes.dex和classes4.dex（放applicaiton类的dex）名字互换,
-
-2.初始化代码更新之后出现NoClassDefFoundError，原因：sdk的初始化方法在新的sdk中已经去掉了某个类，导致初始化代码（旧的）在新的dex文件解析过程中失败。
-解决方法：
-删除旧的sdk初始化代码，可能解决问题。
