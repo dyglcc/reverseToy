@@ -140,7 +140,7 @@ public class ReflectionOper {
 
         if (path != null) { // code path 删除旧代码。
             // 遍历
-            replaceAllFiles(hostdir, newSmaliFolder, path);
+//            replaceAllFiles(hostdir, newSmaliFolder, path);
         }
 
         String callMethodCode = "invoke-static {p0}, Lcom/reverse/stub/Utils;->initReverseSDK(Landroid/content/Context;)V";
@@ -184,7 +184,7 @@ public class ReflectionOper {
     }
 
     private String[] getCodePath(String path) {
-        return path.split(";");
+        return path.split(":");
     }
 
     private void loopReplaceInternal(File filedir, String[] paths, String[] regulars, List<String> list) throws IOException {
