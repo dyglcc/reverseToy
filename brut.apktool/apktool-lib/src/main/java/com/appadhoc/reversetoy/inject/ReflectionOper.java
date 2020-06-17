@@ -141,6 +141,18 @@ public class ReflectionOper {
         if (path != null) { // code path 删除旧代码。
             // 遍历
 //            replaceAllFiles(hostdir, newSmaliFolder, path);
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("如需修改旧的smali代码，请手动处理，完成后请输入[yes]继续..........");
+            while(scanner.hasNextLine()){
+
+                String value = scanner.nextLine();
+                if(value.equals("yes")){
+                    System.out.println("go on reversing ......");
+                    break;
+                }else{
+                    System.out.println("请输入[yes]");
+                }
+            }
         }
 
         String callMethodCode = "invoke-static {p0}, Lcom/reverse/stub/Utils;->initReverseSDK(Landroid/content/Context;)V";
@@ -171,7 +183,7 @@ public class ReflectionOper {
         for (int i = 0; i < paths.length; i++) {
             String one = paths[i].replaceAll("\\.", File.separator);
             paths[i] = "L" + one;
-            regulars[i] = "\\s+.*,.*" + one + ".*\\n(\\s+move-result-object\\s+v\\d{1,2})?";
+            regulars[i] = "\\s+.*,.*" + one + ".*\\n(\\s+move-result-object\\s+[v,p]\\d{1,2})?";
         }
 
         for (File file : Objects.requireNonNull(hostDir.listFiles())) {

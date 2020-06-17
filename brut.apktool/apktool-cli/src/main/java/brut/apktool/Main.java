@@ -119,85 +119,12 @@ public class Main {
         String aarFileName = cli.getArgList().get(paraCount - 2);
         String initCodeFile = cli.getArgList().get(paraCount - 1);
 
-//        String sdk_type = null;
-//        String appkey = null;
-//        // check for merge options
-//        if (cli.hasOption("st") || cli.hasOption("sdk-type")) {
-//            sdk_type = cli.getOptionValue("st");
-//        }
         HashMap<String, Object> operOptions = new HashMap<>();
         operOptions.put("json",new File(initCodeFile).getAbsolutePath());
 //
-//        if (cli.hasOption("ak") || cli.hasOption("appkey")) {
-//            appkey = cli.getOptionValue("ak");
-//            Utils.ParaUtils.checkCmdliPara("appkey",appkey);
-//            operOptions.put("ak",appkey);
-//        }
-//        if (cli.hasOption("chl") || cli.hasOption("channel")) {
-//            String channel = cli.getOptionValue("chl");
-//            Utils.ParaUtils.checkCmdliPara("channel",channel);
-//            operOptions.put("chl",channel);
-//        }
-////        int debugMode = 2;
-//        if (cli.hasOption("dm") || cli.hasOption("debug_mode")) {
-//            String dmV = cli.getOptionValue("dm");
-//            Utils.ParaUtils.checkCmdliPara("debug_mode",dmV);
-//            if(!(dmV.equals("1") || dmV.equals("0") || dmV.equals("2"))){
-//                throw new Exception("debug_mode 参数必须是[0,1,2]其中一个数字");
-//            }
-//            operOptions.put("dm",Integer.parseInt(dmV));
-//        }
-////        boolean autoProfile = true;
-//        if (cli.hasOption("ap") || cli.hasOption("auto_profile")) {
-//            operOptions.put("ap",false);
-//        }
-////    EMPTY(0),
-////    AES(1),
-////    AES_CBC(2);
-////        int encryptType = 1;
-//        if (cli.hasOption("enc") || cli.hasOption("encrypt_type")) {
-//            String encV = cli.getOptionValue("enc");
-//            Utils.ParaUtils.checkCmdliPara("encrypt_type",encV);
-//            if(!(encV.equals("0") || encV.equals("1") || encV.equals("2"))){
-//                throw new Exception("encrypt_type 必须是[0,1,2]中一个值");
-//            }
-//            operOptions.put("enc",Integer.parseInt(encV));
-//        }
-////        boolean allowTimeCheck = true;
-//        if (cli.hasOption("atck") || cli.hasOption("allowTimeCheck")) {
-//            operOptions.put("atck",false);
-//        }
-////        long maxDiffTimeInterval = 5*60;
-//        if (cli.hasOption("mdti") || cli.hasOption("maxDiffTimeInterval")) {
-//            String mdtiV = cli.getOptionValue("mdti");
-//            Utils.ParaUtils.checkCmdliPara("maxDiffTimeInterval",mdtiV);
-//            operOptions.put("mdti",Long.parseLong(mdtiV));
-//        }
-////        boolean autoInstallation = true;
-//        if (cli.hasOption("ai") || cli.hasOption("autoInstallation")) {
-//            operOptions.put("ai",false);
-//        }
-////        boolean autoHeatMap = false;
-//        if (cli.hasOption("ah") || cli.hasOption("autoHeatMap")) {
-//            operOptions.put("ah",true);
-//        }
-////        boolean autoTrackPageView = true;
-//        if (cli.hasOption("atp") || cli.hasOption("autoTrackPageView")) {
-//            operOptions.put("atp",false);
-//        }
-////        boolean autoTrackFragmentPageView = false;
-//        if (cli.hasOption("atfp") || cli.hasOption("autoTrackFragmentPageView")) {
-//            operOptions.put("atfp",true);
-//        }
-////        boolean autoTrackClick = false;
-//        if (cli.hasOption("atc") || cli.hasOption("autoTrackClick")) {
-//            operOptions.put("atc",true);
-//        }
-////        boolean enableException = true;
         if (cli.hasOption("sde") || cli.hasOption("set-debug-enable")) {
             operOptions.put("sde",true);
         }
-////        String uploadUrl = "https://arkpaastest.analysys.cn:4089";
         if (cli.hasOption("codePath") || cli.hasOption("dir-to-del-before-inject-sdk")) {
             String codPath = cli.getOptionValue("codePath");
             Utils.ParaUtils.checkCmdliPara("codePath",codPath);
@@ -208,18 +135,6 @@ public class Main {
             Utils.ParaUtils.checkCmdliPara("keepDir",except);
             operOptions.put("keepDir",except);
         }
-////        String debugUrl ="wss://arkpaastest.analysys.cn:4091";
-//        if (cli.hasOption("deu") || cli.hasOption("debugUrl")) {
-//            String deuV = cli.getOptionValue("deu");
-//            Utils.ParaUtils.checkCmdliPara("debugUrl",deuV);
-//            operOptions.put("deu",deuV);
-//        }
-//        String configUrl ="https://arkpaastest.analysys.cn:4089";
-//        if (cli.hasOption("-json") || cli.hasOption("json")) {
-//            String cfuV = cli.getOptionValue("json");
-//            Utils.ParaUtils.checkCmdliPara("json", cfuV);
-//            operOptions.put("json", cfuV);
-//        }
         logger.fine("code json config file " + operOptions.get("json"));
         try {
             com.appadhoc.reversetoy.Main.reverse(new File(apkFile), new File(aarFileName),operOptions);
