@@ -9,6 +9,6 @@ import java.util.regex.Matcher;
 
 public class TestRegular {
     public static void main(String[] args) throws IOException, BrutException {
-
+        System.out.println("adsfa");
     }
 }

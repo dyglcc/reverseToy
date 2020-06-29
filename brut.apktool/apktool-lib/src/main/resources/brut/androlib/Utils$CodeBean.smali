@@ -51,7 +51,7 @@
 .method public constructor <init>()V
     .locals 0
 
-    .line 113
+    .line 114
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     return-void
@@ -62,7 +62,7 @@
 .method public getClassName()Ljava/lang/String;
     .locals 1
 
-    .line 117
+    .line 118
     iget-object v0, p0, Lcom/reverse/stub/Utils$CodeBean;->className:Ljava/lang/String;
 
     return-object v0
@@ -79,7 +79,7 @@
         }
     .end annotation
 
-    .line 133
+    .line 134
     iget-object v0, p0, Lcom/reverse/stub/Utils$CodeBean;->instanceMethods:Ljava/util/ArrayList;
 
     return-object v0
@@ -96,7 +96,7 @@
         }
     .end annotation
 
-    .line 125
+    .line 126
     iget-object v0, p0, Lcom/reverse/stub/Utils$CodeBean;->methods:Ljava/util/ArrayList;
 
     return-object v0
@@ -105,7 +105,7 @@
 .method public getStaticFields()Lcom/reverse/stub/Utils$CodeBean$StaticField;
     .locals 1
 
-    .line 143
+    .line 144
     iget-object v0, p0, Lcom/reverse/stub/Utils$CodeBean;->staticFields:Lcom/reverse/stub/Utils$CodeBean$StaticField;
 
     return-object v0
@@ -115,10 +115,10 @@
     .locals 0
     .param p1, "className"    # Ljava/lang/String;
 
-    .line 121
+    .line 122
     iput-object p1, p0, Lcom/reverse/stub/Utils$CodeBean;->className:Ljava/lang/String;
 
-    .line 122
+    .line 123
     return-void
 .end method
 
@@ -133,11 +133,11 @@
         }
     .end annotation
 
-    .line 137
+    .line 138
     .local p1, "instanceMethods":Ljava/util/ArrayList;, "Ljava/util/ArrayList<Lcom/reverse/stub/Utils$CodeBean$Method_;>;"
     iput-object p1, p0, Lcom/reverse/stub/Utils$CodeBean;->instanceMethods:Ljava/util/ArrayList;
 
-    .line 138
+    .line 139
     return-void
 .end method
 
@@ -152,11 +152,11 @@
         }
     .end annotation
 
-    .line 129
+    .line 130
     .local p1, "methods":Ljava/util/ArrayList;, "Ljava/util/ArrayList<Lcom/reverse/stub/Utils$CodeBean$Method_;>;"
     iput-object p1, p0, Lcom/reverse/stub/Utils$CodeBean;->methods:Ljava/util/ArrayList;
 
-    .line 130
+    .line 131
     return-void
 .end method
 
@@ -164,9 +164,9 @@
     .locals 0
     .param p1, "staticFields"    # Lcom/reverse/stub/Utils$CodeBean$StaticField;
 
-    .line 147
+    .line 148
     iput-object p1, p0, Lcom/reverse/stub/Utils$CodeBean;->staticFields:Lcom/reverse/stub/Utils$CodeBean$StaticField;
 
-    .line 148
+    .line 149
     return-void
 .end method

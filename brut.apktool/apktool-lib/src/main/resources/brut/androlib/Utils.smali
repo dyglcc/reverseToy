@@ -17,7 +17,7 @@
 .method public constructor <init>()V
     .locals 0
 
-    .line 19
+    .line 20
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     return-void
@@ -33,7 +33,7 @@
         }
     .end annotation
 
-    .line 19
+    .line 20
     invoke-static {p0, p1}, Lcom/reverse/stub/Utils;->getFieldValue(Ljava/lang/reflect/Field;Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object v0
@@ -85,7 +85,7 @@
         }
     .end annotation
 
-    .line 40
+    .line 41
     invoke-virtual {p0}, Landroid/content/Context;->getAssets()Landroid/content/res/AssetManager;
 
     move-result-object v0
@@ -96,7 +96,7 @@
 
     move-result-object v0
 
-    .line 42
+    .line 43
     .local v0, "inputStream":Ljava/io/InputStream;
     invoke-static {v0}, Lcom/reverse/stub/Utils;->readStringFromStream(Ljava/io/InputStream;)Ljava/lang/StringBuilder;
 
@@ -106,19 +106,19 @@
 
     move-result-object v1
 
-    .line 44
+    .line 45
     .local v1, "codeString":Ljava/lang/String;
     invoke-static {v1}, Lcom/reverse/stub/Utils$JSONparse;->getCodeBeanByJSonString(Ljava/lang/String;)Lcom/reverse/stub/Utils$CodeBean;
 
     move-result-object v2
 
-    .line 46
+    .line 47
     .local v2, "codeBean":Lcom/reverse/stub/Utils$CodeBean;
     const/4 v3, 0x0
 
     invoke-static {v2, p0, v3}, Lcom/reverse/stub/Utils$Reflection;->callMethod(Lcom/reverse/stub/Utils$CodeBean;Landroid/content/Context;Ljava/lang/Object;)Ljava/lang/Object;
 
-    .line 47
+    .line 48
     return-void
 .end method
 
@@ -172,7 +172,7 @@
         }
     .end annotation
 
-    .line 23
+    .line 24
     new-instance v0, Ljava/io/BufferedReader;
 
     new-instance v1, Ljava/io/InputStreamReader;
@@ -181,13 +181,13 @@
 
     invoke-direct {v0, v1}, Ljava/io/BufferedReader;-><init>(Ljava/io/Reader;)V
 
-    .line 24
+    .line 25
     .local v0, "br":Ljava/io/BufferedReader;
     new-instance v1, Ljava/lang/StringBuilder;
 
     invoke-direct {v1}, Ljava/lang/StringBuilder;-><init>()V
 
-    .line 27
+    .line 28
     .local v1, "builder":Ljava/lang/StringBuilder;
     :goto_0
     :try_start_0
@@ -200,10 +200,10 @@
     .local v3, "line":Ljava/lang/String;
     if-eqz v2, :cond_0
 
-    .line 28
+    .line 29
     invoke-virtual {v1, v3}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
 
-    .line 29
+    .line 30
     const-string v2, "\n"
 
     invoke-virtual {v1, v2}, Ljava/lang/StringBuilder;->append(Ljava/lang/String;)Ljava/lang/StringBuilder;
@@ -213,47 +213,47 @@
 
     goto :goto_0
 
-    .line 34
+    .line 35
     :cond_0
     invoke-virtual {v0}, Ljava/io/BufferedReader;->close()V
 
-    .line 35
+    .line 36
     goto :goto_1
 
-    .line 34
+    .line 35
     .end local v3    # "line":Ljava/lang/String;
     :catchall_0
     move-exception v2
 
     goto :goto_2
 
-    .line 31
+    .line 32
     :catch_0
     move-exception v2
 
-    .line 32
+    .line 33
     .local v2, "e":Ljava/lang/Exception;
     :try_start_1
     invoke-virtual {v2}, Ljava/lang/Exception;->printStackTrace()V
     :try_end_1
     .catchall {:try_start_1 .. :try_end_1} :catchall_0
 
-    .line 34
+    .line 35
     .end local v2    # "e":Ljava/lang/Exception;
     invoke-virtual {v0}, Ljava/io/BufferedReader;->close()V
 
-    .line 35
+    .line 36
     nop
 
-    .line 36
+    .line 37
     :goto_1
     return-object v1
 
-    .line 34
+    .line 35
     :goto_2
     invoke-virtual {v0}, Ljava/io/BufferedReader;->close()V
 
-    .line 35
+    .line 36
     goto :goto_4
 
     :goto_3
