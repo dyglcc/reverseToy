@@ -25,3 +25,5 @@ bin/
 # Patches
 *.patch
 todo.md
+
+brut.apktool/apktool-lib/src/main/java/test
