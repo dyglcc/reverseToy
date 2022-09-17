@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -280,13 +281,12 @@ public class Utils {
 
         private static Object callInstanceMethod(CodeBean cb, Context application,Object instance) {
             String className_codebean1 = cb.getClassName();
-            Object obj = null;
+            Object obj = instance;
             try {
                 Class clazz_instance = Class.forName(className_codebean1);
                 if(instance == null){
                     obj = clazz_instance.newInstance();
                 }
-                obj = instance;
                 ArrayList<CodeBean.Method_> instanceMethod = cb.getInstanceMethods();
                 for (int i = 0; i < instanceMethod.size(); i++) {
                     CodeBean.Method_ method_ = instanceMethod.get(i);

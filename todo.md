@@ -23,3 +23,4 @@ merge -codePath com.android.reyunsdk -exclude abc /Users/dongyuangui/Desktop/apk
 bug:
 1.当把Application对象更换到了非classes.dex下面之后，可能会出现classnotfoundExcepiton ，拼多多注入时候报错。
 修复方法（未尝试）：将classes.dex和classes4.dex（放applicaiton类的dex）名字互换,
+reverse m -f -codePath com.adhoc:com.adhocsdk /Users/dongyuangui/Desktop/2345wangluo/app-ksBrowser-debug-13.1.0-com.browser2345_ks-202008311542.apk /Users/dongyuangui/Desktop/2345wangluo/aars /Users/dongyuangui/GITHUB/adhoc_android/reverse_code_json_default-adhoc.txt

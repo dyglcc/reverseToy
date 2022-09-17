@@ -18,7 +18,7 @@
 .method public constructor <init>()V
     .locals 0
 
-    .line 213
+    .line 214
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     return-void
@@ -30,38 +30,35 @@
     .param p1, "application"    # Landroid/content/Context;
     .param p2, "instance"    # Ljava/lang/Object;
 
-    .line 282
+    .line 283
     invoke-virtual {p0}, Lcom/reverse/stub/Utils$CodeBean;->getClassName()Ljava/lang/String;
 
     move-result-object v0
 
-    .line 283
+    .line 284
     .local v0, "className_codebean1":Ljava/lang/String;
-    const/4 v1, 0x0
+    move-object v1, p2
 
-    .line 285
+    .line 286
     .local v1, "obj":Ljava/lang/Object;
     :try_start_0
     invoke-static {v0}, Ljava/lang/Class;->forName(Ljava/lang/String;)Ljava/lang/Class;
 
     move-result-object v2
 
-    .line 286
+    .line 287
     .local v2, "clazz_instance":Ljava/lang/Class;
     if-nez p2, :cond_0
 
-    .line 287
+    .line 288
     invoke-virtual {v2}, Ljava/lang/Class;->newInstance()Ljava/lang/Object;
 
     move-result-object v3
 
     move-object v1, v3
 
-    .line 289
-    :cond_0
-    move-object v1, p2
-
     .line 290
+    :cond_0
     invoke-virtual {p0}, Lcom/reverse/stub/Utils$CodeBean;->getInstanceMethods()Ljava/util/ArrayList;
 
     move-result-object v3
@@ -176,7 +173,7 @@
     .param p1, "application"    # Landroid/content/Context;
     .param p2, "intance"    # Ljava/lang/Object;
 
-    .line 215
+    .line 216
     invoke-virtual {p0}, Lcom/reverse/stub/Utils$CodeBean;->getStaticFields()Lcom/reverse/stub/Utils$CodeBean$StaticField;
 
     move-result-object v0
@@ -209,7 +206,7 @@
 
     if-nez v0, :cond_0
 
-    .line 217
+    .line 218
     :try_start_0
     invoke-static {p0}, Lcom/reverse/stub/Utils$Reflection;->getStaticField(Lcom/reverse/stub/Utils$CodeBean;)Ljava/lang/Object;
 
@@ -221,43 +218,43 @@
 
     return-object v0
 
-    .line 222
+    .line 223
     :catch_0
     move-exception v0
 
-    .line 223
+    .line 224
     .local v0, "e":Ljava/lang/IllegalAccessException;
     invoke-virtual {v0}, Ljava/lang/IllegalAccessException;->printStackTrace()V
 
     goto :goto_0
 
-    .line 220
+    .line 221
     .end local v0    # "e":Ljava/lang/IllegalAccessException;
     :catch_1
     move-exception v0
 
-    .line 221
+    .line 222
     .local v0, "e":Ljava/lang/NoSuchFieldException;
     invoke-virtual {v0}, Ljava/lang/NoSuchFieldException;->printStackTrace()V
 
     .end local v0    # "e":Ljava/lang/NoSuchFieldException;
     goto :goto_0
 
-    .line 218
+    .line 219
     :catch_2
     move-exception v0
 
-    .line 219
+    .line 220
     .local v0, "e":Ljava/lang/ClassNotFoundException;
     invoke-virtual {v0}, Ljava/lang/ClassNotFoundException;->printStackTrace()V
 
-    .line 226
+    .line 227
     .end local v0    # "e":Ljava/lang/ClassNotFoundException;
     :cond_0
     :goto_0
     const/4 v0, 0x0
 
-    .line 227
+    .line 228
     .local v0, "obj":Ljava/lang/Object;
     invoke-virtual {p0}, Lcom/reverse/stub/Utils$CodeBean;->getMethods()Ljava/util/ArrayList;
 
@@ -275,12 +272,12 @@
 
     if-lez v1, :cond_1
 
-    .line 228
+    .line 229
     invoke-static {p0, p1}, Lcom/reverse/stub/Utils$Reflection;->callStaticMethod(Lcom/reverse/stub/Utils$CodeBean;Landroid/content/Context;)Ljava/lang/Object;
 
     move-result-object v0
 
-    .line 230
+    .line 231
     :cond_1
     invoke-virtual {p0}, Lcom/reverse/stub/Utils$CodeBean;->getInstanceMethods()Ljava/util/ArrayList;
 
@@ -298,23 +295,23 @@
 
     if-lez v1, :cond_3
 
-    .line 231
+    .line 232
     if-eqz p2, :cond_2
 
-    .line 232
+    .line 233
     invoke-static {p0, p1, p2}, Lcom/reverse/stub/Utils$Reflection;->callInstanceMethod(Lcom/reverse/stub/Utils$CodeBean;Landroid/content/Context;Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object v0
 
     goto :goto_1
 
-    .line 234
+    .line 235
     :cond_2
     invoke-static {p0, p1, v0}, Lcom/reverse/stub/Utils$Reflection;->callInstanceMethod(Lcom/reverse/stub/Utils$CodeBean;Landroid/content/Context;Ljava/lang/Object;)Ljava/lang/Object;
 
     move-result-object v0
 
-    .line 237
+    .line 238
     :cond_3
     :goto_1
     return-object v0
@@ -325,29 +322,29 @@
     .param p0, "cb"    # Lcom/reverse/stub/Utils$CodeBean;
     .param p1, "application"    # Landroid/content/Context;
 
-    .line 241
+    .line 242
     invoke-virtual {p0}, Lcom/reverse/stub/Utils$CodeBean;->getClassName()Ljava/lang/String;
 
     move-result-object v0
 
-    .line 242
+    .line 243
     .local v0, "className_codebean1":Ljava/lang/String;
     const/4 v1, 0x0
 
-    .line 244
+    .line 245
     .local v1, "obj":Ljava/lang/Object;
     :try_start_0
     invoke-static {v0}, Ljava/lang/Class;->forName(Ljava/lang/String;)Ljava/lang/Class;
 
     move-result-object v2
 
-    .line 245
+    .line 246
     .local v2, "clazz_instance":Ljava/lang/Class;
     invoke-virtual {p0}, Lcom/reverse/stub/Utils$CodeBean;->getMethods()Ljava/util/ArrayList;
 
     move-result-object v3
 
-    .line 246
+    .line 247
     .local v3, "staticMethods":Ljava/util/ArrayList;, "Ljava/util/ArrayList<Lcom/reverse/stub/Utils$CodeBean$Method_;>;"
     const/4 v4, 0x0
 
@@ -359,14 +356,14 @@
 
     if-ge v4, v5, :cond_0
 
-    .line 247
+    .line 248
     invoke-virtual {v3, v4}, Ljava/util/ArrayList;->get(I)Ljava/lang/Object;
 
     move-result-object v5
 
     check-cast v5, Lcom/reverse/stub/Utils$CodeBean$Method_;
 
-    .line 248
+    .line 249
     .local v5, "method_":Lcom/reverse/stub/Utils$CodeBean$Method_;
     const/4 v6, 0x0
 
@@ -380,28 +377,28 @@
 
     move-object v1, v6
 
-    .line 246
+    .line 247
     .end local v5    # "method_":Lcom/reverse/stub/Utils$CodeBean$Method_;
     add-int/lit8 v4, v4, 0x1
 
     goto :goto_0
 
-    .line 253
+    .line 254
     .end local v2    # "clazz_instance":Ljava/lang/Class;
     .end local v3    # "staticMethods":Ljava/util/ArrayList;, "Ljava/util/ArrayList<Lcom/reverse/stub/Utils$CodeBean$Method_;>;"
     .end local v4    # "i":I
     :cond_0
     goto :goto_1
 
-    .line 251
+    .line 252
     :catch_0
     move-exception v2
 
-    .line 252
+    .line 253
     .local v2, "e":Ljava/lang/ClassNotFoundException;
     invoke-virtual {v2}, Ljava/lang/ClassNotFoundException;->printStackTrace()V
 
-    .line 254
+    .line 255
     .end local v2    # "e":Ljava/lang/ClassNotFoundException;
     :goto_1
     return-object v1
@@ -812,30 +809,30 @@
         }
     .end annotation
 
-    .line 259
+    .line 260
     invoke-virtual {p0}, Lcom/reverse/stub/Utils$CodeBean;->getStaticFields()Lcom/reverse/stub/Utils$CodeBean$StaticField;
 
     move-result-object v0
 
-    .line 260
+    .line 261
     .local v0, "field":Lcom/reverse/stub/Utils$CodeBean$StaticField;
     invoke-virtual {v0}, Lcom/reverse/stub/Utils$CodeBean$StaticField;->getFieldName()Ljava/lang/String;
 
     move-result-object v1
 
-    .line 261
+    .line 262
     .local v1, "fieldName":Ljava/lang/String;
     invoke-virtual {p0}, Lcom/reverse/stub/Utils$CodeBean;->getClassName()Ljava/lang/String;
 
     move-result-object v2
 
-    .line 264
+    .line 265
     .local v2, "className":Ljava/lang/String;
     invoke-static {v2}, Ljava/lang/Class;->forName(Ljava/lang/String;)Ljava/lang/Class;
 
     move-result-object v3
 
-    .line 265
+    .line 266
     .local v3, "clazz":Ljava/lang/Class;
     invoke-virtual {v3}, Ljava/lang/Class;->isEnum()Z
 
@@ -845,7 +842,7 @@
 
     if-eqz v4, :cond_2
 
-    .line 266
+    .line 267
     invoke-virtual {v3}, Ljava/lang/Class;->getName()Ljava/lang/String;
 
     move-result-object v4
@@ -854,7 +851,7 @@
 
     move-result-object v4
 
-    .line 267
+    .line 268
     .local v4, "clayy":Ljava/lang/Class;, "Ljava/lang/Class<Ljava/lang/Enum;>;"
     invoke-virtual {v4}, Ljava/lang/Class;->getEnumConstants()[Ljava/lang/Object;
 
@@ -862,7 +859,7 @@
 
     check-cast v6, [Ljava/lang/Enum;
 
-    .line 268
+    .line 269
     .local v6, "enumConstants":[Ljava/lang/Enum;
     array-length v7, v6
 
@@ -873,7 +870,7 @@
 
     aget-object v9, v6, v8
 
-    .line 269
+    .line 270
     .local v9, "enumxyz":Ljava/lang/Enum;
     invoke-virtual {v9}, Ljava/lang/Enum;->name()Ljava/lang/String;
 
@@ -885,32 +882,32 @@
 
     if-eqz v10, :cond_0
 
-    .line 270
+    .line 271
     return-object v9
 
-    .line 268
+    .line 269
     .end local v9    # "enumxyz":Ljava/lang/Enum;
     :cond_0
     add-int/lit8 v8, v8, 0x1
 
     goto :goto_0
 
-    .line 273
+    .line 274
     .end local v4    # "clayy":Ljava/lang/Class;, "Ljava/lang/Class<Ljava/lang/Enum;>;"
     .end local v6    # "enumConstants":[Ljava/lang/Enum;
     :cond_1
     nop
 
-    .line 277
+    .line 278
     return-object v5
 
-    .line 274
+    .line 275
     :cond_2
     invoke-virtual {v3, v1}, Ljava/lang/Class;->getDeclaredField(Ljava/lang/String;)Ljava/lang/reflect/Field;
 
     move-result-object v4
 
-    .line 275
+    .line 276
     .local v4, "field1":Ljava/lang/reflect/Field;
     invoke-static {v4, v5}, Lcom/reverse/stub/Utils;->access$100(Ljava/lang/reflect/Field;Ljava/lang/Object;)Ljava/lang/Object;
 

@@ -261,32 +261,47 @@ public class Utils {
             BufferedReader br = new BufferedReader(new FileReader(file));
             StringBuilder sb = new StringBuilder();
             String line;
+            String result = null;
             try {
                 while ((line = br.readLine()) != null) {
-                    if (line.contains("field public static final")) {
-                        String[] words = line.split(" ");
-                        String[] keys = words[4].split(":");
-//                        AarID integer_value = values.get(keys[0]);
-                        String radix16 = words[6].substring(2);
-                        int oldInt = Integer.parseInt(radix16, 16);
-                        Duo_int newIntDuo = mapping.get(oldInt);
-                        if (newIntDuo != null) { // 提换
-                            words[6] = "0x" + Integer.toHexString(newIntDuo.idNew);
-                        }
-                        StringBuilder s = new StringBuilder();
-                        for (int i = 0; i < words.length; i++) {
-                            s.append(words[i]).append(" ");
-                        }
-                        line = s.toString().trim();
-                    }
+//                    if (line.contains("field public static final")) {
+//                        String[] words = line.split(" ");
+//                        String[] keys = words[4].split(":");
+//                        if(words.length > 6){
+//                            String radix16 = words[6].substring(2);
+//                            int oldInt = Integer.parseInt(radix16, 16);
+//                            Duo_int newIntDuo = mapping.get(oldInt);
+//                            if (newIntDuo != null) { // 替换
+//                                words[6] = "0x" + Integer.toHexString(newIntDuo.idNew);
+//                            }
+//                        }
+//                        StringBuilder s = new StringBuilder();
+//                        for (int i = 0; i < words.length; i++) {
+//                            s.append(words[i]).append(" ");
+//                        }
+//                        line = s.toString().trim();
+//                    }
+                    // style文件出现的形式不是直接的16进制数据，而是通过R文件构造函数初始化和array数组赋值
+                    // 直接文件替换就ok了
                     sb.append(line).append("\n");
+                }
+                result = sb.toString();
+                for (Map.Entry<Integer, Duo_int> entry : mapping.entrySet()) {
+                    try {
+                        String existKey = Integer.toHexString(entry.getKey());
+                        if (result.contains(existKey)) {
+                            result = result.replaceAll(existKey, Integer.toHexString(entry.getValue().idNew));
+                        }
+                    } catch (Exception e) {
+                        continue;
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
                 br.close();
             }
-            return sb;
+            return new StringBuilder(result);
         }
 
         private static String getKeyByFileName(String name) {

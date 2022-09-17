@@ -18,7 +18,7 @@
 .method public constructor <init>()V
     .locals 0
 
-    .line 49
+    .line 50
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
 
     return-void
@@ -33,18 +33,18 @@
         }
     .end annotation
 
-    .line 92
+    .line 93
     new-instance v0, Lorg/json/JSONObject;
 
     invoke-direct {v0, p0}, Lorg/json/JSONObject;-><init>(Ljava/lang/String;)V
 
-    .line 93
+    .line 94
     .local v0, "object":Lorg/json/JSONObject;
     new-instance v1, Lcom/reverse/stub/Utils$CodeBean;
 
     invoke-direct {v1}, Lcom/reverse/stub/Utils$CodeBean;-><init>()V
 
-    .line 94
+    .line 95
     .local v1, "cb":Lcom/reverse/stub/Utils$CodeBean;
     const-string v2, "classname"
 
@@ -52,58 +52,58 @@
 
     move-result-object v2
 
-    .line 95
+    .line 96
     .local v2, "className":Ljava/lang/String;
     invoke-virtual {v1, v2}, Lcom/reverse/stub/Utils$CodeBean;->setClassName(Ljava/lang/String;)V
 
-    .line 97
+    .line 98
     const-string v3, "staticMethods"
 
     invoke-static {v0, v3}, Lcom/reverse/stub/Utils$JSONparse;->getMethods(Lorg/json/JSONObject;Ljava/lang/String;)Ljava/util/ArrayList;
 
     move-result-object v3
 
-    .line 98
+    .line 99
     .local v3, "methodS":Ljava/util/ArrayList;, "Ljava/util/ArrayList<Lcom/reverse/stub/Utils$CodeBean$Method_;>;"
     invoke-virtual {v1, v3}, Lcom/reverse/stub/Utils$CodeBean;->setMethods(Ljava/util/ArrayList;)V
 
-    .line 99
+    .line 100
     const-string v4, "instanceMethods"
 
     invoke-static {v0, v4}, Lcom/reverse/stub/Utils$JSONparse;->getMethods(Lorg/json/JSONObject;Ljava/lang/String;)Ljava/util/ArrayList;
 
     move-result-object v4
 
-    .line 100
+    .line 101
     .local v4, "instanceMethods":Ljava/util/ArrayList;, "Ljava/util/ArrayList<Lcom/reverse/stub/Utils$CodeBean$Method_;>;"
     invoke-virtual {v1, v4}, Lcom/reverse/stub/Utils$CodeBean;->setInstanceMethods(Ljava/util/ArrayList;)V
 
-    .line 102
+    .line 103
     const-string v5, "staticfield"
 
     invoke-virtual {v0, v5}, Lorg/json/JSONObject;->optString(Ljava/lang/String;)Ljava/lang/String;
 
     move-result-object v5
 
-    .line 104
+    .line 105
     .local v5, "staticFeilds":Ljava/lang/String;
     if-eqz v5, :cond_0
 
-    .line 105
+    .line 106
     new-instance v6, Lcom/reverse/stub/Utils$CodeBean$StaticField;
 
     const/4 v7, 0x0
 
     invoke-direct {v6, v7}, Lcom/reverse/stub/Utils$CodeBean$StaticField;-><init>(Lcom/reverse/stub/Utils$1;)V
 
-    .line 106
+    .line 107
     .local v6, "field":Lcom/reverse/stub/Utils$CodeBean$StaticField;
     invoke-virtual {v6, v5}, Lcom/reverse/stub/Utils$CodeBean$StaticField;->setFieldName(Ljava/lang/String;)V
 
-    .line 107
+    .line 108
     invoke-virtual {v1, v6}, Lcom/reverse/stub/Utils$CodeBean;->setStaticFields(Lcom/reverse/stub/Utils$CodeBean$StaticField;)V
 
-    .line 109
+    .line 110
     .end local v6    # "field":Lcom/reverse/stub/Utils$CodeBean$StaticField;
     :cond_0
     return-object v1
@@ -131,27 +131,27 @@
         }
     .end annotation
 
-    .line 53
+    .line 54
     new-instance v0, Ljava/util/ArrayList;
 
     invoke-direct {v0}, Ljava/util/ArrayList;-><init>()V
 
-    .line 54
+    .line 55
     .local v0, "methods":Ljava/util/ArrayList;, "Ljava/util/ArrayList<Lcom/reverse/stub/Utils$CodeBean$Method_;>;"
     invoke-virtual/range {p0 .. p1}, Lorg/json/JSONObject;->optJSONArray(Ljava/lang/String;)Lorg/json/JSONArray;
 
     move-result-object v1
 
-    .line 55
+    .line 56
     .local v1, "array":Lorg/json/JSONArray;
     if-eqz v1, :cond_7
 
-    .line 56
+    .line 57
     invoke-virtual {v1}, Lorg/json/JSONArray;->length()I
 
     move-result v2
 
-    .line 57
+    .line 58
     .local v2, "length":I
     const/4 v3, 0x0
 
@@ -159,18 +159,18 @@
     :goto_0
     if-ge v3, v2, :cond_7
 
-    .line 58
+    .line 59
     invoke-virtual {v1, v3}, Lorg/json/JSONArray;->optJSONObject(I)Lorg/json/JSONObject;
 
     move-result-object v4
 
-    .line 59
+    .line 60
     .local v4, "object1":Lorg/json/JSONObject;
     new-instance v5, Lcom/reverse/stub/Utils$CodeBean$Method_;
 
     invoke-direct {v5}, Lcom/reverse/stub/Utils$CodeBean$Method_;-><init>()V
 
-    .line 60
+    .line 61
     .local v5, "singleMethod":Lcom/reverse/stub/Utils$CodeBean$Method_;
     const-string v6, "methodName"
 
@@ -180,12 +180,12 @@
 
     invoke-virtual {v5, v6}, Lcom/reverse/stub/Utils$CodeBean$Method_;->setMethodName(Ljava/lang/String;)V
 
-    .line 61
+    .line 62
     new-instance v6, Ljava/util/ArrayList;
 
     invoke-direct {v6}, Ljava/util/ArrayList;-><init>()V
 
-    .line 62
+    .line 63
     .local v6, "paras":Ljava/util/ArrayList;, "Ljava/util/ArrayList<Lcom/reverse/stub/Utils$CodeBean$Method_$Para;>;"
     const-string v7, "para"
 
@@ -193,7 +193,7 @@
 
     move-result-object v7
 
-    .line 63
+    .line 64
     .local v7, "array1":Lorg/json/JSONArray;
     const/4 v8, 0x0
 
@@ -205,18 +205,18 @@
 
     if-ge v8, v9, :cond_6
 
-    .line 64
+    .line 65
     invoke-virtual {v7, v8}, Lorg/json/JSONArray;->optJSONObject(I)Lorg/json/JSONObject;
 
     move-result-object v9
 
-    .line 65
+    .line 66
     .local v9, "objecPara":Lorg/json/JSONObject;
     new-instance v10, Lcom/reverse/stub/Utils$CodeBean$Method_$Para;
 
     invoke-direct {v10}, Lcom/reverse/stub/Utils$CodeBean$Method_$Para;-><init>()V
 
-    .line 66
+    .line 67
     .local v10, "para":Lcom/reverse/stub/Utils$CodeBean$Method_$Para;
     const-string v11, "paratype"
 
@@ -224,7 +224,7 @@
 
     move-result-object v11
 
-    .line 67
+    .line 68
     .local v11, "type":Ljava/lang/String;
     const-string v12, "paravalue"
 
@@ -232,11 +232,11 @@
 
     move-result-object v12
 
-    .line 68
+    .line 69
     .local v12, "value":Ljava/lang/String;
     invoke-virtual {v10, v11}, Lcom/reverse/stub/Utils$CodeBean$Method_$Para;->setParatype(Ljava/lang/String;)V
 
-    .line 69
+    .line 70
     const-string v13, "object"
 
     invoke-virtual {v11, v13}, Ljava/lang/String;->equals(Ljava/lang/Object;)Z
@@ -245,7 +245,7 @@
 
     if-eqz v13, :cond_0
 
-    .line 70
+    .line 71
     invoke-static {v12}, Lcom/reverse/stub/Utils$JSONparse;->getCodeBeanByJSonString(Ljava/lang/String;)Lcom/reverse/stub/Utils$CodeBean;
 
     move-result-object v13
@@ -254,7 +254,7 @@
 
     goto :goto_2
 
-    .line 71
+    .line 72
     :cond_0
     const-string v13, "this"
 
@@ -264,12 +264,12 @@
 
     if-eqz v14, :cond_1
 
-    .line 72
+    .line 73
     invoke-virtual {v10, v13}, Lcom/reverse/stub/Utils$CodeBean$Method_$Para;->setParavalue(Ljava/lang/Object;)V
 
     goto :goto_2
 
-    .line 73
+    .line 74
     :cond_1
     const-string v13, "int"
 
@@ -279,7 +279,7 @@
 
     if-eqz v13, :cond_2
 
-    .line 74
+    .line 75
     invoke-static {v12}, Ljava/lang/Integer;->parseInt(Ljava/lang/String;)I
 
     move-result v13
@@ -292,7 +292,7 @@
 
     goto :goto_2
 
-    .line 75
+    .line 76
     :cond_2
     const-string v13, "string"
 
@@ -302,12 +302,12 @@
 
     if-eqz v13, :cond_3
 
-    .line 76
+    .line 77
     invoke-virtual {v10, v12}, Lcom/reverse/stub/Utils$CodeBean$Method_$Para;->setParavalue(Ljava/lang/Object;)V
 
     goto :goto_2
 
-    .line 77
+    .line 78
     :cond_3
     const-string v13, "boolean"
 
@@ -317,7 +317,7 @@
 
     if-eqz v13, :cond_4
 
-    .line 78
+    .line 79
     invoke-static {v12}, Ljava/lang/Boolean;->parseBoolean(Ljava/lang/String;)Z
 
     move-result v13
@@ -330,7 +330,7 @@
 
     goto :goto_2
 
-    .line 79
+    .line 80
     :cond_4
     const-string v13, "long"
 
@@ -340,7 +340,7 @@
 
     if-eqz v13, :cond_5
 
-    .line 80
+    .line 81
     invoke-static {v12}, Ljava/lang/Long;->parseLong(Ljava/lang/String;)J
 
     move-result-wide v13
@@ -351,12 +351,12 @@
 
     invoke-virtual {v10, v13}, Lcom/reverse/stub/Utils$CodeBean$Method_$Para;->setParavalue(Ljava/lang/Object;)V
 
-    .line 82
+    .line 83
     :cond_5
     :goto_2
     invoke-virtual {v6, v10}, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
 
-    .line 63
+    .line 64
     .end local v9    # "objecPara":Lorg/json/JSONObject;
     .end local v10    # "para":Lcom/reverse/stub/Utils$CodeBean$Method_$Para;
     .end local v11    # "type":Ljava/lang/String;
@@ -365,15 +365,15 @@
 
     goto/16 :goto_1
 
-    .line 84
+    .line 85
     .end local v8    # "j":I
     :cond_6
     invoke-virtual {v5, v6}, Lcom/reverse/stub/Utils$CodeBean$Method_;->setParas(Ljava/util/List;)V
 
-    .line 85
+    .line 86
     invoke-virtual {v0, v5}, Ljava/util/ArrayList;->add(Ljava/lang/Object;)Z
 
-    .line 57
+    .line 58
     .end local v4    # "object1":Lorg/json/JSONObject;
     .end local v5    # "singleMethod":Lcom/reverse/stub/Utils$CodeBean$Method_;
     .end local v6    # "paras":Ljava/util/ArrayList;, "Ljava/util/ArrayList<Lcom/reverse/stub/Utils$CodeBean$Method_$Para;>;"
@@ -382,7 +382,7 @@
 
     goto/16 :goto_0
 
-    .line 88
+    .line 89
     .end local v2    # "length":I
     .end local v3    # "i":I
     :cond_7
