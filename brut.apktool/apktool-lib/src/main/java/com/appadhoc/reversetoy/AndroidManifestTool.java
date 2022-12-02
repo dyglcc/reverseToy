@@ -110,21 +110,23 @@ public class AndroidManifestTool {
 //        List<Chunk> launchActivity = MergeAndMestFile.getTrunksFromAarlist(parser.getChunkList(), "activity");
         List<Chunk> activitys = MergeAndMestFile.getTrunksFromAarlist(parser.getChunkList(), "activity");
         for (Chunk activityChunk : activitys) {
-            Attribute appNameChunk = MergeAndMestFile.getAttributeFromTrunk((StartTagChunk) activityChunk, "enabled");
-            // filter the category modify the category is <intent-filter> <category android:name ="android.intent.category.LAUNCHER"/>
-
-            if (appNameChunk != null) {
-                if (appNameChunk.getData().equals("false")) {
-//                    byte[] rawBytes = appNameChunk.getRawBytes();
-//                    Utils.ByteUtils.replaceInt(rawBytes, 16, -1); // 0表示false，-1表示true
-//                    appNameChunk.setData("true");
-//                    parser.setNeedReWrite(true);
-                }
-            } else {
-                // add debuggable attribute.
+            if(activityChunk instanceof StartTagChunk){
+                Attribute appNameChunk = MergeAndMestFile.getAttributeFromTrunk((StartTagChunk) activityChunk, "enabled");
+                // filter the category modify the category is <intent-filter> <category android:name ="android.intent.category.LAUNCHER"/>
+                if (appNameChunk != null) {
+                    if (appNameChunk.getData().equals("false")) {
+                    byte[] rawBytes = appNameChunk.getRawBytes();
+                    Utils.ByteUtils.replaceInt(rawBytes, 16, -1); // 0表示false，-1表示true
+                    appNameChunk.setData("true");
+                    parser.setNeedReWrite(true);
+                    }
+                } else {
+                    // add debuggable attribute.
 //                addDebuggableTrunk((StartTagChunk) activityChunk, parser);
 //                parser.setNeedReWrite(true);
+                }
             }
+
         }
 
 

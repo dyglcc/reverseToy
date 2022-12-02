@@ -1,8 +1,10 @@
 package luyao.parser.xml;
 
 import android.util.TypedValue;
+import brut.androlib.AndrolibException;
 import brut.androlib.res.decoder.StringBlock;
 import brut.common.BrutException;
+import brut.directory.ZipUtils;
 import brut.util.ExtDataInput;
 import com.appadhoc.reversetoy.AndroidManifestTool;
 import com.appadhoc.reversetoy.Main;
@@ -56,7 +58,9 @@ public class XmlParser {
 
     public static void main(String... args) throws Exception {
 //        testParse(123);
-        setCategoryLauncherIsEnable();
+//        setCategoryLauncherIsEnable();
+        ZipUtils.zipFolders(new File("/Users/dongyuangui/work/harri/test"), new File("/Users/dongyuangui/work/harri/out_unsingn.apk"), null, null);
+        System.out.println("don");
     }
 
     public static void testParseSetDebug() throws IOException {
@@ -66,24 +70,47 @@ public class XmlParser {
         System.out.println("abc");
     }
 
-    public static void setCategoryLauncherIsEnable() throws Exception {
+    public static void setCategoryLauncherIsEnable() {
 
-        XmlParser xmlParser = XmlParser.parse(new FileInputStream("/Users/dongyuangui/work/harri/Hurricane Cleanup_1.0.6_Apkpure/AndroidManifest.xml"));
-        AndroidManifestTool.modifyLaunchCategoryEnableAttrIsTrue(xmlParser);
+        XmlParser xmlParser = null;
+        try {
+            xmlParser = XmlParser.parse(new FileInputStream("/Users/dongyuangui/work/harri/test/AndroidManifest.xml"));
 
+            AndroidManifestTool.modifyLaunchCategoryEnableAttrIsTrue(xmlParser);
 
-        File out = new File("/Users/dongyuangui/work/harri/Hurricane Cleanup_1.0.6_Apkpure/AndroidManifest.xml");
-        XmlWriter.write2NewXml(out, xmlParser);
-        System.out.println("done");
+            File out = new File("/Users/dongyuangui/work/harri/test/AndroidManifest.xml-category-enable-why-not-midify.xml");
+            XmlWriter.write2NewXml(out, xmlParser);
+// test
+            XmlParser result = XmlParser.parse(new FileInputStream(out));
+
+            List<Chunk> activitids = MergeAndMestFile.getTrunksFromAarlist(result.getChunkList(), "activity");
+            List<StartTagChunk> acFilter = new ArrayList<>();
+            for (Chunk chunk : activitids) {
+                if (chunk instanceof StartTagChunk) {
+                    Attribute appNameChunk = MergeAndMestFile.getAttributeFromTrunk((StartTagChunk) chunk, "enabled");
+                    if (appNameChunk != null && appNameChunk.getName().equals("enabled")) {
+                        acFilter.add((StartTagChunk) chunk);
+                        System.out.println(appNameChunk.getData() + "  " + ((StartTagChunk) chunk).getName());
+                    }
+                }
+            }
+            System.out.println("abc");
+            System.out.println("done");
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (AndrolibException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
     public static void testParse(int count) throws Exception {
-        File dir = new File("/Users/dongyuangui/work/sdebugable/AndroidManifest.xml");
-
+        File dir = new File("/Users/dongyuangui/work/harri/test/AndroidManifest.xml");
         XmlParser xmlParser = XmlParser.parse(new FileInputStream(dir));
         AndroidManifestTool.setDebuggableTrue(xmlParser);
-        File out = new File("/Users/dongyuangui/work/sdebugable/AndroidManifest-out.xml");
+        File out = new File("/Users/dongyuangui/work/harri/test/AndroidManifest.xml-debug-out.xml");
         XmlWriter.write2NewXml(out, xmlParser);
         XmlParser result = XmlParser.parse(new FileInputStream(out));
         System.out.println("abc");

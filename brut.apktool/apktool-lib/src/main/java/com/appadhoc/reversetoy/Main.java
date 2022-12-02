@@ -50,7 +50,7 @@ public class Main {
 //        SignTool.sign(outApkfile, new File("/Users/dongyuangui/Desktop/apk-blue/output_lingdan-sign.apk"));
     }
     public static void test_reverse(HashMap hashmap) throws Exception {
-        File apkFile = new File("/Users/dongyuangui/GITHUB/reverseToy/app-debug.apk");
+        File apkFile = new File("/Users/dongyuangui/work/harri/test.apk");
         File aarFile = new File("/Users/dongyuangui/GITHUB/reverseToy/abtest-5.4.4.aar");
         reverse(apkFile,aarFile,hashmap);
     }
