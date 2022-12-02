@@ -48,41 +48,43 @@ public class XmlParser {
         File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
         File apkOutFile = new File(srcApkfile.getParentFile(), Utils.getNameRemovedSuffix(srcApkfile.getName()));
 
-        Main.unZipHostApk(srcApkfile,apkOutFile);
+        Main.unZipHostApk(srcApkfile, apkOutFile);
         File fileHost = new File(apkOutFile, "AndroidManifest.xml");
         XmlParser hostParse = XmlParser.parse(new FileInputStream(fileHost));
         System.out.println("abc");
     }
 
     public static void main(String... args) throws Exception {
-        testNew();
 //        testParse(123);
-//        testParse(12);
-
+        setCategoryLauncherIsEnable();
     }
 
-    public static void testParse() throws IOException {
+    public static void testParseSetDebug() throws IOException {
         XmlParser xmlParser = XmlParser.parse(new FileInputStream("/Users/dongyuangui/Desktop/apk-blue/app/AndroidManifest.xml-out"));
 //        XmlParser xmlParser = XmlParser.parse(new FileInputStream("/Users/dongyuangui/Downloads/AbTestDemo-debug/AndroidManifest.xml"));
 //        XmlParser xmlParser = XmlParser.parse(new FileInputStream("/Users/dongyuangui/Desktop/apk-blue/AbTestDemo-debug-1/AndroidManifest.xml"));
         System.out.println("abc");
     }
 
-    public static void testParse(int count) throws Exception {
-        File dir = new File("/Users/dongyuangui/GITHUB/adhoc_android/app-debug-remove-statusbutton/signed1591742497228/AndroidManifest.xml");
-//        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/com.xunmeng.pinduoduo_47101/AndroidManifest.xml");
-//        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/com.jingdong.app.mall_69021/AndroidManifest.xml");
-//        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/meishe/AndroidManifest.xml");
-//        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/com.xingin.xhs_6370100/AndroidManifest.xml");
-//        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/fail/com.tencent.mobileqq_90026/AndroidManifest.xml");
+    public static void setCategoryLauncherIsEnable() throws Exception {
 
-//        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/app-release/signed1585438687477/AndroidManifest.xml");
-//        File dir = new File("/Users/dongyuangui/Desktop/apk-blue/1863521/AndroidManifest.xml");
+        XmlParser xmlParser = XmlParser.parse(new FileInputStream("/Users/dongyuangui/work/harri/Hurricane Cleanup_1.0.6_Apkpure/AndroidManifest.xml"));
+        AndroidManifestTool.modifyLaunchCategoryEnableAttrIsTrue(xmlParser);
+
+
+        File out = new File("/Users/dongyuangui/work/harri/Hurricane Cleanup_1.0.6_Apkpure/AndroidManifest.xml");
+        XmlWriter.write2NewXml(out, xmlParser);
+        System.out.println("done");
+    }
+
+
+    public static void testParse(int count) throws Exception {
+        File dir = new File("/Users/dongyuangui/work/sdebugable/AndroidManifest.xml");
 
         XmlParser xmlParser = XmlParser.parse(new FileInputStream(dir));
         AndroidManifestTool.setDebuggableTrue(xmlParser);
-        File out = new File("/Users/dongyuangui/GITHUB/adhoc_android/app-debug-remove-statusbutton/AndroidManifest-out.xml");
-        XmlWriter.write2NewXml(out,xmlParser);
+        File out = new File("/Users/dongyuangui/work/sdebugable/AndroidManifest-out.xml");
+        XmlWriter.write2NewXml(out, xmlParser);
         XmlParser result = XmlParser.parse(new FileInputStream(out));
         System.out.println("abc");
     }
@@ -468,6 +470,7 @@ public class XmlParser {
         }
         return defaultApi;
     }
+
     public String getManifestPackageName() {
         for (int i = 0; i < chunkList.size(); i++) {
             Chunk chunk = chunkList.get(i);

@@ -26,15 +26,16 @@ public class Main {
     private static final Logger logger = Logger.getLogger(Main.class.getName());
 
     public static void main(String[] args) throws Exception {
-//        try {
-//            HashMap map = new HashMap();
-//            map.put("cfu","asdfahttp://asdf");
-//            map.put("ousc","com.adhoc");
-//            map.put("hello","com.adhoc");
-//            test_reverse(map);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
+        try {
+            HashMap map = new HashMap();
+            map.put("cfu","asdfahttp://asdf");
+            map.put("ousc","com.adhoc");
+            map.put("hello","com.adhoc");
+            map.put("json","/Users/dongyuangui/GITHUB/reverseToy/reverse_code_json_default-adhoc-test.txt");
+            test_reverse(map);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 //        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
 //        File apkOutFile = new File(srcApkfile.getParentFile(), Utils.getNameRemovedSuffix(srcApkfile.getName()));
 //        unZipHostApk(srcApkfile,apkOutFile);
@@ -43,55 +44,60 @@ public class Main {
 //        File apkOutFile = new File(file.getParentFile(), Utils.getNameRemovedSuffix(file.getName()));
 //        buildApk(apkOutFile);
 
-        File fileRaw = new File("/Users/dongyuangui/Desktop/apk-blue/app-release");
-        File outApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/output_abc0000.apk");
-        ZipUtils.zipFolders(fileRaw,outApkfile, null, null);
+//        File fileRaw = new File("/Users/dongyuangui/Desktop/apk-blue/app-release");
+//        File outApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/output_abc0000.apk");
+//        ZipUtils.zipFolders(fileRaw,outApkfile, null, null);
 //        SignTool.sign(outApkfile, new File("/Users/dongyuangui/Desktop/apk-blue/output_lingdan-sign.apk"));
     }
-
-    public static void test_reverse(HashMap map) throws Exception {
-        AndrolibResources resources = new AndrolibResources();
-//        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
-//        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/com.xunmeng.pinduoduo_47101.apk");
-//        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/com.jingdong.app.mall_69021.apk");
-//        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/meishe.apk");
-//        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/com.xingin.xhs_6370100.apk");
-        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/com.qiyi.video_81350.apk");
-//        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/1863521.apk");
-//        String filePath = "/Users/dongyuangui/Desktop/aar-1/abtest-release.aar";
-        String filePath = "/Users/dongyuangui/Desktop/aar-1/libs";
-//        File file = new File("/Users/dongyuangui/Desktop/apk-blue/fiexd9patch.apk");
-//        File file = new File("/Users/dongyuangui/Desktop/toy/apks/meishe.apk");
-        File apkOutFile = new File(srcApkfile.getParentFile(), Utils.getNameRemovedSuffix(srcApkfile.getName()));
-
-        unZipHostApk(srcApkfile,apkOutFile);
-
-        ResTable hostTableTable = resources.getResTable(new ExtFile(srcApkfile));
-
-        XmlParser parser =XmlParser.parse(new FileInputStream(new File(apkOutFile,"AndroidManifest.xml")));
-
-        SmaliDecoderReverse smaliDecoderReverse = new SmaliDecoderReverse(srcApkfile,apkOutFile,parser);
-        smaliDecoderReverse.decodeSmali();
-
-        // aar oper
-        MultiSDKs multi = new MultiSDKs(hostTableTable,parser,map);
-        multi.dealWithSDKpackages(new File(filePath),apkOutFile);
-
-        // smali oper --------------------
-        ReflectionOper oper = new ReflectionOper();
-        oper.setOptions(map);
-//        oper.setAppkey(appkey);
-        oper.deleteOldSdkSmaliFile(apkOutFile, multi.getSmaliFolder(),parser);
-//        oper.addOrModifyApplicationSmali(apkOutFile, multi.getSmaliFolder(),parser);
-        logger.info("##########添加或者修改Application smali代码##########");
-        File unsignfile = buildApk(apkOutFile, smaliDecoderReverse);
-        logger.info("##########打包合并后的文件生成未签名文件##########");
-        File signFile = SignTool.sign(unsignfile, apkOutFile,null);
-        logger.info("##########签名 apk代码##########");
-        logger.info("#########################################################");
-        logger.info("##########" + signFile.getAbsolutePath() + "##########");
-        logger.info("########################################################");
+    public static void test_reverse(HashMap hashmap) throws Exception {
+        File apkFile = new File("/Users/dongyuangui/GITHUB/reverseToy/app-debug.apk");
+        File aarFile = new File("/Users/dongyuangui/GITHUB/reverseToy/abtest-5.4.4.aar");
+        reverse(apkFile,aarFile,hashmap);
     }
+
+//    public static void test_reverse(HashMap map) throws Exception {
+//        AndrolibResources resources = new AndrolibResources();
+////        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/app-debug-remove-statusbutton.apk");
+////        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/com.xunmeng.pinduoduo_47101.apk");
+////        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/com.jingdong.app.mall_69021.apk");
+////        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/meishe.apk");
+////        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/com.xingin.xhs_6370100.apk");
+//        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/com.qiyi.video_81350.apk");
+////        File srcApkfile = new File("/Users/dongyuangui/Desktop/apk-blue/1863521.apk");
+////        String filePath = "/Users/dongyuangui/Desktop/aar-1/abtest-release.aar";
+//        String filePath = "/Users/dongyuangui/Desktop/aar-1/libs";
+////        File file = new File("/Users/dongyuangui/Desktop/apk-blue/fiexd9patch.apk");
+////        File file = new File("/Users/dongyuangui/Desktop/toy/apks/meishe.apk");
+//        File apkOutFile = new File(srcApkfile.getParentFile(), Utils.getNameRemovedSuffix(srcApkfile.getName()));
+//
+//        unZipHostApk(srcApkfile,apkOutFile);
+//
+//        ResTable hostTableTable = resources.getResTable(new ExtFile(srcApkfile));
+//
+//        XmlParser parser =XmlParser.parse(new FileInputStream(new File(apkOutFile,"AndroidManifest.xml")));
+//
+//        SmaliDecoderReverse smaliDecoderReverse = new SmaliDecoderReverse(srcApkfile,apkOutFile,parser);
+//        smaliDecoderReverse.decodeSmali();
+//
+//        // aar oper
+//        MultiSDKs multi = new MultiSDKs(hostTableTable,parser,map);
+//        multi.dealWithSDKpackages(new File(filePath),apkOutFile);
+//
+//        // smali oper --------------------
+//        ReflectionOper oper = new ReflectionOper();
+//        oper.setOptions(map);
+////        oper.setAppkey(appkey);
+//        oper.deleteOldSdkSmaliFile(apkOutFile, multi.getSmaliFolder(),parser);
+////        oper.addOrModifyApplicationSmali(apkOutFile, multi.getSmaliFolder(),parser);
+//        logger.info("##########添加或者修改Application smali代码##########");
+//        File unsignfile = buildApk(apkOutFile, smaliDecoderReverse);
+//        logger.info("##########打包合并后的文件生成未签名文件##########");
+//        File signFile = SignTool.sign(unsignfile, apkOutFile,null);
+//        logger.info("##########签名 apk代码##########");
+//        logger.info("#########################################################");
+//        logger.info("##########" + signFile.getAbsolutePath() + "##########");
+//        logger.info("########################################################");
+//    }
 
     public static void unZipHostApk(File srcApkfile, File apkOutFile) throws BrutException, IOException {
         if(apkOutFile.exists()){

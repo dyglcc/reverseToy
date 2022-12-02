@@ -439,7 +439,7 @@ public class AarManager extends AbstractManager {
         cmd.add(fileJar.getAbsolutePath());
         cmd.add("cf");
         cmd.add(rclassJar.getAbsolutePath());
-        cmd.add("-C");
+//        cmd.add("-C");
         cmd.add(rfiledir.getAbsolutePath());
         cmd.add(".");
         Utils.OSCMD.runCMD(cmd);

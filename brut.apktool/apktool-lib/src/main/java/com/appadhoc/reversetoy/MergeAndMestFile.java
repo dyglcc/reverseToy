@@ -186,7 +186,7 @@ public class MergeAndMestFile {
         return hostTrunkList.get(findStartPostion(hostTrunkList, chunkName));
     }
 
-    private static List<Chunk> getTrunksFromAarlist(List<Chunk> aarList, String name) {
+    public static List<Chunk> getTrunksFromAarlist(List<Chunk> aarList, String name) {
         ArrayList<Chunk> list = new ArrayList();
         boolean open = false;
         for (int i = 0; i < aarList.size(); i++) {
